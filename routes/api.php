@@ -20,6 +20,12 @@ Route::prefix('/user')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
 
     Route::middleware(['auth'])->group(function () {
+        Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);
     });
 });
+
+Route::any('/{any}', function () {
+    return response()->json(['message' => 'Not found'], 404);
+})
+    ->where('any', '.*');

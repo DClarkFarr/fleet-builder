@@ -81,4 +81,15 @@ class UserAuthController extends Controller
             ['user' => $user->toFeObject()]
         );
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logout success']);
+    }
 }

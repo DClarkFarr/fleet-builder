@@ -7,7 +7,7 @@ const userStore = useUserStore();
 
 const onClick = () => {
     console.log("clicked!");
-    userStore.refreshUser();
+    userStore.logout();
 };
 </script>
 <template>

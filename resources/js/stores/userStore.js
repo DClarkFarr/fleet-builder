@@ -5,20 +5,26 @@ import apiClient from "../services/apiClient";
 const useUserStore = defineStore("user", () => {
     const user = ref(null);
 
-    const setUser = (user) => {
-        user.value = user;
+    const setUser = (u) => {
+        user.value = u;
     };
 
-    const refreshUser = () => {
+    const refresh = () => {
         apiClient.get("user").then((response) => {
             setUser(response.data.user);
         });
     };
 
+    const logout = () => {
+        setUser(null);
+        apiClient.post("user/logout");
+    };
+
     return {
         user,
         setUser,
-        refreshUser,
+        refresh,
+        logout,
     };
 });
 

@@ -1,9 +1,14 @@
 <script setup>
+import { onMounted } from "vue";
 import useUserStore from "../../stores/userStore";
 
 const userStore = useUserStore();
 
-// userStore.refreshUser();
+onMounted(() => {
+    if (!userStore.user) {
+        userStore.refresh();
+    }
+});
 </script>
 
 <template>
