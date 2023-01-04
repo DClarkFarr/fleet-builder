@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import apiClient from "../services/apiClient";
 
 const useUserStore = defineStore("user", () => {
@@ -20,8 +20,13 @@ const useUserStore = defineStore("user", () => {
         apiClient.post("user/logout");
     };
 
+    const isAdmin = computed(() => {
+        return (user.value && user.value.roles?.includes("admin")) || false;
+    });
+
     return {
         user,
+        isAdmin,
         setUser,
         refresh,
         logout,

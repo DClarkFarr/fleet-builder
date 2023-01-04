@@ -11,7 +11,11 @@ export default defineConfig({
             compiler: "vue3",
         }),
         laravel({
-            input: ["resources/css/app.less", "resources/js/app.js"],
+            input: [
+                "resources/css/app.less",
+                "resources/js/app.js",
+                "resources/js/dashboard.js",
+            ],
             refresh: true,
         }),
     ],

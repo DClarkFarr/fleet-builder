@@ -21,7 +21,15 @@ Route::get('/signup', function () {
     return view('home');
 })->name('user.signup');
 
-Route::any('/{any}', function () {
+Route::prefix('/dashboard')->middleware(['auth'])->group(function () {
+    Route::get("/{any?}", function () {
+        return view('dashboard');
+    })
+        ->where('any', '.*')
+        ->name('dashboard');
+});
+
+Route::get('/{any}', function () {
     return view('home');
 })
     ->middleware(['auth'])
