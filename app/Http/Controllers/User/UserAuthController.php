@@ -36,7 +36,9 @@ class UserAuthController extends Controller
             return response()->json(['message' => 'These credentials do not match our records.'], 422);
         }
 
-        $user = Auth::user();
+        $auth = Auth::user();
+
+        $user = User::find($auth->id);
 
         return response()->json(
             ['user' => $user->toFeObject()]
@@ -62,6 +64,8 @@ class UserAuthController extends Controller
         $user->save();
 
         $user->assignRole('user');
+
+        Auth::login($user);
 
         return response()->json(
             ['user' => $user->toFeObject()]
