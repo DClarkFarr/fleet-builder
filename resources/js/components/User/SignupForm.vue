@@ -1,9 +1,13 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import validator from "validator";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
+
+import useUserStore from "../../stores/userStore";
+
+const userStore = useUserStore();
 
 const form = reactive({
     name: "",
@@ -81,8 +85,13 @@ const onSubmit = async () => {
     errors.password = "";
 
     try {
-        const user = await axios.post("/api/user/register", form);
-        console.log("got user", user);
+        const res = await apiClient.post("user/register", form);
+
+        userStore.setUser(user);
+
+        router.push({
+            name: "home",
+        });
     } catch (error) {
         if (error.response?.data?.errors) {
             Object.keys(error.response.data.errors).forEach((key) => {

@@ -1,9 +1,16 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import validator from "validator";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
+
+import useUserStore from "../../stores/userStore";
+import { useRouter } from "vue-router";
+
+const userStore = useUserStore();
+
+const router = useRouter();
 
 const form = reactive({
     email: "",
@@ -26,7 +33,6 @@ const isSubmitting = ref(false);
 const errorMessage = ref("");
 
 const validate = () => {
-    console.log("valdiating");
     if (form.email) {
         dirty.email = true;
         errors.email = validator.isEmail(form.email) ? "" : "Invalid email";
@@ -57,8 +63,13 @@ const onSubmit = async () => {
     errors.password = "";
 
     try {
-        const user = await axios.post("/api/user/login", form);
-        console.log("got user", user);
+        const res = await apiClient.post("user/login", form);
+
+        userStore.setUser(res.data.user);
+
+        router.push({
+            name: "home",
+        });
     } catch (error) {
         console.log(error);
         if (error.response?.data?.errors) {
@@ -78,7 +89,12 @@ const onSubmit = async () => {
     <form action="" @submit.prevent="onSubmit">
         <div class="form-group">
             <label> Email </label>
-            <input type="email" v-model="form.email" class="form-control" />
+            <input
+                type="email"
+                v-model="form.email"
+                class="form-control"
+                name="email"
+            />
 
             <p class="text-red-600" v-if="dirty.email && errors.email">
                 {{ errors.email }}
@@ -90,6 +106,7 @@ const onSubmit = async () => {
                 type="password"
                 v-model="form.password"
                 class="form-control"
+                name="password"
             />
             <p class="text-red-600" v-if="dirty.password && errors.password">
                 {{ errors.password }}

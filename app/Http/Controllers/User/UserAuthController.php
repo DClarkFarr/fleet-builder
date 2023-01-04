@@ -15,7 +15,6 @@ use Illuminate\Validation\Rules\Password;
 
 class UserAuthController extends Controller
 {
-
     public function login(Request $req)
     {
         $validator = Validator::make($req->all(), [
@@ -66,6 +65,17 @@ class UserAuthController extends Controller
         $user->assignRole('user');
 
         Auth::login($user);
+
+        return response()->json(
+            ['user' => $user->toFeObject()]
+        );
+    }
+
+    public function auth()
+    {
+        $auth = Auth::user();
+
+        $user = User::find($auth->id);
 
         return response()->json(
             ['user' => $user->toFeObject()]

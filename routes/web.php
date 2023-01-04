@@ -23,4 +23,6 @@ Route::get('/signup', function () {
 
 Route::any('/{any}', function () {
     return view('home');
-})->middleware(['auth'])->where('any', '.*');
+})
+    //->middleware(['auth'])
+    ->where('any', '.*');
