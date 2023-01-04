@@ -42,4 +42,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function toFeObject()
+    {
+        $obj = (object) $this->toArray();
+
+        unset($obj->roles);
+
+        $role = $this->roles->first();
+
+        $obj->role = $role->nama ?? 'user';
+
+        return $obj;
+    }
 }

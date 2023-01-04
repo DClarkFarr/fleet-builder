@@ -15,7 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', function () {
     return view('home');
-})->name('login');
+})->name('user.login');
+
+Route::get('/signup', function () {
+    return view('home');
+})->name('user.signup');
 
 Route::any('/{any}', function () {
     return view('home');

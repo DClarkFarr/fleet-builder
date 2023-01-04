@@ -44,13 +44,4 @@ class PermissionMiddleware
 
         throw UnauthorizedException::forPermissions($permissions);
     }
-
-    public function abort(Request $request)
-    {
-        if (!$request->expectsJson()) {
-            return route('login');
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-    }
 }
