@@ -49,9 +49,9 @@ class User extends Authenticatable
 
         unset($obj->roles);
 
-        $role = $this->roles->first();
+        $roleSlugs = $this->roles->pluck('name')->toArray();
 
-        $obj->role = $role->nama ?? 'user';
+        $obj->roles = $roleSlugs;
 
         return $obj;
     }
