@@ -4,6 +4,6 @@ import DashboardLayout from "../../components/layouts/DashboardLayout.vue";
 
 <template>
     <DashboardLayout>
-        <h1>Dashboard</h1>
+        <h1>Users</h1>
     </DashboardLayout>
 </template>

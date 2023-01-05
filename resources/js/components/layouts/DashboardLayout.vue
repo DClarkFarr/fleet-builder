@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import useUserStore from "../../stores/userStore";
+import DashboardSizebar from "./Dashboard/DashboardSizebar.vue";
 
 const userStore = useUserStore();
 
@@ -14,7 +15,14 @@ onMounted(() => {
 <template>
     <div class="layout layout--dashboard">
         <template v-if="userStore.isAdmin">
-            <slot></slot>
+            <div class="dashboard lg:flex min-h-screen items-stretch">
+                <div class="dashboard__nav h-min-full w-[350px] shrink">
+                    <DashboardSizebar />
+                </div>
+                <div class="dashboard__content min-h-full grow p-8">
+                    <slot></slot>
+                </div>
+            </div>
         </template>
         <template v-else>
             <div
