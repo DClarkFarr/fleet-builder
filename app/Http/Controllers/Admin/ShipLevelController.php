@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ShipClass;
+use App\Models\ShipLevel;
 use App\Services\ShipService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
-class ShipClassController extends Controller
+class ShipLevelController extends Controller
 {
 
     /**
@@ -26,7 +26,7 @@ class ShipClassController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|min:3|unique:ship_classes',
+            'name' => 'required|string|min:3|unique:ship_levels',
             'sort' => 'required|integer|min:0',
         ]);
 
@@ -37,14 +37,14 @@ class ShipClassController extends Controller
         $name = $request->name;
         $sort = $request->sort;
 
-        $shipClass = $this->shipService->createShipClass($name, $sort);
+        $shipLevel = $this->shipService->createShipLevel($name, $sort);
 
         return response()->json(
-            ['row' => $shipClass->toArray()]
+            ['row' => $shipLevel->toArray()]
         );
     }
 
-    public function update(Request $request, $id_class)
+    public function update(Request $request, $id_level)
     {
 
         $validator = Validator::make($request->all(), [
@@ -59,7 +59,7 @@ class ShipClassController extends Controller
         $name = $request->name;
         $sort = $request->sort;
 
-        [$status, $messageOrModel] = $this->shipService->updateShipClass($id_class, $name, $sort);
+        [$status, $messageOrModel] = $this->shipService->updateShipLevel($id_level, $name, $sort);
 
         if ($status) {
             return response()->json(
@@ -72,24 +72,24 @@ class ShipClassController extends Controller
 
     public function list()
     {
-        $shipClasses = ShipClass::orderBy('sort', 'asc')->get();
+        $shipLevels = ShipLevel::orderBy('sort', 'asc')->get();
 
         return response()->json(
-            ['rows' => $shipClasses->toArray()]
+            ['rows' => $shipLevels->toArray()]
         );
     }
 
-    public function delete($id_class)
+    public function delete($id_level)
     {
 
-        [$status, $message] = $this->shipService->deleteShipClass($id_class);
+        [$status, $message] = $this->shipService->deleteShipLevel($id_level);
 
         if (!$status) {
             return response()->json(['message' => $message], 422);
         }
 
         return response()->json(
-            ['message' => 'Ship class deleted']
+            ['message' => 'Ship level deleted']
         );
     }
 }

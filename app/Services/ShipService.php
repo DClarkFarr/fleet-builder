@@ -3,9 +3,81 @@
 namespace App\Services;
 
 use App\Models\ShipClass;
+use App\Models\ShipLevel;
 
 class ShipService
 {
+    public function createShipLevel(string $name, int $sort)
+    {
+        $shipLevel = new ShipLevel;
+        $shipLevel->name = $name;
+        $shipLevel->sort = $sort;
+        $shipLevel->save();
+
+        $this->insertLevelInOrder($shipLevel);
+
+        return $shipLevel;
+    }
+
+    public function insertLevelInOrder(ShipLevel $shipLevel)
+    {
+        $shipLeveles = ShipLevel::where('sort', '>=', $shipLevel->sort)->where('id_level', '!=', $shipLevel->id_level)->orderBy('sort', 'asc')->get();
+        foreach ($shipLeveles as $shipLevel) {
+            $shipLevel->sort++;
+            $shipLevel->save();
+        }
+    }
+
+    public function removeFromLevelOrder(ShipLevel $shipLevel)
+    {
+        $shipLeveles = ShipLevel::where('sort', '>', $shipLevel->sort)->orderBy('sort', 'asc')->get();
+        foreach ($shipLeveles as $shipLevel) {
+            $shipLevel->sort--;
+            $shipLevel->save();
+        }
+    }
+
+    public function updateShipLevel(int $id_level, string $name, int $sort)
+    {
+        $shipLevel = ShipLevel::find($id_level);
+
+        if (!$shipLevel) {
+            return [false, 'Ship level not found'];
+        }
+
+        if (!$shipLevel->validateName($name)) {
+            return [false, 'Name already exists'];
+        }
+
+        $shouldResort = $shipLevel->sort !== $sort;
+
+        $shipLevel->name = $name;
+        $shipLevel->sort = $sort;
+
+        $shipLevel->save();
+
+        if ($shouldResort) {
+            $this->insertLevelInOrder($shipLevel);
+        }
+
+        return [true, $shipLevel];
+    }
+
+    public function deleteShipLevel(int $id_level)
+    {
+        $shipLevel = ShipLevel::find($id_level);
+
+        if (!$shipLevel) {
+            return [false, 'Ship level not found'];
+        }
+
+        $shipLevel->delete();
+
+        $this->removeFromLevelOrder($shipLevel);
+
+        return [true, 'Ship level deleted'];
+    }
+
     public function createShipClass(string $name, int $sort)
     {
         $shipClass = new ShipClass;
@@ -13,12 +85,12 @@ class ShipService
         $shipClass->sort = $sort;
         $shipClass->save();
 
-        $this->insertShipInOrder($shipClass);
+        $this->insertClassInOrder($shipClass);
 
         return $shipClass;
     }
 
-    public function insertShipInOrder(ShipClass $shipClass)
+    public function insertClassInOrder(ShipClass $shipClass)
     {
         $shipClasses = ShipClass::where('sort', '>=', $shipClass->sort)->where('id_class', '!=', $shipClass->id_class)->orderBy('sort', 'asc')->get();
         foreach ($shipClasses as $shipClass) {
@@ -27,7 +99,7 @@ class ShipService
         }
     }
 
-    public function removeFromShipOrder(ShipClass $shipClass)
+    public function removeFromClassOrder(ShipClass $shipClass)
     {
         $shipClasses = ShipClass::where('sort', '>', $shipClass->sort)->orderBy('sort', 'asc')->get();
         foreach ($shipClasses as $shipClass) {
@@ -56,7 +128,7 @@ class ShipService
         $shipClass->save();
 
         if ($shouldResort) {
-            $this->insertShipInOrder($shipClass);
+            $this->insertClassInOrder($shipClass);
         }
 
         return [true, $shipClass];
@@ -72,7 +144,7 @@ class ShipService
 
         $shipClass->delete();
 
-        $this->removeFromShipOrder($shipClass);
+        $this->removeFromClassOrder($shipClass);
 
         return [true, 'Ship class deleted'];
     }

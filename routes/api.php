@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ShipClassController;
+use App\Http\Controllers\Admin\ShipLevelController;
 use App\Http\Controllers\User\UserAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,13 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
             Route::post('/', [ShipClassController::class, 'create']);
             Route::put('/{id_class}', [ShipClassController::class, 'update']);
             Route::delete('/{id_class}', [ShipClassController::class, 'delete']);
+        });
+
+        Route::prefix('/level')->group(function () {
+            Route::get('/', [ShipLevelController::class, 'list']);
+            Route::post('/', [ShipLevelController::class, 'create']);
+            Route::put('/{id_level}', [ShipLevelController::class, 'update']);
+            Route::delete('/{id_level}', [ShipLevelController::class, 'delete']);
         });
     });
 });
