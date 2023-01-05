@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Ship;
 use App\Models\ShipClass;
 use App\Models\ShipLevel;
 
@@ -147,5 +148,18 @@ class ShipService
         $this->removeFromClassOrder($shipClass);
 
         return [true, 'Ship class deleted'];
+    }
+
+    public function createShip(array $data)
+    {
+        $ship = new Ship;
+        $ship->name = $data['name'];
+        $ship->energy = $data['energy'];
+        $ship->id_class = $data['id_class'];
+        $ship->id_level = $data['id_level'];
+        $ship->public = $data['public'];
+        $ship->save();
+
+        return $ship;
     }
 }

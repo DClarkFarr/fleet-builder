@@ -8,6 +8,7 @@
     <title>Fleet Builder</title>
 
     @vite('resources/css/app.less')
+    @vite('resources/css/dashboard.less')
 
     @yield('head')
 </head>
