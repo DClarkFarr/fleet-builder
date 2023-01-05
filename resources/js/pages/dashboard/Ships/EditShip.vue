@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, nextTick } from "vue";
 import DashboardLayout from "../../../components/layouts/DashboardLayout.vue";
 import BasicShipForm from "../../../components/Ship/BasicShipForm.vue";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
@@ -26,8 +26,9 @@ const loadShip = async () => {
 const onUpdateShip = (form, resolve, reject) => {
     apiClient
         .put(`admin/ship/${ship.value.id_ship}`, form)
-        .then((res) => {
+        .then(async (res) => {
             ship.value = res.data.row;
+            await nextTick();
             resolve();
         })
         .catch((err) => {
