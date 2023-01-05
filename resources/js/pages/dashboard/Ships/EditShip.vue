@@ -57,7 +57,7 @@ onMounted(() => {
             <div>
                 <router-link
                     class="text-sky-600"
-                    :to="{ name: 'dashboard.ships.create' }"
+                    :to="{ name: 'dashboard.ships' }"
                 >
                     Back
                 </router-link>
