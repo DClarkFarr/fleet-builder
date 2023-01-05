@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Ship;
 use App\Models\ShipClass;
 use App\Models\ShipLevel;
+use Exception;
 
 class ShipService
 {
@@ -161,5 +162,48 @@ class ShipService
         $ship->save();
 
         return $ship;
+    }
+
+    public function updateShip(int $id_ship, array $data)
+    {
+        $ship = Ship::find($id_ship);
+        if (!$ship) {
+            throw new Exception('Ship not found', 404);
+        }
+
+        if ($data['name'] != $ship->name && !$ship->validateName($data['name'])) {
+            throw new Exception('Name already exists', 400);
+        }
+
+        $ship->name = $data['name'];
+        $ship->energy = $data['energy'];
+        $ship->id_class = $data['id_class'];
+        $ship->id_level = $data['id_level'];
+        $ship->public = $data['public'];
+
+        $ship->save();
+
+        return $ship;
+    }
+
+    public function getShip(int $id_ship, $forResponse = false)
+    {
+        $ship = Ship::find($id_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        if ($forResponse) {
+            return $this->populateShipForResponse($ship);
+        }
+
+        return $ship;
+    }
+
+    public function populateShipForResponse(Ship $ship)
+    {
+        $ship->load(['shipClass', 'shipLevel']);
+
+        return $ship->toArray();
     }
 }

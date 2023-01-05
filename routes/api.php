@@ -48,6 +48,7 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
 
         Route::get('/', [ShipController::class, 'list']);
         Route::post('/', [ShipController::class, 'create']);
+        Route::get('/{id_ship}', [ShipController::class, 'get']);
         Route::put('/{id_ship}', [ShipController::class, 'update']);
         Route::delete('/{id_ship}', [ShipController::class, 'delete']);
     });

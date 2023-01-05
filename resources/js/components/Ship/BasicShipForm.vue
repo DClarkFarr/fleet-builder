@@ -169,6 +169,7 @@ onMounted(async () => {
     await loadLevels();
     await nextTick();
     resetForm();
+    validate();
 });
 </script>
 

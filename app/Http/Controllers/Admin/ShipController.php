@@ -45,4 +45,37 @@ class ShipController extends Controller
             ['row' => $ship->toArray()]
         );
     }
+
+    public function update(Request $request, $id_ship)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:3',
+            'id_class' => 'required',
+            'id_level' => 'required',
+            'energy' => 'required|integer|min:0',
+            'public' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = $request->input();
+
+        $ship = $this->shipService->updateShip($id_ship, $data);
+
+        return response()->json(
+            ['row' => $this->shipService->populateShipForResponse($ship)]
+        );
+    }
+
+    public function get(Request $request, $id_ship)
+    {
+        $ship = $this->shipService->getShip($id_ship, true);
+
+        return response()->json(
+            ['row' => $ship]
+        );
+    }
 }

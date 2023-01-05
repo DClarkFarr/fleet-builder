@@ -12,6 +12,12 @@ class ShipService {
             .get("/admin/ship/level")
             .then((response) => response.data.rows);
     }
+
+    static getShip(id_ship) {
+        return apiClient
+            .get(`/admin/ship/${id_ship}`)
+            .then((response) => response.data.row);
+    }
 }
 
 export default ShipService;
