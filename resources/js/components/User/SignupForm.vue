@@ -92,13 +92,13 @@ const onSubmit = async () => {
         router.push({
             name: "home",
         });
-    } catch (error) {
-        if (error.response?.data?.errors) {
+    } catch (err) {
+        if (err.response?.data?.errors) {
             Object.keys(error.response.data.errors).forEach((key) => {
                 errors[key] = error.response.data.errors[key][0];
             });
         } else {
-            errorMessage.value = error.response?.data?.message || error.message;
+            errorMessage.value = err.response?.data?.message || err.message;
         }
     }
     isSubmitting.value = false;

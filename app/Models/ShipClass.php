@@ -32,4 +32,31 @@ class ShipClass extends Model
      * @var array<string, string>
      */
     protected $casts = [];
+
+
+    /**
+     * Relations
+     */
+
+
+    /**
+     * Methods
+     */
+
+    public function validateName($name)
+    {
+        if (strlen($name < 3)) {
+            return false;
+        }
+
+        if ($name !== $this->name) {
+            $shipClass = ShipClass::where('name', $name)->where('id_class', '!=', $this->id_class)->first();
+
+            if ($shipClass) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

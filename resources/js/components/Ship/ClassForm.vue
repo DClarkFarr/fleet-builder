@@ -54,9 +54,9 @@ const onSubmit = async () => {
         reset();
     };
 
-    const reject = (err) => {
+    const reject = (message) => {
         isSubmitting.value = false;
-        errorMessage.value = err.message;
+        errorMessage.value = message;
     };
 
     emit("submit", { ...form }, resolve, reject);
@@ -71,9 +71,9 @@ const onDelete = () => {
         reset();
     };
 
-    const reject = (err) => {
+    const reject = (message) => {
         isSubmitting.value = false;
-        errorMessage.value = err.message;
+        errorMessage.value = message;
     };
 
     emit("delete", { ...form }, resolve, reject);
@@ -107,6 +107,7 @@ watch(props, () => {
                     type="text"
                     class="form-control"
                     name="name"
+                    placeholder="Frigate, Destroyer..."
                     v-model="form.name"
                     @input="onChangeInput"
                 />
@@ -153,7 +154,7 @@ watch(props, () => {
                 </div>
             </div>
         </div>
-        <div v-if="isDirty && errorMessage">
+        <div v-if="isDirty && errorMessage" class="mb-4 -mt-2">
             <p class="text-red-600 text-sm">
                 {{ errorMessage }}
             </p>
