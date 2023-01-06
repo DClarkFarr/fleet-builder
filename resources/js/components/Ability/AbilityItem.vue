@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from "vue";
+import { $vfm } from "vue-final-modal";
+
 import EditIcon from "~icons/fa-solid/pencil-alt";
 
 const props = defineProps({
@@ -20,9 +23,16 @@ const props = defineProps({
     },
 });
 
+const modals = ref({});
+
 const onClickEdit = () => {};
 
-const onClickAdd = () => {};
+const onClickAdd = async () => {
+    // console.log("showing", `${props.location}add`, "from vfm", $vfm);
+    $vfm.show(`${props.location}--add`, { hello: "world" });
+
+    // console.log("openRes", openRes);
+};
 </script>
 
 <template>
@@ -65,5 +75,40 @@ const onClickAdd = () => {};
                 </div>
             </div>
         </div>
+
+        <vue-final-modal
+            v-for="ability in abilities"
+            :key="ability.id_ability"
+            classes="modal-container"
+            content-class="modal-content"
+            v-model="modals[ability.id_ability]"
+            :name="`${location}--${ability.id_ability}`"
+            @close="onSave"
+        >
+            <span class="modal__title">Hello, vue-final-modal</span>
+            <div class="modal__content">
+                <p>
+                    Vue Final Modal is a renderless, stackable, detachable and
+                    lightweight modal component.
+                </p>
+            </div>
+        </vue-final-modal>
+
+        <vue-final-modal
+            classes="modal-container"
+            content-class="modal-content"
+            v-model="modals.add"
+            :modal-visible="true"
+            :name="`${location}--add`"
+            @close="onSave"
+        >
+            <span class="modal__title">Hello, vue-final-modal</span>
+            <div class="modal__content">
+                <p>
+                    Vue Final Modal is a renderless, stackable, detachable and
+                    lightweight modal component.
+                </p>
+            </div>
+        </vue-final-modal>
     </div>
 </template>
