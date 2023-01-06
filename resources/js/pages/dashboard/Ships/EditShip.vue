@@ -6,10 +6,15 @@ import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import { useRoute } from "vue-router";
 import ShipService from "../../../services/ShipService";
 import apiClient from "../../../services/apiClient";
+import SlotsForm from "../../../components/Ship/SlotsForm.vue";
+import DataService from "../../../services/DataService";
 
 const ship = ref(null);
 const isLoading = ref(true);
 const route = useRoute();
+
+const sizes = DataService.getSizes();
+const slotTypes = DataService.SLOT_TYPES;
 
 const loadShip = async () => {
     const { id } = route.params;
@@ -46,6 +51,16 @@ const onUpdateShip = (form, resolve, reject) => {
             }
         });
 };
+
+const onSaveSlots = (type, slots) => {
+    const data = {
+        type,
+        slots,
+    };
+
+    return apiClient.put(`admin/ship/${ship.value.id_ship}/slots`, data);
+};
+
 onMounted(() => {
     loadShip();
 });
@@ -88,6 +103,33 @@ onMounted(() => {
                 <BasicShipForm :ship="ship" @submit="onUpdateShip" />
             </div>
             <hr />
+
+            <div class="mb-10">
+                <h3 class="font-2xl mb-6">Ship Slots</h3>
+                <div class="slots grid gap-1">
+                    <SlotsForm
+                        :slots="ship.ship_weapon_slots"
+                        :sizes="sizes"
+                        :type="slotTypes.WEAPON"
+                        :onSave="onSaveSlots"
+                        label="Weapon Slots"
+                    />
+                    <SlotsForm
+                        :slots="ship.ship_armor_slots"
+                        :sizes="sizes"
+                        :type="slotTypes.ARMOR"
+                        :onSave="onSaveSlots"
+                        label="Armor Slots"
+                    />
+                    <SlotsForm
+                        :slots="ship.ship_unit_slots"
+                        :sizes="sizes"
+                        :type="slotTypes.UNIT"
+                        :onSave="onSaveSlots"
+                        label="Unit Slots"
+                    />
+                </div>
+            </div>
         </div>
     </DashboardLayout>
 </template>
