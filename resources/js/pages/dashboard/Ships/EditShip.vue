@@ -98,14 +98,14 @@ onMounted(() => {
             </div>
         </div>
         <div v-else>
-            <div class="mb-10">
-                <h3 class="font-medium">Basic Ship Info</h3>
+            <div class="mb-8">
+                <h3 class="font-medium text-xl mb-4">Basic Ship Info</h3>
                 <BasicShipForm :ship="ship" @submit="onUpdateShip" />
             </div>
             <hr />
 
-            <div class="mb-10">
-                <h3 class="font-2xl mb-6">Ship Slots</h3>
+            <div class="mb-8 mt-8">
+                <h3 class="font-2xl mb-4 font-medium text-xl">Ship Slots</h3>
                 <div class="slots grid gap-1">
                     <SlotsForm
                         :slots="ship.ship_weapon_slots"

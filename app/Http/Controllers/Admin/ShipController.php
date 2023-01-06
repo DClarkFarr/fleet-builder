@@ -91,4 +91,25 @@ class ShipController extends Controller
             ['rows' => $ships->toArray()]
         );
     }
+
+    public function updateSlotsByType(Request $request, $id_ship)
+    {
+        $validator = Validator::make($request->all(), [
+            'type' => 'required|string',
+            'slots' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $type = $request->type;
+        $slots = $request->slots;
+
+        $ship = $this->shipService->updateSlotsByType($id_ship, $type, $slots);
+
+        return response()->json(
+            ['row' => $this->shipService->populateShipForResponse($ship)->toArray()]
+        );
+    }
 }

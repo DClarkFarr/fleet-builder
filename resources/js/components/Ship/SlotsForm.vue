@@ -2,6 +2,7 @@
 import { reactive, computed, watch, ref, onMounted } from "vue";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import InputError from "../controls/InputError.vue";
+import { debounce } from "lodash";
 
 const props = defineProps({
     slots: {
@@ -78,6 +79,8 @@ const onSave = async () => {
     isSaving.value = false;
 };
 
+const onChangeDebounce = debounce(onSave, 500);
+
 watch([() => props.slots, () => props.sizes], () => {
     Object.assign(form, getFormState());
 });
@@ -108,20 +111,16 @@ watch([() => props.slots, () => props.sizes], () => {
                         class="form-control max-w-[80px]"
                         min="0"
                         v-model="form[size]"
+                        @input="onChangeDebounce"
                     />
                 </div>
             </div>
             <div class="slots-form__actions shrink self-end">
-                <button
-                    class="btn bg-sky-600 hover:bg-sky-800"
-                    :disabled="!isValid || isSaving"
-                    @click="onSave"
-                >
-                    <template v-if="isSaving">
+                <template v-if="isSaving">
+                    <div class="flex items-center h-10">
                         <CircleNotchIcon class="animate-spin" />
-                    </template>
-                    <template v-else> Save </template>
-                </button>
+                    </div>
+                </template>
             </div>
         </div>
         <InputError :error="errorMessage" />

@@ -238,4 +238,35 @@ class ShipService
 
         return $ship;
     }
+
+    public function updateSlotsByType(int $id_ship, string $type, array $slots)
+    {
+        $ship = Ship::find($id_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        foreach ($slots as $size => $amount) {
+            $this->syncShipSlot($ship, $type, $size, $amount);
+        }
+
+        return $ship;
+    }
+
+    public function syncShipSlot(Ship $ship, string $type, string $size, int $amount)
+    {
+        $slot = $ship->shipSlots()->where('type', $type)->where('size', $size)->first();
+        if ($slot) {
+            $slot->amount = $amount;
+            $slot->save();
+        } else {
+            $slot = $ship->shipSlots()->create([
+                'type' => $type,
+                'size' => $size,
+                'amount' => $amount,
+            ]);
+        }
+
+        return $slot;
+    }
 }
