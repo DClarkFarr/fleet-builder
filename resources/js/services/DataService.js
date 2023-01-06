@@ -3,8 +3,25 @@ export default class DataService {
         return ["s", "m", "l"];
     }
 
+    static getWeaponClasses() {
+        return ["beam", "missile", "kinetic"];
+    }
+
     static getSlotTypes() {
         return ["weapon", "armor", "unit"];
+    }
+
+    static getDurationTypes() {
+        return [
+            {
+                name: "Seconds",
+                slug: "seconds",
+            },
+            {
+                name: "Attacks",
+                slug: "attacks",
+            },
+        ];
     }
 
     static SLOT_TYPES = {
@@ -81,6 +98,7 @@ export default class DataService {
             {
                 name: "Increase Weapon Damage",
                 slug: "increase_weapon_damage",
+                weapons: true,
             },
             {
                 name: "Increase Penetration",
@@ -93,6 +111,7 @@ export default class DataService {
             {
                 name: "Increase Armor",
                 slug: "increase_armor",
+                weapons: true,
             },
             {
                 name: "Increase Accuracy",
@@ -105,6 +124,7 @@ export default class DataService {
             {
                 name: "Increase Shield",
                 slug: "increase_shield",
+                weapons: true,
             },
             {
                 name: "Increase Movement Speed",
@@ -117,10 +137,41 @@ export default class DataService {
             {
                 name: "Extra Attack",
                 slug: "extra_attack",
+                weapons: true,
             },
             {
                 name: "Increase Attack Speed",
                 slug: "increase_attack_speed",
+                weapons: true,
+            },
+        ];
+    }
+
+    static getVariantsByAbilityType(abilityType) {
+        return {
+            reduce_damage: ["shields", "hull"],
+            increase_resistence: ["missile", "beam", "kinetic"],
+            increase_penetration: ["shield", "hull"],
+        };
+    }
+
+    static getAmountTypes() {
+        return [
+            {
+                name: "Number",
+                slug: "number",
+            },
+            {
+                name: "Percent",
+                slug: "percent",
+            },
+            {
+                name: "Seconds",
+                slug: "seconds",
+            },
+            {
+                name: "Attacks",
+                slug: "attacks",
             },
         ];
     }

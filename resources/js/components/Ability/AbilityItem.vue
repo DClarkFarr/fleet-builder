@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { $vfm } from "vue-final-modal";
 
 import EditIcon from "~icons/fa-solid/pencil-alt";
+import AbilityForm from "./AbilityForm.vue";
 
 const props = defineProps({
     abilities: {
@@ -96,18 +97,18 @@ const onClickAdd = async () => {
 
         <vue-final-modal
             classes="modal-container"
-            content-class="modal-content"
+            content-class="modal-content modal-content--xl"
             v-model="modals.add"
             :modal-visible="true"
             :name="`${location}--add`"
             @close="onSave"
         >
-            <span class="modal__title">Hello, vue-final-modal</span>
             <div class="modal__content">
-                <p>
-                    Vue Final Modal is a renderless, stackable, detachable and
-                    lightweight modal component.
-                </p>
+                <AbilityForm
+                    :location="location"
+                    :locationName="locationName"
+                    :onSave="onSave"
+                />
             </div>
         </vue-final-modal>
     </div>
