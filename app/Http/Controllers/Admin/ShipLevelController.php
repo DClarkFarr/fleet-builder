@@ -75,7 +75,7 @@ class ShipLevelController extends Controller
         $shipLevels = ShipLevel::orderBy('sort', 'asc')->get();
 
         return response()->json(
-            ['rows' => $shipLevels->toArray()]
+            ['rows' => $shipLevels->values()->toArray()]
         );
     }
 

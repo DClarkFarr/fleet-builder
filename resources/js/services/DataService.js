@@ -1,34 +1,107 @@
 export default class DataService {
+    static SLOT_TYPES = {
+        WEAPON: "weapon",
+        ARMOR: "armor",
+        UNIT: "unit",
+    };
+
+    static SIZES = {
+        S: "s",
+        M: "m",
+        L: "l",
+    };
+
+    static WEAPON_CLASSES = {
+        BEAM: "beam",
+        MISSILE: "missile",
+        KINETIC: "kinetic",
+    };
+
+    static DURATION_TYPES = {
+        SECONDS: "seconds",
+        ATTACKS: "attacks",
+    };
+
+    static AMOUNT_TYPES = {
+        NUMBER: "number",
+        PERCENT: "percent",
+        SECONDS: "seconds",
+        ATTACKS: "attacks",
+    };
+
+    static RESISTANCE_TYPES = {
+        SHIELDS: "shields",
+        HULL: "hull",
+    };
+
+    static CONDITION_TYPES = {
+        id_class: "id_class",
+    };
+
+    static OPERATORS = {
+        EQUALS: "=",
+        GREATER: ">",
+        LESS: "<",
+    };
+
+    static getOperators() {
+        return [
+            {
+                name: "Equals",
+                slug: DataService.OPERATORS.EQUALS,
+            },
+            {
+                name: "Greater Than",
+                slug: DataService.OPERATORS.GREATER,
+            },
+            {
+                name: "Less Than",
+                slug: DataService.OPERATORS.LESS,
+            },
+        ];
+    }
+
     static getSizes() {
-        return ["s", "m", "l"];
+        return [DataService.SIZES.S, DataService.SIZES.M, DataService.SIZES.L];
     }
 
     static getWeaponClasses() {
-        return ["beam", "missile", "kinetic"];
+        return [
+            DataService.WEAPON_CLASSES.BEAM,
+            DataService.WEAPON_CLASSES.MISSILE,
+            DataService.WEAPON_CLASSES.KINETIC,
+        ];
     }
 
     static getSlotTypes() {
-        return ["weapon", "armor", "unit"];
+        return [
+            DataService.SLOT_TYPES.WEAPON,
+            DataService.SLOT_TYPES.ARMOR,
+            DataService.SLOT_TYPES.UNIT,
+        ];
+    }
+
+    static getConditionTypes() {
+        return [
+            {
+                name: "Has Class",
+                slug: DataService.CONDITION_TYPES.id_class,
+            },
+        ];
     }
 
     static getDurationTypes() {
         return [
             {
                 name: "Seconds",
-                slug: "seconds",
+                slug: DataService.DURATION_TYPES.SECONDS,
             },
             {
                 name: "Attacks",
-                slug: "attacks",
+                slug: DataService.DURATION_TYPES.ATTACKS,
             },
         ];
     }
-
-    static SLOT_TYPES = {
-        WEAPON: "weapon",
-        ARMOR: "armor",
-        UNIT: "unit",
-    };
 
     static getShipAbilityLocations() {
         return [
@@ -149,9 +222,19 @@ export default class DataService {
 
     static getVariantsByAbilityType(abilityType) {
         return {
-            reduce_damage: ["shields", "hull"],
-            increase_resistence: ["missile", "beam", "kinetic"],
-            increase_penetration: ["shield", "hull"],
+            reduce_damage: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+            ],
+            increase_resistence: [
+                DataService.WEAPON_CLASSES.BEAM,
+                DataService.WEAPON_CLASSES.MISSILE,
+                DataService.WEAPON_CLASSES.KINETIC,
+            ],
+            increase_penetration: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+            ],
         };
     }
 
@@ -159,19 +242,19 @@ export default class DataService {
         return [
             {
                 name: "Number",
-                slug: "number",
+                slug: DataService.AMOUNT_TYPES.NUMBER,
             },
             {
                 name: "Percent",
-                slug: "percent",
+                slug: DataService.AMOUNT_TYPES.PERCENT,
             },
             {
                 name: "Seconds",
-                slug: "seconds",
+                slug: DataService.AMOUNT_TYPES.SECONDS,
             },
             {
                 name: "Attacks",
-                slug: "attacks",
+                slug: DataService.AMOUNT_TYPES.ATTACKS,
             },
         ];
     }

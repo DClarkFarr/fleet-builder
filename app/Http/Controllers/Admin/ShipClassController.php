@@ -75,7 +75,7 @@ class ShipClassController extends Controller
         $shipClasses = ShipClass::orderBy('sort', 'asc')->get();
 
         return response()->json(
-            ['rows' => $shipClasses->toArray()]
+            ['rows' => $shipClasses->values()->toArray()]
         );
     }
 

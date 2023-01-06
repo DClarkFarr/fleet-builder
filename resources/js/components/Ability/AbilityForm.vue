@@ -7,6 +7,7 @@ import EditIcon from "~icons/fa-solid/pencil-alt";
 import CirlceNotchIcon from "~icons/fa-solid/circle-notch";
 import InputError from "../controls/InputError.vue";
 import ShipService from "../../services/ShipService";
+import ConditionForm from "./ConditionForm.vue";
 
 const abilityTypes = DataService.getAbilityTypes();
 const variantsByType = DataService.getVariantsByAbilityType();
@@ -118,7 +119,21 @@ const loadClasses = async () => {
     shipClasses.value = classes;
 };
 
-const onAddCondition = () => {};
+const onAddCondition = () => {
+    form.conditions.push({});
+};
+
+const onChangeCondition = (index, data) => {
+    const conditions = [...form.conditions];
+    conditions.splice(index, 1, data);
+    form.conditions = conditions;
+};
+
+const onRemoveCondition = (index) => {
+    const conditions = [...form.conditions];
+    conditions.splice(index, 1);
+    form.conditions = conditions;
+};
 
 const amountInput = computed(() => {
     let placeholder = "";
@@ -394,11 +409,28 @@ onMounted(() => {
         </div>
 
         <div class="form-group">
-            <label>Conditions</label>
+            <label class="text-lg font-medium mb-4">Fleet Conditions</label>
 
-            <div class="conditions-list mb-4"></div>
+            <div class="conditions-list mb-4">
+                <div
+                    class="mb-2"
+                    v-for="(condition, index) in form.conditions"
+                    :key="index"
+                >
+                    <ConditionForm
+                        :condition="condition"
+                        :ship-classes="shipClasses"
+                        @change="(data) => onChangeCondition(index, data)"
+                        @remove="onRemoveCondition(index)"
+                    />
+                </div>
+            </div>
 
-            <button class="btn" type="button" @click="onAddCondition">
+            <button
+                class="btn btn-sm bg-gray-600 hover:bg-gray-800"
+                type="button"
+                @click="onAddCondition"
+            >
                 Add Condition
             </button>
         </div>
