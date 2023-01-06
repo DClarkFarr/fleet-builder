@@ -72,8 +72,7 @@ const onSubmit = async () => {
         });
     } catch (err) {
         if (err.response?.data?.errors) {
-            console.log("got errors", err.response.data.errors);
-            Object.keys(error.response.data.errors).forEach((key) => {
+            Object.keys(err.response.data.errors).forEach((key) => {
                 errors[key] = err.response.data.errors[key][0];
             });
         } else {

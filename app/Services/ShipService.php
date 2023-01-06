@@ -200,10 +200,42 @@ class ShipService
         return $ship;
     }
 
+    public function getShips($options = [])
+    {
+        $options = array_merge([
+            'public' => true,
+        ], $options);
+
+        $query = Ship::query();
+
+        if ($options['public']) {
+            $query->where('public', true);
+        }
+
+        $ships = $query->get()
+            ->map(function ($ship) {
+                return $this->populateShipForResponse($ship);
+            })
+            ->sort(function (Ship $sa, Ship $sb) {
+                if ($sa->shipLevel->sort != $sb->shipLevel->sort) {
+                    return $sb->shipLevel->sort <=> $sa->shipLevel->sort;
+                }
+
+                if ($sa->shipClass->sort != $sb->shipClass->sort) {
+                    return $sb->shipClass->sort <=> $sa->shipClass->sort;
+                }
+
+                return $sb->energy <=> $sa->energy;
+            })
+            ->values();
+
+        return $ships;
+    }
+
     public function populateShipForResponse(Ship $ship)
     {
-        $ship->load(['shipClass', 'shipLevel']);
+        $ship->load(['shipClass', 'shipLevel', 'shipWeaponSlots', 'shipArmorSlots', 'shipUnitSlots']);
 
-        return $ship->toArray();
+        return $ship;
     }
 }

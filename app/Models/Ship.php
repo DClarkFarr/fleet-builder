@@ -52,6 +52,27 @@ class Ship extends Model
         return $this->belongsTo(ShipLevel::class, 'id_level', 'id_level', 'shipLevel');
     }
 
+    public function shipSlots()
+    {
+        return $this->hasMany(ShipSlot::class, 'id_ship', 'id_ship');
+    }
+
+    public function shipWeaponSlots()
+    {
+        return $this->shipSlots()->where('type', 'weapon');
+    }
+
+    public function shipArmorSlots()
+    {
+        return $this->shipSlots()->where('type', 'armor');
+    }
+
+    public function shipUnitSlots()
+    {
+        return $this->shipSlots()->where('type', 'unit');
+    }
+
+
     /**
      * Methods
      */

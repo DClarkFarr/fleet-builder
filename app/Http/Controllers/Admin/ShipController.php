@@ -66,7 +66,7 @@ class ShipController extends Controller
         $ship = $this->shipService->updateShip($id_ship, $data);
 
         return response()->json(
-            ['row' => $this->shipService->populateShipForResponse($ship)]
+            ['row' => $this->shipService->populateShipForResponse($ship)->toArray()]
         );
     }
 
@@ -75,7 +75,20 @@ class ShipController extends Controller
         $ship = $this->shipService->getShip($id_ship, true);
 
         return response()->json(
-            ['row' => $ship]
+            ['row' => $ship->toArray()]
+        );
+    }
+
+    public function list(Request $request)
+    {
+        $public = $request->boolean('public');
+
+        $ships = $this->shipService->getShips([
+            'public' => $public
+        ]);
+
+        return response()->json(
+            ['rows' => $ships->toArray()]
         );
     }
 }

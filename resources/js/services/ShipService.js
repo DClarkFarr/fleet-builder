@@ -18,6 +18,16 @@ class ShipService {
             .get(`/admin/ship/${id_ship}`)
             .then((response) => response.data.row);
     }
+
+    static getShips({ public: isPublic = true } = {}) {
+        return apiClient
+            .get(`/admin/ship`, {
+                params: {
+                    public: isPublic,
+                },
+            })
+            .then((response) => response.data.rows);
+    }
 }
 
 export default ShipService;
