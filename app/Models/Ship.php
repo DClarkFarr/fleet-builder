@@ -42,6 +42,12 @@ class Ship extends Model
     /**
      * Relations
      */
+
+    public function abilities()
+    {
+        return $this->morphMany(Ability::class, 'abilities');
+    }
+
     public function shipClass()
     {
         return $this->belongsTo(ShipClass::class, 'id_class', 'id_class', 'shipClass');

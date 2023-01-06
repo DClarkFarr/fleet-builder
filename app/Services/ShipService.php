@@ -234,7 +234,7 @@ class ShipService
 
     public function populateShipForResponse(Ship $ship)
     {
-        $ship->load(['shipClass', 'shipLevel', 'shipWeaponSlots', 'shipArmorSlots', 'shipUnitSlots']);
+        $ship->load(['shipClass', 'shipLevel', 'shipWeaponSlots', 'shipArmorSlots', 'shipUnitSlots', 'abilities']);
 
         return $ship;
     }

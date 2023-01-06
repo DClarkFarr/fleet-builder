@@ -8,6 +8,7 @@ import ShipService from "../../../services/ShipService";
 import apiClient from "../../../services/apiClient";
 import SlotsForm from "../../../components/Ship/SlotsForm.vue";
 import DataService from "../../../services/DataService";
+import AbilityItem from "../../../components/Ability/AbilityItem.vue";
 
 const ship = ref(null);
 const isLoading = ref(true);
@@ -15,6 +16,11 @@ const route = useRoute();
 
 const sizes = DataService.getSizes();
 const slotTypes = DataService.SLOT_TYPES;
+
+const allLocations = DataService.getShipAbilityLocations();
+
+const abilityLocations = allLocations.filter((l) => !l.isChip);
+const chipLocations = allLocations.filter((l) => l.isChip);
 
 const loadShip = async () => {
     const { id } = route.params;
@@ -60,6 +66,25 @@ const onSaveSlots = (type, slots) => {
 
     return apiClient.put(`admin/ship/${ship.value.id_ship}/slots`, data);
 };
+
+const onSaveAbilities = (location, abilities) => {
+    return apiClient.put(`admin/ship/${ship.value.id_ship}/abilit`, {
+        location,
+        abilities,
+    });
+};
+
+const shipAbilitiesByLocation = computed(() => {
+    return ship.value?.abilities.reduce((obj, ability) => {
+        if (!obj[ability.location]) {
+            obj[ability.location] = [];
+        }
+
+        obj[ability.location].push(ability);
+
+        return obj;
+    }, {});
+});
 
 onMounted(() => {
     loadShip();
@@ -127,6 +152,22 @@ onMounted(() => {
                         :type="slotTypes.UNIT"
                         :onSave="onSaveSlots"
                         label="Unit Slots"
+                    />
+                </div>
+            </div>
+            <hr />
+            <div class="my-8">
+                <h3 class="font-2xl mb-4 font-medium text-xl">
+                    Ship Abilities
+                </h3>
+                <div class="abilities grid gap-1">
+                    <AbilityItem
+                        v-for="location in abilityLocations"
+                        :key="location.slug"
+                        :location="location.slug"
+                        :location-name="location.name"
+                        :abilities="shipAbilitiesByLocation[location.slug]"
+                        :onSave="onSaveAbilities"
                     />
                 </div>
             </div>

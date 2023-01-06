@@ -13,59 +13,114 @@ export default class DataService {
         UNIT: "unit",
     };
 
+    static getShipAbilityLocations() {
+        return [
+            {
+                name: "Ability 1",
+                slug: "ability_1",
+                isChip: false,
+            },
+            {
+                name: "Ability 2",
+                slug: "ability_2",
+                isChip: false,
+            },
+            {
+                name: "Ability 3",
+                slug: "ability_3",
+                isChip: false,
+            },
+            {
+                name: "Flagship Ability",
+                slug: "flagship_ability",
+                isChip: false,
+            },
+            {
+                name: "Chip 1",
+                slug: "chip_1",
+                isChip: true,
+            },
+            {
+                name: "Chip 2",
+                slug: "chip_2",
+                isChip: true,
+            },
+            {
+                name: "Chip 3",
+                slug: "chip_3",
+                isChip: true,
+            },
+            {
+                name: "Chip 4",
+                slug: "chip_4",
+                isChip: true,
+            },
+            {
+                name: "Chip 5",
+                slug: "chip_5",
+                isChip: true,
+            },
+            {
+                name: "Chip 6",
+                slug: "chip_6",
+                isChip: true,
+            },
+        ];
+    }
+
     static getAbilityTypes() {
         return [
             {
                 name: "Reduce Damage",
-                slug: "reduce-damage",
+                slug: "reduce_damage",
             },
             {
                 name: "Increase Resistence",
-                slug: "increase-resistence",
+                slug: "increase_resistence",
             },
             {
                 name: "Increase Weapon Damage",
-                slug: "increase-weapon-damage",
+                slug: "increase_weapon_damage",
             },
             {
                 name: "Increase Penetration",
-                slug: "increase-penetration",
+                slug: "increase_penetration",
             },
             {
                 name: "Increase HP",
-                slug: "increase-hp",
+                slug: "increase_hp",
             },
             {
                 name: "Increase Armor",
-                slug: "increase-armor",
+                slug: "increase_armor",
             },
             {
                 name: "Increase Accuracy",
-                slug: "increase-accuracy",
+                slug: "increase_accuracy",
             },
             {
                 name: "Increase Evade",
-                slug: "increase-evade",
+                slug: "increase_evade",
             },
             {
                 name: "Increase Shield",
-                slug: "increase-shield",
+                slug: "increase_shield",
             },
             {
                 name: "Increase Movement Speed",
-                slug: "increase-movement-speed",
+                slug: "increase_movement_speed",
             },
             {
                 name: "Increase FTL Speed",
-                slug: "increase-ftl-speed",
+                slug: "increase_ftl_speed",
             },
             {
                 name: "Extra Attack",
-                slug: "extra-attack",
+                slug: "extra_attack",
             },
             {
                 name: "Increase Attack Speed",
-                slug: "increase-attack-speed",
+                slug: "increase_attack_speed",
             },
         ];
     }
