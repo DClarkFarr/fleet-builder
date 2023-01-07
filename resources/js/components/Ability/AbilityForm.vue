@@ -213,7 +213,7 @@ const onAddAmount = () => {
 const onChangeAmount = (index, data) => {
     const amounts = [...form.amounts];
     amounts.splice(index, 1, data);
-    form.amounts = amounts;
+    form.amounts = amounts.map((a) => reactive(a));
 };
 
 const onRemoveAmount = (index) => {
