@@ -60,34 +60,75 @@ const parseForClasses = (ability, { shipClasses }) => {
     return `of ${joinAnd(classNames)} in fleet`;
 };
 
-const parseAmountDescription = (ability) => {
-    const attack = pluralize("attack", parseInt(ability.amount));
-    const second = pluralize("second", parseInt(ability.amount));
+const parseFormulaAmountLine = (ability, amount) => {
+    console.log("TODO: parse formula amount line", ability.id_class, amount);
+};
+
+const parseAmountLine = (ability, amount) => {
+    if (!amount?.type) {
+        return "";
+    }
+
+    if (amount.type === amountTypes.FORMULA) {
+        return parseFormulaAmountLine(ability, amount);
+    }
+    const attack = pluralize("attack", parseInt(amount.value));
+    const second = pluralize("second", parseInt(amount.value));
 
     const lines = {
-        [amountTypes.NUMBER]: "by {amount}",
-        [amountTypes.PERCENT]: "by {amount}%",
-        [amountTypes.ATTACKS]: `for {amount} ${attack}`,
-        [amountTypes.SECONDS]: `for {amount} ${second}`,
-        byType: {
-            [DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED]: {
-                [amountTypes.SECONDS]: `by {amount} ${second}`,
-            },
-            [DataService.ABILITY_TYPES.EXTRA_ATTACK]: {
-                [amountTypes.NUMBER]: `does {amount} damage`,
-                [amountTypes.PERCENT]: `does {amount}% damage`,
-            },
-        },
+        [amountTypes.NUMBER]: "{value}",
+        [amountTypes.PERCENT]: "{value}%",
+        [amountTypes.ATTACKS]: `{value} ${attack}`,
+        [amountTypes.SECONDS]: `{value} ${second}`,
     };
 
-    let amount = parseNumber(ability.amount);
+    let value = parseNumber(amount.value);
 
-    const line =
-        lines.byType[ability.type]?.[ability.amount_type] ||
-        lines[ability.amount_type];
+    const line = lines[amount.type];
 
     return parseText(line, {
-        amount,
+        value,
+    });
+};
+const parseAmountDescription = (ability) => {
+    if (!ability.amounts?.length) {
+        return "";
+    }
+
+    const amounts = ability.amounts
+        .map((amount) => {
+            const parsedAmount = parseAmountLine(ability, amount);
+            if (!parsedAmount) {
+                return false;
+            }
+            return parsedAmount;
+        })
+        .filter((a) => !!a);
+
+    const isMultiple = amounts.length > 1;
+
+    const multipleOrSingle = {
+        multiple: "({amount})",
+        single: "{amount}",
+    };
+
+    const parsedAmounts = parseText(
+        isMultiple ? multipleOrSingle.multiple : multipleOrSingle.single,
+        {
+            amount: amounts.join(" + "),
+        }
+    );
+
+    const formatLines = {
+        default: "by {parsedAmounts}",
+        [DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED]: `by {parsedAmounts}`,
+        [DataService.ABILITY_TYPES.EXTRA_ATTACK]: `does {parsedAmounts} damage`,
+    };
+
+    const formatLine = formatLines[ability.type] || formatLines.default;
+
+    return parseText(formatLine, {
+        parsedAmounts,
     });
 };
 

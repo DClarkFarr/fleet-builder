@@ -1,15 +1,15 @@
 <script setup>
-import { ref, computed, watch, reactive, onMounted } from "vue";
+import { ref, computed, watch, reactive, onMounted, toRaw } from "vue";
 import DataService from "../../services/DataService";
 
 import CirlceNotchIcon from "~icons/fa-solid/circle-notch";
 import InputError from "../controls/InputError.vue";
 import ShipService from "../../services/ShipService";
 import ConditionForm from "./ConditionForm.vue";
+import AmountForm from "./AmountForm.vue";
 
 const abilityTypes = DataService.getAbilityTypes();
 const variantsByType = DataService.getVariantsByAbilityType();
-const amountTypes = DataService.getAmountTypes();
 const sizes = DataService.getSizes();
 const weaponClasses = DataService.getWeaponClasses();
 const durationTypes = DataService.getDurationTypes();
@@ -39,8 +39,7 @@ const makeFormState = () => {
     return {
         type: props.ability?.type || "",
         variants: props.ability?.variants || [],
-        amount_type: props.ability?.amount_type || "",
-        amount: props.ability?.amount || "",
+        amounts: props.ability?.amounts || [{}],
         weapon_classes: props.ability?.weapon_classes || [],
         weapon_sizes: props.ability?.weapon_sizes || [],
         notes: props.ability?.notes || "",
@@ -71,8 +70,7 @@ const form = reactive(makeFormState());
 const errors = reactive({
     type: "",
     variants: "",
-    amount_type: "",
-    amount: "",
+    amounts: "",
     weapon_classes: "",
     weapon_sizes: "",
     notes: "",
@@ -88,8 +86,7 @@ const errors = reactive({
 const dirty = reactive({
     type: false,
     variants: false,
-    amount_type: false,
-    amount: false,
+    amounts: false,
     weapon_classes: false,
     weapon_sizes: false,
     notes: false,
@@ -135,12 +132,8 @@ const validate = () => {
         errors.type = "Ability type is required";
     }
 
-    if (!form.amount_type) {
-        errors.amount_type = "Amount type is required";
-    }
-
-    if (isNaN(parseInt(form.amount))) {
-        errors.amount = "Amount is required";
+    if (form.amounts.length === 0) {
+        errors.errorMessage = "Please add an amount";
     }
 
     if (form.duration_type && isNaN(parseInt(form.duration))) {
@@ -180,7 +173,11 @@ const onSubmit = async () => {
     isSaving.value = true;
 
     try {
-        await props.onSave({ ...form });
+        const data = {
+            ...toRaw(form),
+            amounts: form.amounts.map((amount) => toRaw(amount)),
+        };
+        await props.onSave(data);
     } catch (err) {
         errorMessage.value = err.message;
     }
@@ -209,27 +206,23 @@ const onRemoveCondition = (index) => {
     form.conditions = conditions;
 };
 
+const onAddAmount = () => {
+    form.amounts.push(reactive({}));
+};
+
+const onChangeAmount = (index, data) => {
+    const amounts = [...form.amounts];
+    amounts.splice(index, 1, data);
+    form.amounts = amounts;
+};
+
+const onRemoveAmount = (index) => {
+    const amounts = [...form.amounts];
+    amounts.splice(index, 1);
+    form.amounts = amounts;
+};
+
 const hasVariation = computed(() => form.type && variantsByType[form.type]);
-
-const amountInput = computed(() => {
-    let placeholder = "";
-    let type = "number";
-
-    if (form.amount_type === "percent") {
-        placeholder = "Percent value: 10 = 10%";
-    } else if (form.amount_type === "number") {
-        placeholder = "Numeric value";
-    } else if (form.amount_type === "seconds") {
-        placeholder = "Seconds value: 10 = 10s";
-    } else if (form.amount_type === "attacks") {
-        placeholder = "Attack cycle: 10 = every 10 attacks";
-    }
-
-    return {
-        placeholder,
-        type,
-    };
-});
 
 const durationInput = computed(() => {
     let placeholder = "";
@@ -386,40 +379,32 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="lg:flex gap-x-3">
-            <div class="lg:w-1/2">
-                <div class="form-group">
-                    <label>Amount Type</label>
-                    <VSelect
-                        label="name"
-                        :options="amountTypes"
-                        :reduce="(type) => type.slug"
-                        :multiple="false"
-                        :searchable="true"
-                        :clearable="false"
-                        v-model="form.amount_type"
-                        @input="onChangeForm"
-                        @close="onChangeForm"
-                    />
-                    <InputError
-                        :error="errors.amount_type"
-                        :dirty="dirty.amount_type"
-                    />
+        <div class="amount form-group">
+            <div>
+                <div class="amounts-list">
+                    <div v-for="(amount, index) in form.amounts" :key="index">
+                        <AmountForm
+                            :index="index"
+                            :amount="amount"
+                            @change="(data) => onChangeAmount(index, data)"
+                            @remove="onRemoveAmount(index)"
+                        />
+                    </div>
+                    <div
+                        class="mb-2 bg-slate-100 p-2 text-slate-600"
+                        v-if="!form.amounts.length"
+                    >
+                        No amount values yet
+                    </div>
                 </div>
-            </div>
-            <div class="lg:w-1/2">
-                <div class="form-group">
-                    <label>Amount</label>
-                    <input
-                        :type="amountInput.type"
-                        :placeholder="amountInput.placeholder"
-                        class="form-control"
-                        step=".1"
-                        v-model="form.amount"
-                        @input="onChangeForm"
-                    />
-                    <InputError :error="errors.amount" :dirty="dirty.amount" />
-                </div>
+
+                <button
+                    class="btn btn-sm bg-gray-600 hover:bg-gray-800"
+                    type="button"
+                    @click="onAddAmount"
+                >
+                    Add Amount
+                </button>
             </div>
         </div>
 
@@ -587,6 +572,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
+
         <div class="form-group">
             <label class="text-lg font-medium mb-4">Fleet Conditions</label>
             <div>
@@ -604,7 +590,7 @@ onMounted(async () => {
                         />
                     </div>
                     <div
-                        class="mb-2 bg-blue-100 p-2 text-blue-600"
+                        class="mb-2 bg-slate-100 p-2 text-slate-600"
                         v-if="!form.conditions.length"
                     >
                         No Conditions yet

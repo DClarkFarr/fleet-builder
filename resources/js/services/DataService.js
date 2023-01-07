@@ -30,6 +30,7 @@ export default class DataService {
     static AMOUNT_TYPES = {
         NUMBER: "number",
         PERCENT: "percent",
+        FORMULA: "formula",
         SECONDS: "seconds",
         ATTACKS: "attacks",
     };
@@ -377,6 +378,10 @@ export default class DataService {
             {
                 name: "Percent",
                 slug: DataService.AMOUNT_TYPES.PERCENT,
+            },
+            {
+                name: "Formula",
+                slug: DataService.AMOUNT_TYPES.FORMULA,
             },
             {
                 name: "Seconds",
