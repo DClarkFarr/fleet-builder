@@ -14,6 +14,7 @@ class Ability extends Model
         'location',
         'type',
         'variants',
+        'amounts',
         'amount_type',
         'amount',
         'weapon_classes',
@@ -21,7 +22,10 @@ class Ability extends Model
         'notes',
         'duration_type',
         'duration',
+        'repeat_type',
+        'repeat',
         'applies_to_fleet',
+        'flagship_required',
         'for_class_ids',
         'target_class_ids',
         'conditions',
@@ -29,12 +33,14 @@ class Ability extends Model
 
     protected $casts = [
         'variants' => 'array',
+        'amounts' => 'array',
         'weapon_classes' => 'array',
         'weapon_sizes' => 'array',
         'for_class_ids' => 'array',
         'target_class_ids' => 'array',
         'conditions' => 'array',
         'applies_to_fleet' => 'boolean',
+        'flagship_required' => 'boolean',
     ];
 
     /**

@@ -170,7 +170,7 @@ onMounted(async () => {
                     <div
                         v-tooltip="'Passive'"
                         v-else-if="
-                            ability.affectType === abilityAffects.DEFENSE
+                            ability.affectType === abilityAffects.PASSIVE
                         "
                     >
                         <PassiveIcon />

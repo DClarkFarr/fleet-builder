@@ -13,8 +13,13 @@ const amountTypes = DataService.getAmountTypes();
 const sizes = DataService.getSizes();
 const weaponClasses = DataService.getWeaponClasses();
 const durationTypes = DataService.getDurationTypes();
+const repeatTypes = DataService.getRepeatTypes();
 
 const props = defineProps({
+    location: {
+        type: String,
+        required: true,
+    },
     ability: {
         type: Object,
         default: () => ({}),
@@ -41,7 +46,20 @@ const makeFormState = () => {
         notes: props.ability?.notes || "",
         duration_type: props.ability?.duration_type || "",
         duration: props.ability?.duration || "",
-        applies_to_fleet: props.ability?.applies_to_fleet || false,
+        repeat_type: props.ability?.repeat_type || "",
+        repeat: props.ability?.repeat || "",
+        applies_to_fleet:
+            typeof props.ability?.applies_to_fleet === "boolean"
+                ? props.ability.applies_to_fleet
+                : props.location?.indexOf("flagship") > -1
+                ? true
+                : false,
+        flagship_required:
+            typeof props.ability?.flagship_required === "boolean"
+                ? props.ability.flagship_required
+                : props.location?.indexOf("flagship") > -1
+                ? true
+                : false,
         for_class_ids: props.ability?.for_class_ids || [],
         target_class_ids: props.ability?.target_class_ids || [],
         conditions: props.ability?.conditions || [],
@@ -60,7 +78,8 @@ const errors = reactive({
     notes: "",
     duration_type: "",
     duration: "",
-    applies_to_fleet: "",
+    repeat_type: "",
+    repeat: "",
     for_class_ids: "",
     target_class_ids: "",
     conditions: "",
@@ -76,7 +95,8 @@ const dirty = reactive({
     notes: false,
     duration_type: false,
     duration: false,
-    applies_to_fleet: false,
+    repeat_type: false,
+    repeat: false,
     for_class_ids: false,
     target_class_ids: false,
     conditions: false,
@@ -125,6 +145,10 @@ const validate = () => {
 
     if (form.duration_type && isNaN(parseInt(form.duration))) {
         errors.duration = "Duration is required";
+    }
+
+    if (form.repeat_type && isNaN(parseInt(form.repeat))) {
+        errors.repeat = "Repeat is required";
     }
 
     isValid.value = !Object.values(errors).some((error) => error);
@@ -223,6 +247,22 @@ const durationInput = computed(() => {
     };
 });
 
+const repeatInput = computed(() => {
+    let placeholder = "";
+    let type = "number";
+
+    if (form.repeat_type === "seconds") {
+        placeholder = "Every x seconds";
+    } else if (form.repeat_type === "attacks") {
+        placeholder = "Every x attacks";
+    }
+
+    return {
+        placeholder,
+        type,
+    };
+});
+
 const isWeaponsType = computed(() => {
     if (!form.type) {
         return false;
@@ -231,6 +271,16 @@ const isWeaponsType = computed(() => {
     const found = abilityTypes.find((type) => type.slug === form.type);
 
     return !!found.weapons;
+});
+
+const isRepeatType = computed(() => {
+    if (!form.type) {
+        return false;
+    }
+
+    const found = abilityTypes.find((type) => type.slug === form.type);
+
+    return !!found.repeats;
 });
 
 watch(
@@ -293,43 +343,6 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="lg:flex gap-x-3">
-            <div class="lg:w-1/2">
-                <div class="form-group">
-                    <label>Amount Type</label>
-                    <VSelect
-                        label="name"
-                        :options="amountTypes"
-                        :reduce="(type) => type.slug"
-                        :multiple="false"
-                        :searchable="true"
-                        :clearable="false"
-                        v-model="form.amount_type"
-                        @input="onChangeForm"
-                        @close="onChangeForm"
-                    />
-                    <InputError
-                        :error="errors.amount_type"
-                        :dirty="dirty.amount_type"
-                    />
-                </div>
-            </div>
-            <div class="lg:w-1/2">
-                <div class="form-group">
-                    <label>Amount</label>
-                    <input
-                        :type="amountInput.type"
-                        :placeholder="amountInput.placeholder"
-                        class="form-control"
-                        step=".1"
-                        v-model="form.amount"
-                        @input="onChangeForm"
-                    />
-                    <InputError :error="errors.amount" :dirty="dirty.amount" />
-                </div>
-            </div>
-        </div>
-
         <div class="lg:flex gap-x-3" v-if="isWeaponsType">
             <div class="lg:w-1/2">
                 <div class="form-group">
@@ -376,6 +389,43 @@ onMounted(async () => {
         <div class="lg:flex gap-x-3">
             <div class="lg:w-1/2">
                 <div class="form-group">
+                    <label>Amount Type</label>
+                    <VSelect
+                        label="name"
+                        :options="amountTypes"
+                        :reduce="(type) => type.slug"
+                        :multiple="false"
+                        :searchable="true"
+                        :clearable="false"
+                        v-model="form.amount_type"
+                        @input="onChangeForm"
+                        @close="onChangeForm"
+                    />
+                    <InputError
+                        :error="errors.amount_type"
+                        :dirty="dirty.amount_type"
+                    />
+                </div>
+            </div>
+            <div class="lg:w-1/2">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input
+                        :type="amountInput.type"
+                        :placeholder="amountInput.placeholder"
+                        class="form-control"
+                        step=".1"
+                        v-model="form.amount"
+                        @input="onChangeForm"
+                    />
+                    <InputError :error="errors.amount" :dirty="dirty.amount" />
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:flex gap-x-3">
+            <div class="lg:w-1/2">
+                <div class="form-group">
                     <label>Duration Type</label>
                     <VSelect
                         label="name"
@@ -408,6 +458,42 @@ onMounted(async () => {
                         :error="errors.duration"
                         :dirty="dirty.duration"
                     />
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:flex gap-x-3" v-if="isRepeatType">
+            <div class="lg:w-1/2">
+                <div class="form-group">
+                    <label>Repeat Type</label>
+                    <VSelect
+                        label="name"
+                        :options="repeatTypes"
+                        :reduce="(type) => type.slug"
+                        :multiple="false"
+                        :searchable="true"
+                        :clearable="true"
+                        v-model="form.repeat_type"
+                        @input="onChangeForm"
+                        @close="onChangeForm"
+                    />
+                    <InputError
+                        :error="errors.repeat_type"
+                        :dirty="dirty.repeat_type"
+                    />
+                </div>
+            </div>
+            <div class="lg:w-1/2">
+                <div class="form-group">
+                    <label>Repeat</label>
+                    <input
+                        :type="repeatInput.type"
+                        :placeholder="repeatInput.placeholder"
+                        class="form-control"
+                        v-model="form.repeat"
+                        @input="onChangeForm"
+                    />
+                    <InputError :error="errors.repeat" :dirty="dirty.repeat" />
                 </div>
             </div>
         </div>
@@ -461,29 +547,50 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="text-lg font-medium mb-4">Fleet Conditions</label>
-
-            <div class="form-group">
-                <label>Applies to Fleet</label>
-                <div class="checkbox">
-                    <label>
-                        <input
-                            type="checkbox"
-                            class="mr-2"
-                            name="applies_to_fleet"
-                            v-model="form.applies_to_fleet"
-                            :true-value="true"
-                            :false-value="false"
-                            @change="onChangeForm('applies_to_fleet')"
-                        />
-                        {{ form.applies_to_fleet ? "Yes" : "No" }}
-                    </label>
+        <div class="lg:flex gap-x-3">
+            <div class="lg:w-1/2">
+                <div class="form-group">
+                    <label>Applies to Fleet</label>
+                    <div class="checkbox">
+                        <label>
+                            <input
+                                type="checkbox"
+                                class="mr-2"
+                                name="applies_to_fleet"
+                                v-model="form.applies_to_fleet"
+                                :true-value="true"
+                                :false-value="false"
+                                @change="onChangeForm('applies_to_fleet')"
+                            />
+                            {{ form.applies_to_fleet ? "Yes" : "No" }}
+                        </label>
+                    </div>
                 </div>
             </div>
-
-            <div v-show="form.applies_to_fleet">
-                <div class="conditions-list mb-4">
+            <div class="lg:w-1/2">
+                <div class="form-group">
+                    <label>Must be flagship</label>
+                    <div class="checkbox">
+                        <label>
+                            <input
+                                type="checkbox"
+                                class="mr-2"
+                                name="flagship_required"
+                                v-model="form.flagship_required"
+                                :true-value="true"
+                                :false-value="false"
+                                @change="onChangeForm('flagship_required')"
+                            />
+                            {{ form.flagship_required ? "Yes" : "No" }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="text-lg font-medium mb-4">Fleet Conditions</label>
+            <div>
+                <div class="conditions-list mb-2">
                     <div
                         class="mb-2"
                         v-for="(condition, index) in form.conditions"

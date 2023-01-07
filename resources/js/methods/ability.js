@@ -67,11 +67,15 @@ const parseAmountDescription = (ability) => {
     const lines = {
         [amountTypes.NUMBER]: "by {amount}",
         [amountTypes.PERCENT]: "by {amount}%",
-        [amountTypes.ATTACKS]: `every {amount} ${attack}`,
-        [amountTypes.SECONDS]: `every {amount} ${second}`,
+        [amountTypes.ATTACKS]: `for {amount} ${attack}`,
+        [amountTypes.SECONDS]: `for {amount} ${second}`,
         byType: {
             [DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED]: {
                 [amountTypes.SECONDS]: `by {amount} ${second}`,
+            },
+            [DataService.ABILITY_TYPES.EXTRA_ATTACK]: {
+                [amountTypes.NUMBER]: `does {amount} damage`,
+                [amountTypes.PERCENT]: `does {amount}% damage`,
             },
         },
     };
@@ -146,6 +150,23 @@ const parseDurationDescription = (ability) => {
 
     return parseText(line, {
         amount: ability.duration,
+    });
+};
+
+const parseRepeatDescription = (ability) => {
+    if (!ability.repeat_type) {
+        return "";
+    }
+
+    const lines = {
+        [DataService.REPEAT_TYPES.ATTACKS]: "every {amount} attacks",
+        [DataService.REPEAT_TYPES.SECONDS]: "every {amount} seconds",
+    };
+
+    const line = lines[ability.repeat_type];
+
+    return parseText(line, {
+        amount: ability.repeat,
     });
 };
 
@@ -262,6 +283,10 @@ class AbilityParser {
         return parseDurationDescription(this.ability);
     }
 
+    get repeatDescription() {
+        return parseRepeatDescription(this.ability);
+    }
+
     get againstClasses() {
         return parseAgainstClasses(this.ability, {
             shipClasses: this.shipClasses,
@@ -280,7 +305,7 @@ class AbilityParser {
 
     get fullDescription() {
         const template =
-            "{abilityTypeName} {weaponsDescription} {toVariantDescription} {forClasses} {amountDescription} {durationDescription} {againstClasses} {conditionsDescription}";
+            "{abilityTypeName} {weaponsDescription} {toVariantDescription} {forClasses} {amountDescription} {durationDescription} {repeatDescription} {againstClasses} {conditionsDescription}";
 
         const parsedText = parseText(template, {
             abilityTypeName: this.abilityTypeName,
@@ -288,6 +313,7 @@ class AbilityParser {
             forClasses: this.forClasses,
             toVariantDescription: this.toVariantDescription,
             durationDescription: this.durationDescription,
+            repeatDescription: this.repeatDescription,
             againstClasses: this.againstClasses,
             conditionsDescription: this.conditionsDescription,
             weaponsDescription: this.weaponsDescription,

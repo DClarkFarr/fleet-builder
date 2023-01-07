@@ -22,6 +22,11 @@ export default class DataService {
         ATTACKS: "attacks",
     };
 
+    static REPEAT_TYPES = {
+        SECONDS: "seconds",
+        ATTACKS: "attacks",
+    };
+
     static AMOUNT_TYPES = {
         NUMBER: "number",
         PERCENT: "percent",
@@ -79,6 +84,49 @@ export default class DataService {
         CHIP_5: "chip_5",
         CHIP_6: "chip_6",
     };
+
+    static SHIP_COLUMNS = {
+        LEVEL: "level",
+        TOTAL_WEAPON_DAMAGE: "all_weapon_damage",
+        BEAM_WEAPON_DAMAGE: "beam_weapon_damage",
+        MISSILE_WEAPON_DAMAGE: "missile_weapon_damage",
+        KINETIC_WEAPON_DAMAGE: "kinetic_weapon_damage",
+        TOTAL_RESISTANCE: "all_resistance",
+        TOTAL_SHIELDS: "all_shields",
+    };
+
+    static getShipColumns() {
+        return [
+            {
+                name: "Level",
+                slug: DataService.SHIP_COLUMNS.LEVEL,
+            },
+            {
+                name: "Total Weapon Damage",
+                slug: DataService.SHIP_COLUMNS.TOTAL_WEAPON_DAMAGE,
+            },
+            {
+                name: "Beam Weapon Damage",
+                slug: DataService.SHIP_COLUMNS.BEAM_WEAPON_DAMAGE,
+            },
+            {
+                name: "Missile Weapon Damage",
+                slug: DataService.SHIP_COLUMNS.MISSILE_WEAPON_DAMAGE,
+            },
+            {
+                name: "Kinetic Weapon Damage",
+                slug: DataService.SHIP_COLUMNS.KINETIC_WEAPON_DAMAGE,
+            },
+            {
+                name: "Total Resistance",
+                slug: DataService.SHIP_COLUMNS.TOTAL_RESISTANCE,
+            },
+            {
+                name: "Total Shields",
+                slug: DataService.SHIP_COLUMNS.TOTAL_SHIELDS,
+            },
+        ];
+    }
 
     static getAbilityAffects() {
         return [
@@ -183,6 +231,19 @@ export default class DataService {
             {
                 name: "Attacks",
                 slug: DataService.DURATION_TYPES.ATTACKS,
+            },
+        ];
+    }
+
+    static getRepeatTypes() {
+        return [
+            {
+                name: "Seconds",
+                slug: DataService.REPEAT_TYPES.SECONDS,
+            },
+            {
+                name: "Attacks",
+                slug: DataService.REPEAT_TYPES.ATTACKS,
             },
         ];
     }
@@ -297,6 +358,7 @@ export default class DataService {
                 name: "Extra Attack",
                 slug: DataService.ABILITY_TYPES.EXTRA_ATTACK,
                 weapons: true,
+                repeats: true,
             },
             {
                 name: "Increase Attack Speed",
