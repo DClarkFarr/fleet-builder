@@ -1,4 +1,4 @@
-import { watch } from "vue";
+import { watch, toRaw } from "vue";
 import DataService from "../services/DataService";
 import pluralize from "pluralize";
 
@@ -132,7 +132,9 @@ const parseAmountDescription = (ability) => {
     });
 };
 
-const joinAnd = (arr) => {
+const joinAnd = (original) => {
+    const arr = [...original];
+
     if (arr.length > 1) {
         const last = arr.pop();
         return arr.join(", ") + " and " + last;
@@ -290,7 +292,7 @@ class AbilityParser {
         watch(
             ability,
             () => {
-                this.ability = { ...ability };
+                this.ability = toRaw(ability);
             },
             {
                 immediate: true,

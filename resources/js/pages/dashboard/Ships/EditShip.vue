@@ -26,6 +26,7 @@ const loadShip = async () => {
     const { id } = route.params;
     try {
         const res = await ShipService.getShip(id);
+
         ship.value = res;
     } catch (err) {
         console.warn(err, "error loading ship");
@@ -195,6 +196,7 @@ onMounted(() => {
                     Chip Abilities
                 </h3>
                 <div class="abilities grid gap-1">
+                    <!--
                     <AbilityItem
                         v-for="location in chipLocations"
                         :key="location.slug"
@@ -207,6 +209,7 @@ onMounted(() => {
                         "
                         :onDelete="onDeleteAbility"
                     />
+                    -->
                 </div>
             </div>
         </div>

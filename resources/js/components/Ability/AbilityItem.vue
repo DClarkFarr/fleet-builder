@@ -4,7 +4,6 @@ import { $vfm } from "vue-final-modal";
 
 import { getAbilityParser } from "../../methods/ability";
 import DataService from "../../services/DataService";
-import AbilityForm from "./AbilityForm.vue";
 
 import EditIcon from "~icons/fa-solid/pencil-alt";
 import AttackIcon from "~icons/fluent-emoji/crossed-swords";
@@ -14,6 +13,8 @@ import CrownIcon from "~icons/fluent-emoji/crown";
 import TrashIcon from "~icons/fa-solid/trash-alt";
 
 import ShipService from "../../services/ShipService";
+
+import AbilityModal from "./AbilityModal.vue";
 
 const abilityAffects = DataService.ABILITY_AFFECTS;
 
@@ -42,8 +43,23 @@ const props = defineProps({
 
 const modals = ref({});
 
-const onClickEdit = (id_ability) => {
-    $vfm.show(`${props.location}--${id_ability}`);
+const onEditAbility = async (id_ability) => {
+    await $vfm.hideAll();
+
+    $vfm.show({
+        component: AbilityModal,
+        bind: {
+            ability: computedAbilities.value.find(
+                (a) => a.id_ability === id_ability
+            ),
+            location: props.location,
+            locationName: props.locationName,
+            onSave: (data) => {
+                onUpdateAbility(id_ability, data);
+                $vfm.hideAll();
+            },
+        },
+    });
 };
 
 const deletingAbility = ref(null);
@@ -62,9 +78,21 @@ const onDeleteAbility = async (id_ability) => {
 
 const shipClasses = ref([]);
 
-const onClickAdd = async () => {
+const onAddAbility = async () => {
     await $vfm.hideAll();
-    $vfm.show(`${props.location}--add`);
+
+    $vfm.show({
+        component: AbilityModal,
+        bind: {
+            ability: defaultAbility,
+            location: props.location,
+            locationName: props.locationName,
+            onSave: (data) => {
+                onCreateAbility(data);
+                $vfm.hideAll();
+            },
+        },
+    });
 };
 
 const onCreateAbility = (abilityForm) => {
@@ -72,8 +100,6 @@ const onCreateAbility = (abilityForm) => {
     abilities.push(abilityForm);
 
     props.onSave(abilities);
-
-    $vfm.hide(`${props.location}--add`);
 };
 
 const onUpdateAbility = (id_ability, data) => {
@@ -91,8 +117,6 @@ const onUpdateAbility = (id_ability, data) => {
     };
 
     props.onSave(locationAbilities);
-
-    $vfm.hide(`${props.location}--${id_ability}`);
 };
 
 const defaultAbility = computed(() => {
@@ -133,7 +157,7 @@ onMounted(async () => {
             <div class="ability__add ml-auto">
                 <button
                     class="btn bg-sky-600 hover:bg-sky-800"
-                    @click="onClickAdd"
+                    @click="onAddAbility"
                 >
                     Add Ability
                 </button>
@@ -209,7 +233,7 @@ onMounted(async () => {
                     <div>
                         <button
                             class="btn bg-sky-600 hover:bg-sky-800"
-                            @click="onClickEdit(ability.id_ability)"
+                            @click="onEditAbility(ability.id_ability)"
                         >
                             <EditIcon />
                         </button>
@@ -233,42 +257,6 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-
-        <vue-final-modal
-            v-for="ability in computedAbilities"
-            :key="ability.id_ability"
-            classes="modal-container"
-            content-class="modal-content modal-content--xl"
-            v-model="modals[ability.id_ability]"
-            :name="`${location}--${ability.id_ability}`"
-        >
-            <div class="modal__content">
-                <AbilityForm
-                    :ability="ability"
-                    :location="location"
-                    :locationName="locationName"
-                    :onSave="
-                        (data) => onUpdateAbility(ability.id_ability, data)
-                    "
-                />
-            </div>
-        </vue-final-modal>
-
-        <vue-final-modal
-            classes="modal-container"
-            content-class="modal-content modal-content--xl"
-            v-model="modals.add"
-            :name="`${location}--add`"
-        >
-            <div class="modal__content">
-                <AbilityForm
-                    :ability="defaultAbility"
-                    :location="location"
-                    :locationName="locationName"
-                    :onSave="onCreateAbility"
-                />
-            </div>
-        </vue-final-modal>
     </div>
 </template>
 
