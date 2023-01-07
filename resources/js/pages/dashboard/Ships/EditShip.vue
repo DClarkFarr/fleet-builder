@@ -67,11 +67,25 @@ const onSaveSlots = (type, slots) => {
     return apiClient.put(`admin/ship/${ship.value.id_ship}/slots`, data);
 };
 
-const onSaveAbilities = (location, abilities) => {
-    return apiClient.put(`admin/ship/${ship.value.id_ship}/abilities`, {
-        location,
-        abilities,
-    });
+const onSaveAbilities = async (location, abilities) => {
+    try {
+        const res = await apiClient.put(
+            `admin/ship/${ship.value.id_ship}/abilities`,
+            {
+                location,
+                abilities,
+            }
+        );
+
+        const rows = [
+            ...ship.value.abilities.filter((a) => a.location != location),
+            ...res.data.rows,
+        ];
+
+        ship.value.abilities = rows;
+    } catch (err) {
+        console.warn(err, "error saving abilities");
+    }
 };
 
 const shipAbilitiesByLocation = computed(() => {

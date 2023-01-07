@@ -54,6 +54,7 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
             Route::delete('/', [ShipController::class, 'delete']);
 
             Route::put('/slots', [ShipController::class, 'updateSlotsByType']);
+            Route::put('/abilities', [ShipController::class, 'updateShipAbilities']);
         });
     });
 });

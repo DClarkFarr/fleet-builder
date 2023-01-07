@@ -112,4 +112,25 @@ class ShipController extends Controller
             ['row' => $this->shipService->populateShipForResponse($ship)->toArray()]
         );
     }
+
+    public function updateShipAbilities(Request $request, $id_ship)
+    {
+        $validator = Validator::make($request->all(), [
+            'location' => 'required|string',
+            'abilities' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $location = $request->location;
+        $abilities = $request->abilities;
+
+        $abilities = $this->shipService->updateShipAbilities($id_ship, $location, $abilities);
+
+        return response()->json(
+            ['rows' => $abilities->toArray()]
+        );
+    }
 }

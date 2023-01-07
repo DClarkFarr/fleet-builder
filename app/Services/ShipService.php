@@ -269,4 +269,30 @@ class ShipService
 
         return $slot;
     }
+
+    public function updateShipAbilities(int $id_ship, string $location, array $abilities)
+    {
+        $ship = Ship::find($id_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        $currentAbilities = $ship->abilities()->where('location', $location)->get();
+
+        foreach ($abilities as $data) {
+            if (!empty($data['id_ability'])) {
+                $ability = $currentAbilities->where('id_ability', $data['id_ability'])->first();
+                if ($ability) {
+                    $ability->fill($data);
+                    $ability->save();
+                }
+            } else {
+                $ability = $ship->abilities()->create(array_merge($data, ['location' => $location]));
+
+                $currentAbilities->push($ability);
+            }
+        }
+
+        return $currentAbilities;
+    }
 }
