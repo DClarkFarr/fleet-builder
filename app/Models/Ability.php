@@ -34,6 +34,7 @@ class Ability extends Model
         'for_class_ids' => 'array',
         'target_class_ids' => 'array',
         'conditions' => 'array',
+        'applies_to_fleet' => 'boolean',
     ];
 
     /**

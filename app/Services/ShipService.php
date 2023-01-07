@@ -295,4 +295,14 @@ class ShipService
 
         return $currentAbilities;
     }
+
+    public function deleteShipAbility(int $id_ship, int $id_ability)
+    {
+        $ship = Ship::find($id_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        $ship->abilities()->where('id_ability', $id_ability)->delete();
+    }
 }

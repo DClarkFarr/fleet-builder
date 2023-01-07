@@ -133,4 +133,13 @@ class ShipController extends Controller
             ['rows' => $abilities->toArray()]
         );
     }
+
+    public function deleteShipAbility(Request $request, $id_ship, $id_ability)
+    {
+        $this->shipService->deleteShipAbility($id_ship, $id_ability);
+
+        return response()->json(
+            ['success' => true]
+        );
+    }
 }

@@ -32,6 +32,7 @@ export default class DataService {
     static RESISTANCE_TYPES = {
         SHIELDS: "shields",
         HULL: "hull",
+        ARMOR: "armor",
     };
 
     static CONDITION_TYPES = {
@@ -259,6 +260,7 @@ export default class DataService {
             {
                 name: "Increase Penetration",
                 slug: DataService.ABILITY_TYPES.INCREASE_PENETRATION,
+                weapons: true,
             },
             {
                 name: "Increase HP",
@@ -326,9 +328,15 @@ export default class DataService {
 
     static getVariantsByAbilityType() {
         return {
-            reduce_damage: [
+            [DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE]: [
                 DataService.RESISTANCE_TYPES.SHIELDS,
                 DataService.RESISTANCE_TYPES.HULL,
+                DataService.RESISTANCE_TYPES.ARMOR,
+            ],
+            [DataService.ABILITY_TYPES.REDUCE_DAMAGE]: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+                DataService.RESISTANCE_TYPES.ARMOR,
             ],
             increase_resistence: [
                 DataService.WEAPON_CLASSES.BEAM,
@@ -338,6 +346,7 @@ export default class DataService {
             increase_penetration: [
                 DataService.RESISTANCE_TYPES.SHIELDS,
                 DataService.RESISTANCE_TYPES.HULL,
+                DataService.RESISTANCE_TYPES.ARMOR,
             ],
         };
     }

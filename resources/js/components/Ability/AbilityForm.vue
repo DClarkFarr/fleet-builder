@@ -244,8 +244,10 @@ watch(form, () => {
     validate();
 });
 
-onMounted(() => {
-    loadClasses();
+onMounted(async () => {
+    await loadClasses();
+
+    validate();
 });
 </script>
 
@@ -319,6 +321,7 @@ onMounted(() => {
                         :type="amountInput.type"
                         :placeholder="amountInput.placeholder"
                         class="form-control"
+                        step=".1"
                         v-model="form.amount"
                         @input="onChangeForm"
                     />

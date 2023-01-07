@@ -14,12 +14,17 @@ const typesByAffect = Object.entries(
 const abilityTypes = DataService.getAbilityTypes();
 const amountTypes = DataService.AMOUNT_TYPES;
 
+const numberFormatter = new Intl.NumberFormat();
+
+const parseNumber = (n) => {
+    return numberFormatter.format(n);
+};
 const parseAgainstClasses = (ability, { shipClasses }) => {
-    if (!ability.for_class_ids.length) {
+    if (!ability.target_class_ids.length) {
         return "";
     }
 
-    const classNames = ability.for_class_ids
+    const classNames = ability.target_class_ids
         .map((id) => {
             const name = shipClasses.find((c) => c.id_class === id)?.name;
             return name ? pluralize.plural(name) : false;
@@ -35,7 +40,7 @@ const parseForClasses = (ability, { shipClasses }) => {
     }
 
     if (!ability.for_class_ids.length) {
-        return "for all ships in fleet";
+        return "";
     }
 
     const classNames = ability.for_class_ids
@@ -45,20 +50,33 @@ const parseForClasses = (ability, { shipClasses }) => {
         })
         .filter((c) => !!c);
 
-    return `for ${joinAnd(classNames)} in fleet`;
+    return `of ${joinAnd(classNames)} in fleet`;
 };
 
 const parseAmountDescription = (ability) => {
+    const attack = pluralize("attack", parseInt(ability.amount));
+    const second = pluralize("second", parseInt(ability.amount));
+
     const lines = {
         [amountTypes.NUMBER]: "by {amount}",
         [amountTypes.PERCENT]: "by {amount}%",
-        [amountTypes.ATTACKS]: "every {amount} attacks",
-        [amountTypes.SECONDS]: "every {amount} seconds",
+        [amountTypes.ATTACKS]: `every {amount} ${attack}`,
+        [amountTypes.SECONDS]: `every {amount} ${second}`,
+        byType: {
+            [DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED]: {
+                [amountTypes.SECONDS]: `by {amount} ${second}`,
+            },
+        },
     };
 
-    const line = lines[ability.amount_type];
+    let amount = parseNumber(ability.amount);
+
+    const line =
+        lines.byType[ability.type]?.[ability.amount_type] ||
+        lines[ability.amount_type];
+
     return parseText(line, {
-        amount: ability.amount,
+        amount,
     });
 };
 
@@ -163,9 +181,37 @@ const parseConditionsDescription = (ability, { shipClasses }) => {
         return parseCondition(c, { shipClasses });
     });
 
-    return `when ${joinAnd(conditions)} in the fleet`;
+    return `when ${joinAnd(conditions)} in your fleet`;
 };
 
+const parseWeaponsDescription = (ability) => {
+    if (!ability.weapon_classes.length && !ability.weapon_sizes.length) {
+        return "";
+    }
+
+    const sizePlural = pluralize("size", ability.weapon_sizes.length);
+
+    const lines = {
+        both: `(${sizePlural} {sizes} {classes} weapons)`,
+        size: `(${sizePlural} {sizes} weapons)`,
+        class: `({classes} weapons)`,
+    };
+
+    if (ability.weapon_classes.length && ability.weapon_sizes.length) {
+        return parseText(lines.both, {
+            sizes: joinAnd(ability.weapon_sizes.map((s) => s.toUpperCase())),
+            classes: joinAnd(ability.weapon_classes),
+        });
+    } else if (ability.weapon_classes.length) {
+        return parseText(lines.class, {
+            classes: joinAnd(ability.weapon_classes),
+        });
+    } else if (ability.weapon_sizes.length) {
+        return parseText(lines.size, {
+            sizes: joinAnd(ability.weapon_sizes.map((s) => s.toUpperCase())),
+        });
+    }
+};
 class AbilityParser {
     // data = {
     //     affectType: null,
@@ -221,26 +267,13 @@ class AbilityParser {
         });
     }
 
-    get fullDescription() {
-        /*
-        'location',
-        'type',
-        'variants',
-        'amount_type',
-        'amount',
-        'weapon_classes',
-        'weapon_sizes',
-        'notes',
-        'duration_type',
-        'duration',
-        'applies_to_fleet',
-        'for_class_ids',
-        'target_class_ids',
-        'conditions',
-        */
+    get weaponsDescription() {
+        return parseWeaponsDescription(this.ability);
+    }
 
+    get fullDescription() {
         const template =
-            "{abilityTypeName} {toVariantDescription} {forClasses} {amountDescription} {durationDescription} {againstClasses} {conditionsDescription}";
+            "{abilityTypeName} {weaponsDescription} {toVariantDescription} {forClasses} {amountDescription} {durationDescription} {againstClasses} {conditionsDescription}";
 
         const parsedText = parseText(template, {
             abilityTypeName: this.abilityTypeName,
@@ -250,6 +283,7 @@ class AbilityParser {
             durationDescription: this.durationDescription,
             againstClasses: this.againstClasses,
             conditionsDescription: this.conditionsDescription,
+            weaponsDescription: this.weaponsDescription,
         });
 
         return `${parsedText.replace(/\s{2,}/gm, " ").trim()}.`;

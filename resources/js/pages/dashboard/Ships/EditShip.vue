@@ -88,6 +88,19 @@ const onSaveAbilities = async (location, abilities) => {
     }
 };
 
+const onDeleteAbility = (id_ability) => {
+    apiClient
+        .delete(`admin/ship/${ship.value.id_ship}/abilities/${id_ability}`)
+        .then(() => {
+            ship.value.abilities = ship.value.abilities.filter(
+                (a) => a.id_ability != id_ability
+            );
+        })
+        .catch((err) => {
+            console.warn(err, "error deleting ability");
+        });
+};
+
 const shipAbilitiesByLocation = computed(() => {
     return ship.value?.abilities.reduce((obj, ability) => {
         if (!obj[ability.location]) {
@@ -173,6 +186,26 @@ onMounted(() => {
                             (abilities) =>
                                 onSaveAbilities(location.slug, abilities)
                         "
+                        :onDelete="onDeleteAbility"
+                    />
+                </div>
+            </div>
+            <div class="my-8">
+                <h3 class="font-2xl mb-4 font-medium text-xl">
+                    Chip Abilities
+                </h3>
+                <div class="abilities grid gap-1">
+                    <AbilityItem
+                        v-for="location in chipLocations"
+                        :key="location.slug"
+                        :location="location.slug"
+                        :location-name="location.name"
+                        :abilities="shipAbilitiesByLocation[location.slug]"
+                        :onSave="
+                            (abilities) =>
+                                onSaveAbilities(location.slug, abilities)
+                        "
+                        :onDelete="onDeleteAbility"
                     />
                 </div>
             </div>
