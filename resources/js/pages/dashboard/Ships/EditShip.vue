@@ -196,7 +196,6 @@ onMounted(() => {
                     Chip Abilities
                 </h3>
                 <div class="abilities grid gap-1">
-                    <!--
                     <AbilityItem
                         v-for="location in chipLocations"
                         :key="location.slug"
@@ -209,7 +208,6 @@ onMounted(() => {
                         "
                         :onDelete="onDeleteAbility"
                     />
-                    -->
                 </div>
             </div>
         </div>
