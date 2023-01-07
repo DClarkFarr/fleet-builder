@@ -274,6 +274,7 @@ export default class DataService {
             {
                 name: "Increase Accuracy",
                 slug: DataService.ABILITY_TYPES.INCREASE_ACCURACY,
+                weapons: true,
             },
             {
                 name: "Increase Evade",

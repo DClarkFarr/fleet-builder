@@ -24,6 +24,13 @@ const parseAgainstClasses = (ability, { shipClasses }) => {
         return "";
     }
 
+    const affectType = typesByAffect[ability.type];
+
+    let prep = "against";
+    if (affectType === DataService.ABILITY_AFFECTS.DEFENSE) {
+        prep = "from";
+    }
+
     const classNames = ability.target_class_ids
         .map((id) => {
             const name = shipClasses.find((c) => c.id_class === id)?.name;
@@ -31,7 +38,7 @@ const parseAgainstClasses = (ability, { shipClasses }) => {
         })
         .filter((c) => !!c);
 
-    return `against enemy ${joinAnd(classNames)}`;
+    return `${prep} enemy ${joinAnd(classNames)}`;
 };
 
 const parseForClasses = (ability, { shipClasses }) => {
