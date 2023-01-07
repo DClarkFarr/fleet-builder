@@ -44,6 +44,58 @@ export default class DataService {
         LESS: "<",
     };
 
+    static ABILITY_AFFECTS = {
+        ATTACK: "attack",
+        DEFENSE: "defense",
+        PASSIVE: "passive",
+    };
+
+    static ABILITY_TYPES = {
+        REDUCE_DAMAGE: "reduce_damage",
+        INCREASE_RESISTENCE: "increase_resistence",
+        INCREASE_WEAPON_DAMAGE: "increase_weapon_damage",
+        INCREASE_PENETRATION: "increase_penetration",
+        INCREASE_HP: "increase_hp",
+        INCREASE_ARMOR: "increase_armor",
+        INCREASE_ACCURACY: "increase_accuracy",
+        INCREASE_EVADE: "increase_evade",
+        INCREASE_SHIELD: "increase_shield",
+        INCREASE_MOVEMENT_SPEED: "increase_movement_speed",
+        INCREASE_FTL_SPEED: "increase_ftl_speed",
+        EXTRA_ATTACK: "extra_attack",
+        INCREASE_ATTACK_SPEED: "increase_attack_speed",
+    };
+
+    static ABILITY_LOCATIONS = {
+        ABILITY_1: "ability_1",
+        ABILITY_2: "ability_2",
+        ABILITY_3: "ability_3",
+        FLAGSHIP_ABILITY: "flagship_ability",
+        CHIP_1: "chip_1",
+        CHIP_2: "chip_2",
+        CHIP_3: "chip_3",
+        CHIP_4: "chip_4",
+        CHIP_5: "chip_5",
+        CHIP_6: "chip_6",
+    };
+
+    static getAbilityAffects() {
+        return [
+            {
+                name: "Attack",
+                slug: DataService.ABILITY_AFFECTS.ATTACK,
+            },
+            {
+                name: "Defense",
+                slug: DataService.ABILITY_AFFECTS.DEFENSE,
+            },
+            {
+                name: "Passive",
+                slug: DataService.ABILITY_AFFECTS.PASSIVE,
+            },
+        ];
+    }
+
     static getOperators() {
         return [
             {
@@ -62,7 +114,20 @@ export default class DataService {
     }
 
     static getSizes() {
-        return [DataService.SIZES.S, DataService.SIZES.M, DataService.SIZES.L];
+        return [
+            {
+                name: "S",
+                slug: DataService.SIZES.S,
+            },
+            {
+                name: "M",
+                slug: DataService.SIZES.M,
+            },
+            {
+                name: "L",
+                slug: DataService.SIZES.L,
+            },
+        ];
     }
 
     static getWeaponClasses() {
@@ -107,52 +172,52 @@ export default class DataService {
         return [
             {
                 name: "Ability 1",
-                slug: "ability_1",
+                slug: DataService.ABILITY_LOCATIONS.ABILITY_1,
                 isChip: false,
             },
             {
                 name: "Ability 2",
-                slug: "ability_2",
+                slug: DataService.ABILITY_LOCATIONS.ABILITY_2,
                 isChip: false,
             },
             {
                 name: "Ability 3",
-                slug: "ability_3",
+                slug: DataService.ABILITY_LOCATIONS.ABILITY_3,
                 isChip: false,
             },
             {
                 name: "Flagship Ability",
-                slug: "flagship_ability",
+                slug: DataService.ABILITY_LOCATIONS.FLAGSHIP_ABILITY,
                 isChip: false,
             },
             {
                 name: "Chip 1",
-                slug: "chip_1",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_1,
                 isChip: true,
             },
             {
                 name: "Chip 2",
-                slug: "chip_2",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_2,
                 isChip: true,
             },
             {
                 name: "Chip 3",
-                slug: "chip_3",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_3,
                 isChip: true,
             },
             {
                 name: "Chip 4",
-                slug: "chip_4",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_4,
                 isChip: true,
             },
             {
                 name: "Chip 5",
-                slug: "chip_5",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_5,
                 isChip: true,
             },
             {
                 name: "Chip 6",
-                slug: "chip_6",
+                slug: DataService.ABILITY_LOCATIONS.CHIP_6,
                 isChip: true,
             },
         ];
@@ -162,59 +227,59 @@ export default class DataService {
         return [
             {
                 name: "Reduce Damage",
-                slug: "reduce_damage",
+                slug: DataService.ABILITY_TYPES.REDUCE_DAMAGE,
             },
             {
                 name: "Increase Resistence",
-                slug: "increase_resistence",
+                slug: DataService.ABILITY_TYPES.INCREASE_RESISTENCE,
             },
             {
                 name: "Increase Weapon Damage",
-                slug: "increase_weapon_damage",
+                slug: DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE,
                 weapons: true,
             },
             {
                 name: "Increase Penetration",
-                slug: "increase_penetration",
+                slug: DataService.ABILITY_TYPES.INCREASE_PENETRATION,
             },
             {
                 name: "Increase HP",
-                slug: "increase_hp",
+                slug: DataService.ABILITY_TYPES.INCREASE_HP,
             },
             {
                 name: "Increase Armor",
-                slug: "increase_armor",
+                slug: DataService.ABILITY_TYPES.INCREASE_ARMOR,
                 weapons: true,
             },
             {
                 name: "Increase Accuracy",
-                slug: "increase_accuracy",
+                slug: DataService.ABILITY_TYPES.INCREASE_ACCURACY,
             },
             {
                 name: "Increase Evade",
-                slug: "increase_evade",
+                slug: DataService.ABILITY_TYPES.INCREASE_EVADE,
             },
             {
                 name: "Increase Shield",
-                slug: "increase_shield",
+                slug: DataService.ABILITY_TYPES.INCREASE_SHIELD,
                 weapons: true,
             },
             {
                 name: "Increase Movement Speed",
-                slug: "increase_movement_speed",
+                slug: DataService.ABILITY_TYPES.INCREASE_MOVEMENT_SPEED,
             },
             {
                 name: "Increase FTL Speed",
-                slug: "increase_ftl_speed",
+                slug: DataService.ABILITY_TYPES.INCREASE_FTL_SPEED,
             },
             {
                 name: "Extra Attack",
-                slug: "extra_attack",
+                slug: DataService.ABILITY_TYPES.EXTRA_ATTACK,
                 weapons: true,
             },
             {
                 name: "Increase Attack Speed",
-                slug: "increase_attack_speed",
+                slug: DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED,
                 weapons: true,
             },
         ];

@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { $vfm } from "vue-final-modal";
 
 import EditIcon from "~icons/fa-solid/pencil-alt";
+import DataService from "../../services/DataService";
 import AbilityForm from "./AbilityForm.vue";
 
 const props = defineProps({
@@ -41,6 +42,13 @@ const onCreateAbility = (abilityForm) => {
 
     $vfm.hide(`${props.location}--add`);
 };
+
+const defaultAbility = computed(() => {
+    return {
+        amount_type: DataService.AMOUNT_TYPES.PERCENT,
+        amount: 8,
+    };
+});
 </script>
 
 <template>
@@ -110,6 +118,7 @@ const onCreateAbility = (abilityForm) => {
         >
             <div class="modal__content">
                 <AbilityForm
+                    :ability="defaultAbility"
                     :location="location"
                     :locationName="locationName"
                     :onSave="onCreateAbility"

@@ -31,8 +31,8 @@ const isSaving = ref(false);
 const errorMessage = ref("");
 
 const generateDefaultObject = () => {
-    return props.sizes.reduce((obj, key) => {
-        obj[key] = 0;
+    return Object.entries(props.sizes).reduce((obj, [, s]) => {
+        obj[s.slug] = 0;
         return obj;
     }, {});
 };
@@ -102,15 +102,15 @@ watch([() => props.slots, () => props.sizes], () => {
             >
                 <div
                     v-for="size in props.sizes"
-                    :key="size"
+                    :key="size.slug"
                     class="flex gap-x-2 items-center"
                 >
-                    <label>{{ size.toUpperCase() }}</label>
+                    <label>{{ size.name }}</label>
                     <input
                         type="number"
                         class="form-control max-w-[80px]"
                         min="0"
-                        v-model="form[size]"
+                        v-model="form[size.slug]"
                         @input="onChangeDebounce"
                     />
                 </div>
