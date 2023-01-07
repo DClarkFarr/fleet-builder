@@ -1,10 +1,19 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, toRaw } from "vue";
 import { $vfm } from "vue-final-modal";
 
-import EditIcon from "~icons/fa-solid/pencil-alt";
+import { getAbilityParser } from "../../methods/ability";
 import DataService from "../../services/DataService";
 import AbilityForm from "./AbilityForm.vue";
+
+import EditIcon from "~icons/fa-solid/pencil-alt";
+import AttackIcon from "~icons/fluent-emoji/crossed-swords";
+import DefenseIcon from "~icons/fluent-emoji/shield";
+import PassiveIcon from "~icons/fluent-emoji/fast-up-button";
+import CrownIcon from "~icons/fluent-emoji/crown";
+import ShipService from "../../services/ShipService";
+
+const abilityAffects = DataService.ABILITY_AFFECTS;
 
 const props = defineProps({
     abilities: {
@@ -29,6 +38,8 @@ const modals = ref({});
 
 const onClickEdit = () => {};
 
+const shipClasses = ref([]);
+
 const onClickAdd = async () => {
     await $vfm.hideAll();
     $vfm.show(`${props.location}--add`);
@@ -49,6 +60,26 @@ const defaultAbility = computed(() => {
         amount: 8,
     };
 });
+
+const computedAbilities = computed(() => {
+    return props.abilities.map((ability) => {
+        const parser = getAbilityParser(ability, {
+            shipClasses: toRaw(shipClasses.value),
+        });
+
+        ability.affectType = parser.affectType;
+        ability.abilityTypeName = parser.abilityTypeName;
+        ability.amountDescription = parser.amountDescription;
+        ability.fullDescription = parser.fullDescription;
+
+        return ability;
+    });
+});
+
+onMounted(async () => {
+    const res = await ShipService.getShipClasses();
+    shipClasses.value = [...res];
+});
 </script>
 
 <template>
@@ -67,12 +98,59 @@ const defaultAbility = computed(() => {
                 </button>
             </div>
         </div>
-        <div class="abilities">
+        <div class="ability-items">
             <div
-                class="ability flex border text-sm text-gray-500 bg-gray-200 p-3 rounded gap-x-4 mb-1"
-                v-for="ability in abilities"
+                class="ability flex items-center text-sm p-3 rounded gap-x-4 mb-1"
+                :class="[
+                    `ability--${ability.affectType}`,
+                    { 'ability--fleet': ability.applies_to_fleet },
+                ]"
+                v-for="ability in computedAbilities"
                 :key="ability.id_ability"
             >
+                <div class="ability__icons">
+                    <div
+                        v-tooltip="'Attack'"
+                        v-if="ability.affectType === abilityAffects.ATTACK"
+                    >
+                        <AttackIcon />
+                    </div>
+                    <div
+                        v-tooltip="'Defense'"
+                        v-else-if="
+                            ability.affectType === abilityAffects.DEFENSE
+                        "
+                    >
+                        <DefenseIcon />
+                    </div>
+                    <div
+                        v-tooltip="'Passive'"
+                        v-else-if="
+                            ability.affectType === abilityAffects.DEFENSE
+                        "
+                    >
+                        <PassiveIcon />
+                    </div>
+                    <div
+                        v-if="ability.applies_to_fleet"
+                        v-tooltip="'Fleet Boost'"
+                    >
+                        <CrownIcon />
+                    </div>
+                </div>
+                <div class="ability__description">
+                    <div class="ability__name flex gap-x-2 items-center">
+                        <div class="font-medium">
+                            {{ ability.abilityTypeName }}
+                        </div>
+                        <div class="font-bold">
+                            {{ ability.amountDescription }}
+                        </div>
+                    </div>
+                    <div class="ability__full-description">
+                        {{ ability.fullDescription }}
+                    </div>
+                </div>
                 <div class="ml-auto">
                     <button
                         class="btn bg-sky-600 hover:bg-sky-800"
@@ -83,7 +161,7 @@ const defaultAbility = computed(() => {
                 </div>
             </div>
 
-            <div v-if="!abilities.length">
+            <div v-if="!computedAbilities.length">
                 <div
                     class="text-gray-500 text-sm bg-gray-200 p-3 rounded text-center"
                 >
@@ -93,7 +171,7 @@ const defaultAbility = computed(() => {
         </div>
 
         <vue-final-modal
-            v-for="ability in abilities"
+            v-for="ability in computedAbilities"
             :key="ability.id_ability"
             classes="modal-container"
             content-class="modal-content"
@@ -127,3 +205,33 @@ const defaultAbility = computed(() => {
         </vue-final-modal>
     </div>
 </template>
+
+<style lang="less">
+.ability-items {
+    .ability {
+        &--defense,
+        &--attack,
+        &--passive {
+            @apply border-l-8;
+        }
+
+        &--defense {
+            @apply border-blue-500;
+        }
+
+        &--attack {
+            @apply border-red-500;
+        }
+
+        &--passive {
+            @apply border-green-500;
+        }
+
+        @apply bg-gray-200 text-gray-500;
+
+        &--fleet {
+            @apply bg-yellow-800/50 text-gray-900;
+        }
+    }
+}
+</style>
