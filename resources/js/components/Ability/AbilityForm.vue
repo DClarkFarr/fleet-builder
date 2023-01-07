@@ -1,9 +1,7 @@
 <script setup>
 import { ref, computed, watch, reactive, onMounted } from "vue";
-import { $vfm } from "vue-final-modal";
 import DataService from "../../services/DataService";
 
-import EditIcon from "~icons/fa-solid/pencil-alt";
 import CirlceNotchIcon from "~icons/fa-solid/circle-notch";
 import InputError from "../controls/InputError.vue";
 import ShipService from "../../services/ShipService";
@@ -84,9 +82,7 @@ const dirty = reactive({
     conditions: false,
 });
 
-const resetForm = () => {
-    form.value = makeFormState();
-
+const resetErrors = () => {
     Object.assign(
         errors,
         Object.keys(errors).reduce((acc, key) => {
@@ -94,6 +90,12 @@ const resetForm = () => {
             return acc;
         }, {})
     );
+};
+
+const resetForm = () => {
+    form.value = makeFormState();
+
+    resetErrors();
 
     Object.assign(
         dirty,
@@ -107,11 +109,59 @@ const resetForm = () => {
 };
 
 const validate = () => {
-    // TODO: validate stuff
+    resetErrors();
+
+    if (!form.type) {
+        errors.type = "Ability type is required";
+    }
+
+    if (!form.amount_type) {
+        errors.amount_type = "Amount type is required";
+    }
+
+    if (isNaN(parseInt(form.amount))) {
+        errors.amount = "Amount is required";
+    }
+
+    if (form.duration_type && isNaN(parseInt(form.duration))) {
+        errors.duration = "Duration is required";
+    }
+
+    isValid.value = !Object.values(errors).some((error) => error);
 };
 
-const onChangeForm = () => {
+const onChangeForm = (field = "") => {
     validate();
+
+    Object.entries(form).forEach(([key, value]) => {
+        if (value !== props.ability[key]) {
+            dirty[key] = true;
+        }
+    });
+
+    if (field === "applies_to_fleet" && !form.applies_to_fleet) {
+        form.for_class_ids = [];
+    }
+
+    if (field === "for_class_ids" && form.for_class_ids.length) {
+        form.applies_to_fleet = true;
+    }
+};
+
+const onSubmit = async () => {
+    if (!isValid.value || isSaving.value) {
+        return;
+    }
+
+    isSaving.value = true;
+
+    try {
+        await props.onSave({ ...form });
+    } catch (err) {
+        errorMessage.value = err.message;
+    }
+
+    isSaving.value = false;
 };
 
 const loadClasses = async () => {
@@ -134,6 +184,8 @@ const onRemoveCondition = (index) => {
     conditions.splice(index, 1);
     form.conditions = conditions;
 };
+
+const hasVariation = computed(() => form.type && variantsByType[form.type]);
 
 const amountInput = computed(() => {
     let placeholder = "";
@@ -188,6 +240,10 @@ watch(
     }
 );
 
+watch(form, () => {
+    validate();
+});
+
 onMounted(() => {
     loadClasses();
 });
@@ -197,7 +253,7 @@ onMounted(() => {
     <form action="" class="ability-form" @submit.prevent="onSubmit">
         <h3 class="text-xl font-medium mb-6">Manage Ability</h3>
 
-        <div class="lg:flex gap-x-3">
+        <div class="lg:flex items-end gap-x-3">
             <div class="lg:w-1/2">
                 <div class="form-group">
                     <label>Effect Type</label>
@@ -210,16 +266,17 @@ onMounted(() => {
                         :clearable="false"
                         v-model="form.type"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError :error="errors.type" :dirty="dirty.type" />
                 </div>
             </div>
             <div class="lg:w-1/2">
-                <div
-                    class="form-group"
-                    v-if="form.type && variantsByType[form.type]"
-                >
+                <div class="form-group" v-if="hasVariation">
                     <label>Variation</label>
+                    <blockquote class="italic">
+                        Note: Selecting none means "all"
+                    </blockquote>
                     <VSelect
                         :options="variantsByType[form.type]"
                         :multiple="true"
@@ -227,27 +284,10 @@ onMounted(() => {
                         :clearable="true"
                         v-model="form.variants"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError :error="errors.type" :dirty="dirty.type" />
                 </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Applies to Fleet</label>
-            <div class="checkbox">
-                <label>
-                    <input
-                        type="checkbox"
-                        class="mr-2"
-                        name="applies_to_fleet"
-                        v-model="form.applies_to_fleet"
-                        :true-value="true"
-                        :false-value="false"
-                        @change="onChangeForm"
-                    />
-                    {{ form.applies_to_fleet ? "Yes" : "No" }}
-                </label>
             </div>
         </div>
 
@@ -264,6 +304,7 @@ onMounted(() => {
                         :clearable="false"
                         v-model="form.amount_type"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError
                         :error="errors.amount_type"
@@ -297,6 +338,7 @@ onMounted(() => {
                         :clearable="true"
                         v-model="form.weapon_classes"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError
                         :error="errors.weapon_classes"
@@ -314,6 +356,7 @@ onMounted(() => {
                         :clearable="true"
                         v-model="form.weapon_sizes"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError
                         :error="errors.weapon_sizes"
@@ -336,6 +379,7 @@ onMounted(() => {
                         :clearable="true"
                         v-model="form.duration_type"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError
                         :error="errors.duration_type"
@@ -376,7 +420,8 @@ onMounted(() => {
                         :searchable="true"
                         :clearable="true"
                         v-model="form.for_class_ids"
-                        @input="onChangeForm"
+                        @input="onChangeForm('for_class_ids')"
+                        @close="onChangeForm('for_class_ids')"
                     />
                     <InputError
                         :error="errors.for_class_ids"
@@ -399,6 +444,7 @@ onMounted(() => {
                         :clearable="true"
                         v-model="form.target_class_ids"
                         @input="onChangeForm"
+                        @close="onChangeForm"
                     />
                     <InputError
                         :error="errors.target_class_ids"
@@ -411,28 +457,54 @@ onMounted(() => {
         <div class="form-group">
             <label class="text-lg font-medium mb-4">Fleet Conditions</label>
 
-            <div class="conditions-list mb-4">
-                <div
-                    class="mb-2"
-                    v-for="(condition, index) in form.conditions"
-                    :key="index"
-                >
-                    <ConditionForm
-                        :condition="condition"
-                        :ship-classes="shipClasses"
-                        @change="(data) => onChangeCondition(index, data)"
-                        @remove="onRemoveCondition(index)"
-                    />
+            <div class="form-group">
+                <label>Applies to Fleet</label>
+                <div class="checkbox">
+                    <label>
+                        <input
+                            type="checkbox"
+                            class="mr-2"
+                            name="applies_to_fleet"
+                            v-model="form.applies_to_fleet"
+                            :true-value="true"
+                            :false-value="false"
+                            @change="onChangeForm('applies_to_fleet')"
+                        />
+                        {{ form.applies_to_fleet ? "Yes" : "No" }}
+                    </label>
                 </div>
             </div>
 
-            <button
-                class="btn btn-sm bg-gray-600 hover:bg-gray-800"
-                type="button"
-                @click="onAddCondition"
-            >
-                Add Condition
-            </button>
+            <div v-show="form.applies_to_fleet">
+                <div class="conditions-list mb-4">
+                    <div
+                        class="mb-2"
+                        v-for="(condition, index) in form.conditions"
+                        :key="index"
+                    >
+                        <ConditionForm
+                            :condition="condition"
+                            :ship-classes="shipClasses"
+                            @change="(data) => onChangeCondition(index, data)"
+                            @remove="onRemoveCondition(index)"
+                        />
+                    </div>
+                    <div
+                        class="mb-2 bg-blue-100 p-2 text-blue-600"
+                        v-if="!form.conditions.length"
+                    >
+                        No Conditions yet
+                    </div>
+                </div>
+
+                <button
+                    class="btn btn-sm bg-gray-600 hover:bg-gray-800"
+                    type="button"
+                    @click="onAddCondition"
+                >
+                    Add Condition
+                </button>
+            </div>
         </div>
         <div class="form-group">
             <label>Notes</label>
@@ -444,6 +516,9 @@ onMounted(() => {
             ></textarea>
         </div>
 
+        <div class="form-group" v-if="errorMessage">
+            <InputError :error="errorMessage" />
+        </div>
         <div class="form-group">
             <button
                 type="submit"

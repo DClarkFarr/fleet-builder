@@ -68,7 +68,7 @@ const onSaveSlots = (type, slots) => {
 };
 
 const onSaveAbilities = (location, abilities) => {
-    return apiClient.put(`admin/ship/${ship.value.id_ship}/abilit`, {
+    return apiClient.put(`admin/ship/${ship.value.id_ship}/abilities`, {
         location,
         abilities,
     });
@@ -167,7 +167,10 @@ onMounted(() => {
                         :location="location.slug"
                         :location-name="location.name"
                         :abilities="shipAbilitiesByLocation[location.slug]"
-                        :onSave="onSaveAbilities"
+                        :onSave="
+                            (abilities) =>
+                                onSaveAbilities(location.slug, abilities)
+                        "
                     />
                 </div>
             </div>

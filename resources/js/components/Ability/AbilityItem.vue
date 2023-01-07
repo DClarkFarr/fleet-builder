@@ -29,10 +29,17 @@ const modals = ref({});
 const onClickEdit = () => {};
 
 const onClickAdd = async () => {
-    // console.log("showing", `${props.location}add`, "from vfm", $vfm);
-    $vfm.show(`${props.location}--add`, { hello: "world" });
+    await $vfm.hideAll();
+    $vfm.show(`${props.location}--add`);
+};
 
-    // console.log("openRes", openRes);
+const onCreateAbility = (abilityForm) => {
+    const abilities = [...props.abilities];
+    abilities.push(abilityForm);
+
+    props.onSave(abilities);
+
+    $vfm.hide(`${props.location}--add`);
 };
 </script>
 
@@ -84,7 +91,6 @@ const onClickAdd = async () => {
             content-class="modal-content"
             v-model="modals[ability.id_ability]"
             :name="`${location}--${ability.id_ability}`"
-            @close="onSave"
         >
             <span class="modal__title">Hello, vue-final-modal</span>
             <div class="modal__content">
@@ -101,13 +107,12 @@ const onClickAdd = async () => {
             v-model="modals.add"
             :modal-visible="true"
             :name="`${location}--add`"
-            @close="onSave"
         >
             <div class="modal__content">
                 <AbilityForm
                     :location="location"
                     :locationName="locationName"
-                    :onSave="onSave"
+                    :onSave="onCreateAbility"
                 />
             </div>
         </vue-final-modal>
