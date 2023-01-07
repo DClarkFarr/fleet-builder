@@ -303,24 +303,6 @@ export default class DataService {
         ];
     }
 
-    static getVariantsByAbilityType(abilityType) {
-        return {
-            reduce_damage: [
-                DataService.RESISTANCE_TYPES.SHIELDS,
-                DataService.RESISTANCE_TYPES.HULL,
-            ],
-            increase_resistence: [
-                DataService.WEAPON_CLASSES.BEAM,
-                DataService.WEAPON_CLASSES.MISSILE,
-                DataService.WEAPON_CLASSES.KINETIC,
-            ],
-            increase_penetration: [
-                DataService.RESISTANCE_TYPES.SHIELDS,
-                DataService.RESISTANCE_TYPES.HULL,
-            ],
-        };
-    }
-
     static getAmountTypes() {
         return [
             {
@@ -340,5 +322,47 @@ export default class DataService {
                 slug: DataService.AMOUNT_TYPES.ATTACKS,
             },
         ];
+    }
+
+    static getVariantsByAbilityType() {
+        return {
+            reduce_damage: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+            ],
+            increase_resistence: [
+                DataService.WEAPON_CLASSES.BEAM,
+                DataService.WEAPON_CLASSES.MISSILE,
+                DataService.WEAPON_CLASSES.KINETIC,
+            ],
+            increase_penetration: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+            ],
+        };
+    }
+
+    static getAbilityTypesByAffect() {
+        return {
+            [DataService.ABILITY_AFFECTS.ATTACK]: [
+                DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED,
+                DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE,
+                DataService.ABILITY_TYPES.INCREASE_PENETRATION,
+                DataService.ABILITY_TYPES.INCREASE_ACCURACY,
+                DataService.ABILITY_TYPES.EXTRA_ATTACK,
+            ],
+            [DataService.ABILITY_AFFECTS.DEFENSE]: [
+                DataService.ABILITY_TYPES.REDUCE_DAMAGE,
+                DataService.ABILITY_TYPES.INCREASE_RESISTENCE,
+                DataService.ABILITY_TYPES.INCREASE_HP,
+                DataService.ABILITY_TYPES.INCREASE_ARMOR,
+                DataService.ABILITY_TYPES.INCREASE_EVADE,
+                DataService.ABILITY_TYPES.INCREASE_SHIELD,
+            ],
+            [DataService.ABILITY_AFFECTS.PASSIVE]: [
+                DataService.ABILITY_TYPES.INCREASE_MOVEMENT_SPEED,
+                DataService.ABILITY_TYPES.INCREASE_FTL_SPEED,
+            ],
+        };
     }
 }
