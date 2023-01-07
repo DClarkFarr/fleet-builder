@@ -15,7 +15,7 @@ const isLoading = ref(true);
 const route = useRoute();
 
 const sizes = DataService.getSizes();
-const slotTypes = DataService.SLOT_TYPES;
+const slotTypes = DataService.getSlotTypes();
 
 const allLocations = DataService.getShipAbilityLocations();
 
@@ -147,25 +147,13 @@ onMounted(() => {
                 <h3 class="font-2xl mb-4 font-medium text-xl">Ship Slots</h3>
                 <div class="slots grid gap-1">
                     <SlotsForm
-                        :slots="ship.ship_weapon_slots"
+                        v-for="slotType in slotTypes"
+                        :key="slotType.slug"
+                        :slots="ship[`ship_${slotType.slug}_slots`]"
                         :sizes="sizes"
-                        :type="slotTypes.WEAPON"
+                        :type="slotType.slug"
                         :onSave="onSaveSlots"
-                        label="Weapon Slots"
-                    />
-                    <SlotsForm
-                        :slots="ship.ship_armor_slots"
-                        :sizes="sizes"
-                        :type="slotTypes.ARMOR"
-                        :onSave="onSaveSlots"
-                        label="Armor Slots"
-                    />
-                    <SlotsForm
-                        :slots="ship.ship_unit_slots"
-                        :sizes="sizes"
-                        :type="slotTypes.UNIT"
-                        :onSave="onSaveSlots"
-                        label="Unit Slots"
+                        :label="`${slotType.name} Slots`"
                     />
                 </div>
             </div>

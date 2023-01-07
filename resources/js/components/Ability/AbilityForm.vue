@@ -332,7 +332,9 @@ onMounted(() => {
                 <div class="form-group">
                     <label>Weapon Classes</label>
                     <VSelect
+                        label="name"
                         :options="weaponClasses"
+                        :reduce="(c) => c.slug"
                         :multiple="true"
                         :searchable="true"
                         :clearable="true"

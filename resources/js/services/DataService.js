@@ -132,17 +132,35 @@ export default class DataService {
 
     static getWeaponClasses() {
         return [
-            DataService.WEAPON_CLASSES.BEAM,
-            DataService.WEAPON_CLASSES.MISSILE,
-            DataService.WEAPON_CLASSES.KINETIC,
+            {
+                name: "Beam",
+                slug: DataService.WEAPON_CLASSES.BEAM,
+            },
+            {
+                name: "Missile",
+                slug: DataService.WEAPON_CLASSES.MISSILE,
+            },
+            {
+                name: "Kinetic",
+                slug: DataService.WEAPON_CLASSES.KINETIC,
+            },
         ];
     }
 
     static getSlotTypes() {
         return [
-            DataService.SLOT_TYPES.WEAPON,
-            DataService.SLOT_TYPES.ARMOR,
-            DataService.SLOT_TYPES.UNIT,
+            {
+                name: "Weapon",
+                slug: DataService.SLOT_TYPES.WEAPON,
+            },
+            {
+                name: "Armor",
+                slug: DataService.SLOT_TYPES.ARMOR,
+            },
+            {
+                name: "Unit",
+                slug: DataService.SLOT_TYPES.UNIT,
+            },
         ];
     }
 
