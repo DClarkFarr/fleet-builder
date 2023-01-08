@@ -58,7 +58,6 @@ const onChangeNumber = (index, e) => {
 const onChangeOperator = (index) => {
     const items = [...props.items];
 
-    console.log("operator pushing", items[index].operator);
     onChange(items);
 };
 
