@@ -4,6 +4,7 @@ import DataService from "../../services/DataService";
 import InputError from "../controls/InputError.vue";
 
 import TrashIcon from "~icons/fa-solid/trash-alt";
+import FormulaItem from "../controls/FormulaItem.vue";
 
 const amountTypes = DataService.getAmountTypes();
 
@@ -82,6 +83,12 @@ const handleChange = (field) => {
     if (isValid.value) {
         emit("change", toRaw(form));
     }
+};
+
+const handleFormulaChange = (updatedItems) => {
+    form.children = updatedItems;
+
+    handleChange("children");
 };
 
 const isFormula = computed(() => {
@@ -165,7 +172,12 @@ onMounted(() => {
                 </div>
             </div>
             <div class="lg:w-3/4">
-                <template v-if="isFormula"> </template>
+                <template v-if="isFormula">
+                    <FormulaItem
+                        :items="amount.children"
+                        @change="handleFormulaChange"
+                    />
+                </template>
                 <template v-else>
                     <div class="mb-3">
                         <label>Amount</label>

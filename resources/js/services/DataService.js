@@ -96,10 +96,60 @@ export default class DataService {
         TOTAL_SHIELDS: "all_shields",
     };
 
+    static FORMULA_ITEM_TYPES = {
+        NUMBER: "number",
+        COLUMN: "column",
+        FORMULA: "formula",
+    };
+
+    static FORMULA_ITEM_OPERATORS = {
+        ADD: "+",
+        SUBTRACT: "-",
+        MULTIPLY: "*",
+        DIVIDE: "/",
+    };
+
+    static getFormulaOperators() {
+        return [
+            {
+                name: "Add",
+                slug: DataService.FORMULA_ITEM_OPERATORS.ADD,
+            },
+            {
+                name: "Subtract",
+                slug: DataService.FORMULA_ITEM_OPERATORS.SUBTRACT,
+            },
+            {
+                name: "Multiply",
+                slug: DataService.FORMULA_ITEM_OPERATORS.MULTIPLY,
+            },
+            {
+                name: "Divide",
+                slug: DataService.FORMULA_ITEM_OPERATORS.DIVIDE,
+            },
+        ];
+    }
+    static getFormulaItemTypes() {
+        return [
+            {
+                name: "Number",
+                slug: DataService.FORMULA_ITEM_TYPES.NUMBER,
+            },
+            {
+                name: "Column",
+                slug: DataService.FORMULA_ITEM_TYPES.COLUMN,
+            },
+            {
+                name: "Formula",
+                slug: DataService.FORMULA_ITEM_TYPES.FORMULA,
+            },
+        ];
+    }
+
     static getShipColumns() {
         return [
             {
-                name: "Level",
+                name: "Ship Level",
                 slug: DataService.SHIP_COLUMNS.LEVEL,
             },
             {
