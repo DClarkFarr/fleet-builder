@@ -1,8 +1,10 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import DataService from "../../../services/DataService";
 import BlockBase from "./BlockBase.vue";
 import useBlock from "./useBlock";
+
+import TraskIcon from "~icons/fa-solid/trash-alt";
 
 const shipColumns = DataService.getShipColumns();
 
@@ -22,7 +24,14 @@ const {
     isColumn,
     onChangeColumn,
     onChangeNumber,
+    onRemove,
 } = useBlock(props, emit);
+
+const showDelete = ref(false);
+
+const toggleShowDelete = () => {
+    showDelete.value = !showDelete.value;
+};
 
 const computedText = computed(() => {
     if (isColumn(props.block.item.type)) {
@@ -36,7 +45,22 @@ const computedText = computed(() => {
 <template>
     <BlockBase :block="block">
         <template #label>
-            <div>Value</div>
+            <div class="flex gap-x-2">
+                <div
+                    class="cursor-pointer underline"
+                    @click="toggleShowDelete"
+                    v-tooltip="'Click to show Delete option'"
+                >
+                    Value
+                </div>
+                <div
+                    class="cursor-pointer text-red-600 hover:text-red-600 underline"
+                    @click="onRemove"
+                    v-if="showDelete"
+                >
+                    <TraskIcon />
+                </div>
+            </div>
         </template>
         <template #toggle>
             <span> {{ computedText }} </span>

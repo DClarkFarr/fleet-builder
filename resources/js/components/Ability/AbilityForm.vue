@@ -213,10 +213,8 @@ const onAddAmount = () => {
 const onChangeAmount = (index, data) => {
     const amounts = [...form.amounts];
 
-    console.log("splicing", index, { ...data });
     amounts.splice(index, 1, data);
 
-    console.log("spliced amounts", [...amounts]);
     form.amounts = amounts;
 };
 

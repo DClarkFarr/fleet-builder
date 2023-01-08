@@ -108,6 +108,10 @@ const useBlock = (props, emit) => {
         setActivePath("");
     };
 
+    const onRemove = () => {
+        emit("remove", props.block.depth);
+    };
+
     const isOpen = computed(() => {
         return blockState.activePath === props.block.index;
     });
@@ -133,6 +137,7 @@ const useBlock = (props, emit) => {
         onChangeFormula,
         onChangeType,
         onAddItem,
+        onRemove,
     };
 };
 

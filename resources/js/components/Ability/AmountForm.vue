@@ -105,21 +105,12 @@ const handleChange = (field) => {
 
     validate();
 
-    console.log(
-        "handle change",
-        [...form.children],
-        "=",
-        isValid.value,
-        "and",
-        toRaw(form)
-    );
     if (isValid.value) {
         emit("change", toRaw(form));
     }
 };
 
 const handleFormulaChange = (updatedItems) => {
-    console.log("got update items", [...updatedItems]);
     form.children = updatedItems;
 
     handleChange("children");

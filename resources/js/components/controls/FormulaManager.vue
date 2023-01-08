@@ -133,8 +133,21 @@ const handleBlockChange = (origDepthPath, data) => {
 
     onChange(items);
 };
-const onRemove = (...xs) => {
-    console.log("manager onRemove", ...xs);
+const onRemove = (origDepthPath) => {
+    const depthPath = [...origDepthPath];
+    const items = [...props.items];
+
+    const index = depthPath.pop();
+
+    let base = items;
+    for (let i = 0; i < depthPath.length; i++) {
+        const index = depthPath[i];
+        base = base[index].children;
+    }
+
+    base.splice(index, 1);
+
+    onChange(items);
 };
 
 const blocks = computed(() => {
