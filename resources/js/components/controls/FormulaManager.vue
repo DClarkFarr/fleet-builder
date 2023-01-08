@@ -12,6 +12,8 @@ import ItemBlock from "./FormultaManager/ItemBlock.vue";
 import OpenBlock from "./FormultaManager/OpenBlock.vue";
 import OperatorBlock from "./FormultaManager/OperatorBlock.vue";
 
+import { buildItemBlocks } from "../../methods/ability";
+
 /*
 items: {
     type: 'column', 'number', 'formula'
@@ -50,48 +52,6 @@ const getComponent = (type) => {
         case "operator":
             return OperatorBlock;
     }
-};
-
-const buildItemBlocks = (items, bs, depth = []) => {
-    items.forEach((item, index) => {
-        if (isFormula(item.type)) {
-            bs.push({
-                depth: [...depth, index],
-                index: bs.length,
-                type: "open",
-                item,
-            });
-            buildItemBlocks(item.children, bs, [...depth, index]);
-            bs.push({
-                depth: [...depth, index],
-                index: bs.length,
-                type: "close",
-                item,
-            });
-        } else {
-            bs.push({
-                depth: [...depth, index],
-                index: bs.length,
-                type: "item",
-                item,
-            });
-        }
-
-        if (!isLast(index, items)) {
-            bs.push({
-                depth: [...depth, index],
-                index: bs.length,
-                item,
-                type: "operator",
-            });
-        }
-    });
-
-    bs.push({
-        type: "add",
-        depth: [...depth],
-        index: bs.length,
-    });
 };
 
 const onChange = (items) => {

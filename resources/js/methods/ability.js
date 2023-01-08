@@ -13,6 +13,7 @@ const typesByAffect = Object.entries(
 
 const abilityTypes = DataService.getAbilityTypes();
 const amountTypes = DataService.AMOUNT_TYPES;
+const shipColumns = DataService.getShipColumns();
 
 const numberFormatter = new Intl.NumberFormat();
 
@@ -61,7 +62,70 @@ const parseForClasses = (ability, { shipClasses }) => {
 };
 
 const parseFormulaAmountLine = (ability, amount) => {
-    console.log("TODO: parse formula amount line", ability.id_class, amount);
+    const blocks = [];
+    buildItemBlocks(amount.children, blocks);
+
+    return blocks
+        .map((block) => {
+            if (block.type === "open") {
+                return "(";
+            } else if (block.type === "close") {
+                return ")";
+            } else if (block.type === "item") {
+                if (block.item.type === "column") {
+                    return shipColumns.find((c) => c.slug === block.item.value)
+                        .name;
+                } else {
+                    return block.item.value;
+                }
+            } else if (block.type === "operator") {
+                return block.item.operator;
+            }
+        })
+        .join(" ");
+};
+
+export const buildItemBlocks = (items, bs, depth = []) => {
+    const lastIndex = items.length - 1;
+    items.forEach((item, index) => {
+        if (item.type === DataService.FORMULA_ITEM_TYPES.FORMULA) {
+            bs.push({
+                depth: [...depth, index],
+                index: bs.length,
+                type: "open",
+                item,
+            });
+            buildItemBlocks(item.children, bs, [...depth, index]);
+            bs.push({
+                depth: [...depth, index],
+                index: bs.length,
+                type: "close",
+                item,
+            });
+        } else {
+            bs.push({
+                depth: [...depth, index],
+                index: bs.length,
+                type: "item",
+                item,
+            });
+        }
+
+        if (lastIndex !== index) {
+            bs.push({
+                depth: [...depth, index],
+                index: bs.length,
+                item,
+                type: "operator",
+            });
+        }
+    });
+
+    bs.push({
+        type: "add",
+        depth: [...depth],
+        index: bs.length,
+    });
 };
 
 const parseAmountLine = (ability, amount) => {
@@ -70,7 +134,9 @@ const parseAmountLine = (ability, amount) => {
     }
 
     if (amount.type === amountTypes.FORMULA) {
-        return parseFormulaAmountLine(ability, amount);
+        return parseText("X [{formula}]", {
+            formula: parseFormulaAmountLine(ability, amount),
+        });
     }
     const attack = pluralize("attack", parseInt(amount.value));
     const second = pluralize("second", parseInt(amount.value));
