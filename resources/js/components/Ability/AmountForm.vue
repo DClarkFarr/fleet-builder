@@ -4,7 +4,7 @@ import DataService from "../../services/DataService";
 import InputError from "../controls/InputError.vue";
 
 import TrashIcon from "~icons/fa-solid/trash-alt";
-import FormulaItem from "../controls/FormulaItem.vue";
+import FormulaManager from "../controls/FormulaManager.vue";
 
 const amountTypes = DataService.getAmountTypes();
 
@@ -46,8 +46,33 @@ const dirty = reactive({
 const errorMessage = ref("");
 const isValid = ref(false);
 
+const validateItem = (item) => {
+    if (item.type === DataService.FORMULA_ITEM_TYPES.COLUMN) {
+        if (!item.value) {
+            errors.children = "Please select a column";
+        }
+    } else if (item.type === DataService.FORMULA_ITEM_TYPES.NUMBER) {
+        if (isNaN(parseInt(item.value)) || item.value < 0) {
+            errors.children = "Please enter a valid number";
+        }
+    } else if (item.type === DataService.FORMULA_ITEM_TYPES.FORMULA) {
+        if (!item.children.length) {
+            errors.children = "Please add at least one item";
+        } else {
+            item.children.forEach((item) => {
+                validateItem(item);
+            });
+        }
+    }
+};
+
 const validateForuma = () => {
-    console.log("TODO: Validate formula");
+    if (!form.children.length) {
+        errors.children = "Please add at least one item";
+        return;
+    }
+
+    form.children.forEach(validateItem);
 };
 
 const resetErrors = () => {
@@ -58,18 +83,18 @@ const resetErrors = () => {
     });
 };
 const validate = () => {
-    if (isFormula.value) {
-        return validateForuma();
-    }
-
     resetErrors();
 
-    if (!form.type) {
-        errors.type = "Please select an amount type";
-    }
+    if (isFormula.value) {
+        validateForuma();
+    } else {
+        if (!form.type) {
+            errors.type = "Please select an amount type";
+        }
 
-    if (isNaN(parseInt(form.value)) || form.value < 0) {
-        errors.value = "Please enter a valid amount";
+        if (isNaN(parseInt(form.value)) || form.value < 0) {
+            errors.value = "Please enter a valid amount";
+        }
     }
 
     isValid.value = !Object.values(errors).some((error) => error);
@@ -80,12 +105,21 @@ const handleChange = (field) => {
 
     validate();
 
+    console.log(
+        "handle change",
+        [...form.children],
+        "=",
+        isValid.value,
+        "and",
+        toRaw(form)
+    );
     if (isValid.value) {
         emit("change", toRaw(form));
     }
 };
 
 const handleFormulaChange = (updatedItems) => {
+    console.log("got update items", [...updatedItems]);
     form.children = updatedItems;
 
     handleChange("children");
@@ -173,9 +207,13 @@ onMounted(() => {
             </div>
             <div class="lg:w-3/4">
                 <template v-if="isFormula">
-                    <FormulaItem
+                    <FormulaManager
                         :items="amount.children"
                         @change="handleFormulaChange"
+                    />
+                    <InputError
+                        :error="errors.children"
+                        :dirty="dirty.children"
                     />
                 </template>
                 <template v-else>

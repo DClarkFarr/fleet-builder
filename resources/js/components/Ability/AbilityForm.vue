@@ -212,8 +212,12 @@ const onAddAmount = () => {
 
 const onChangeAmount = (index, data) => {
     const amounts = [...form.amounts];
+
+    console.log("splicing", index, { ...data });
     amounts.splice(index, 1, data);
-    form.amounts = amounts.map((a) => reactive(a));
+
+    console.log("spliced amounts", [...amounts]);
+    form.amounts = amounts;
 };
 
 const onRemoveAmount = (index) => {

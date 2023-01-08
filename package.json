@@ -23,6 +23,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@vueuse/components": "^9.10.0",
         "@vueuse/core": "^9.10.0",
         "pinia": "^2.0.28",
         "pluralize": "^8.0.0",
