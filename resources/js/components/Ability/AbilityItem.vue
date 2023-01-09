@@ -121,8 +121,7 @@ const onUpdateAbility = (id_ability, data) => {
 
 const defaultAbility = computed(() => {
     return {
-        amount_type: DataService.AMOUNT_TYPES.PERCENT,
-        amount: 8,
+        amounts: [],
     };
 });
 

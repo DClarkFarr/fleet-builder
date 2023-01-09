@@ -93,6 +93,9 @@ export default class DataService {
         MISSILE_WEAPON_DAMAGE: "missile_weapon_damage",
         KINETIC_WEAPON_DAMAGE: "kinetic_weapon_damage",
         TOTAL_RESISTANCE: "all_resistance",
+        KINETIC_RESISTANCE: "kinetic_resistance",
+        MISSILE_RESISTANCE: "missile_resistance",
+        BEAM_RESISTANCE: "beam_resistance",
         TOTAL_SHIELDS: "all_shields",
     };
 
@@ -171,6 +174,18 @@ export default class DataService {
             {
                 name: "Total Resistance",
                 slug: DataService.SHIP_COLUMNS.TOTAL_RESISTANCE,
+            },
+            {
+                name: "Kinetic Resistance",
+                slug: DataService.SHIP_COLUMNS.KINETIC_RESISTANCE,
+            },
+            {
+                name: "Missile Resistance",
+                slug: DataService.SHIP_COLUMNS.MISSILE_RESISTANCE,
+            },
+            {
+                name: "Beam Resistance",
+                slug: DataService.SHIP_COLUMNS.BEAM_RESISTANCE,
             },
             {
                 name: "Total Shields",
