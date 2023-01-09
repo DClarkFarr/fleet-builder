@@ -16,6 +16,8 @@ export default defineConfig({
                 "resources/js/app.js",
                 "resources/js/dashboard.js",
                 "resources/css/dashboard.less",
+                "resources/js/builder.js",
+                "resources/css/builder.less",
             ],
             refresh: true,
         }),

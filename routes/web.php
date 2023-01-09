@@ -13,6 +13,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('/dashboard')->middleware(['role:admin'])->group(function () {
+    Route::get("/{any?}", function () {
+        return view('dashboard');
+    })
+        ->where('any', '.*')
+        ->name('dashboard');
+});
+
+Route::prefix('/builder')->middleware(['auth'])->group(function () {
+    Route::get("/{any?}", function () {
+        return view('builder');
+    })
+        ->where('any', '.*')
+        ->name('builder');
+});
+
+
+
 Route::get('/login', function () {
     return view('home');
 })->name('user.login');
@@ -21,16 +39,6 @@ Route::get('/signup', function () {
     return view('home');
 })->name('user.signup');
 
-Route::prefix('/dashboard')->middleware(['auth'])->group(function () {
-    Route::get("/{any?}", function () {
-        return view('dashboard');
-    })
-        ->where('any', '.*')
-        ->name('dashboard');
-});
-
-Route::get('/{any}', function () {
+Route::get('/', function () {
     return view('home');
-})
-    ->middleware(['auth'])
-    ->where('any', '.*');
+})->name('home');

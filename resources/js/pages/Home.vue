@@ -1,6 +1,5 @@
 <script setup>
 import UserLayout from "../components/layouts/UserLayout.vue";
-
 import useUserStore from "../stores/userStore";
 
 const userStore = useUserStore();
@@ -12,7 +11,10 @@ const onClick = () => {
 </script>
 <template>
     <UserLayout>
-        <h1>Home</h1>
-        <button class="btn bg-sky-600" @click="onClick">Click me</button>
+        <div class="view view space-bg">
+            <div class="banner">
+                <img src="/images/banner-2.jpg" alt="banner" />
+            </div>
+        </div>
     </UserLayout>
 </template>

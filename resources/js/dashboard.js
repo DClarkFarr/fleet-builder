@@ -10,6 +10,8 @@ import App from "./App.vue";
 
 import router from "./routes/dashboardRouter.js";
 
+import.meta.glob(["../images/**"]);
+
 const app = createApp(App);
 const pinia = createPinia();
 

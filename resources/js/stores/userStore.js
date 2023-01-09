@@ -9,15 +9,27 @@ const useUserStore = defineStore("user", () => {
         user.value = u;
     };
 
-    const refresh = () => {
-        apiClient.get("user").then((response) => {
-            setUser(response.data.user);
-        });
+    const refresh = async () => {
+        try {
+            await apiClient.get("user").then((response) => {
+                setUser(response.data.user);
+            });
+
+            return true;
+        } catch (err) {
+            return false;
+        }
     };
 
-    const logout = () => {
-        setUser(null);
-        apiClient.post("user/logout");
+    const logout = async () => {
+        try {
+            setUser(null);
+            await apiClient.post("user/logout");
+
+            return true;
+        } catch (err) {
+            return false;
+        }
     };
 
     const isAdmin = computed(() => {
