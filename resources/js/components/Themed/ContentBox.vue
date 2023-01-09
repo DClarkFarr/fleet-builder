@@ -13,7 +13,7 @@
         </div>
 
         <div
-            class="content-box__body modal-border bg-modal-content/75 py-4 px-3 text-modal-text m-4"
+            class="content-box__body modal-border bg-modal-content/75 py-3 px-3 text-modal-text m-4"
         >
             <slot> </slot>
         </div>
