@@ -69,4 +69,91 @@
     .banner-2 {
         background-image: url("/resources/images/banner-2.jpg");
     }
+
+    .themed {
+        .modal {
+            @apply text-modal-text;
+
+            &-border {
+                @apply border border-modal-border;
+            }
+            &-bg {
+                @apply bg-modal-bg;
+            }
+
+            &__tick {
+                @apply bg-modal-tick;
+            }
+            &__content {
+                @apply bg-modal-content;
+            }
+            &__title {
+                @apply text-modal-title;
+            }
+        }
+
+        .input {
+            @apply border border-input-border placeholder:text-input-placeholder bg-input-bg text-white;
+
+            border-top: 0.5px;
+        }
+
+        .btn {
+            @apply rounded-none cursor-pointer disabled:border-gray-400 disabled:bg-gray-100 disabled:text-gray-600;
+        }
+
+        .btn-blue {
+            @apply border-btn-blue-border bg-btn-blue-bg text-btn-blue-text;
+        }
+
+        .btn-yellow {
+            @apply border-btn-yellow-border bg-btn-yellow-bg text-btn-yellow-text;
+        }
+
+        .btn-red {
+            @apply border-btn-red-border bg-btn-red-bg text-btn-red-text;
+        }
+
+        .ship-box {
+            @apply border border-b-2;
+
+            &__content {
+                background: linear-gradient(0deg, black, transparent);
+            }
+
+            &__caption {
+                @apply text-center text-dark-text-white text-sm;
+            }
+
+            &--ledgendary {
+                .ship-box {
+                    @border border-ledgendary-weak border-b-ledgendary-string;
+
+                    &__content {
+                        background: linear-gradient(0deg, #97361a, transparent);
+                    }
+                }
+            }
+
+            &--rare {
+                .ship-box {
+                    @border border-rare-weak border-b-rare-string;
+
+                    &__content {
+                        background: linear-gradient(0deg, #3f2266, transparent);
+                    }
+                }
+            }
+
+            &--standard {
+                .ship-box {
+                    @border border-standard-weak border-b-standard-string;
+
+                    &__content {
+                        background: linear-gradient(0deg, #173356, transparent);
+                    }
+                }
+            }
+        }
+    }
 }
