@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Ship;
 use App\Models\ShipClass;
 use App\Models\ShipLevel;
+use App\Models\UserShip;
 use Exception;
 
 class ShipService
@@ -306,7 +307,39 @@ class ShipService
         $ship->abilities()->where('id_ability', $id_ability)->delete();
     }
 
+    /**
+     * Get public user ships, sorted nicely by class and level
+     *
+     * @param [type] $id_user
+     * @return Collection<UserShip>
+     */
     public function getUserShips($id_user)
     {
+        $ships = UserShip::where('id_user', $id_user)
+            ->with('ship')
+            ->whereHas('ship', function ($query) {
+                $query->where('public', true);
+            })
+            ->get()
+            ->map(function ($userShip) {
+                $userShip->ship = $this->populateShipForResponse($userShip->ship);
+
+                return $userShip;
+            })
+            ->sort(function (UserShip $sa, UserShip $sb) {
+                if ($sa->ship->shipLevel->sort != $sb->ship->shipLevel->sort) {
+                    return $sb->ship->shipLevel->sort <=> $sa->ship->shipLevel->sort;
+                }
+
+                if ($sa->ship->shipClass->sort != $sb->ship->shipClass->sort) {
+                    return $sb->ship->shipClass->sort <=> $sa->ship->shipClass->sort;
+                }
+
+                return $sb->ship->energy <=> $sa->ship->energy;
+            })
+            ->values();
+
+
+        return $ships;
     }
 }

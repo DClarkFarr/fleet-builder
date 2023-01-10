@@ -42,7 +42,7 @@ class UserShip extends Model
     /**
      * Relations
      */
-    public function ships()
+    public function ship()
     {
         return $this->belongsTo(Ship::class, 'id_ship', 'id_ship', 'ship');
     }

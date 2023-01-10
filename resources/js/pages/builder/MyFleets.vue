@@ -1,15 +1,26 @@
 <script setup>
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
 import useUserStore from "../../stores/userStore";
+import useBuilderStore from "../../stores/builderStore";
+
+import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 
 const userStore = useUserStore();
+const builderStore = useBuilderStore();
 
 const showShipsModal = () => {};
 
+const allLoaded = ref(false);
+
 onBeforeMount(() => {
-    userStore.loadShips();
+    const def1 = userStore.loadShips();
+    const def2 = builderStore.loadShips();
+
+    Promise.all([def1, def2]).then(() => {
+        allLoaded.value = true;
+    });
 });
 </script>
 <template>
@@ -37,7 +48,16 @@ onBeforeMount(() => {
                                 </button>
                             </div>
                         </div>
-                        <div class="bordered p-6"></div>
+                        <div class="bordered p-6">
+                            <template v-if="allLoaded"> </template>
+                            <template v-else>
+                                <div
+                                    class="p-10 flex justify-center items-center text-3xl"
+                                >
+                                    <CircleNotchIcon class="animate-spin" />
+                                </div>
+                            </template>
+                        </div>
                     </div>
                     <div class="my-fleets__workshops h-full lg:w-1/2">
                         <div

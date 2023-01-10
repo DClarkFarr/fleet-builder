@@ -3,8 +3,8 @@
 use App\Http\Controllers\Admin\ShipClassController;
 use App\Http\Controllers\Admin\ShipController;
 use App\Http\Controllers\Admin\ShipLevelController;
+use App\Http\Controllers\User\DataController;
 use App\Http\Controllers\User\UserAuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,10 +23,19 @@ Route::prefix('/user')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
 
     Route::middleware(['auth'])->group(function () {
+        /** UserShips */
         Route::get('/ships', [UserAuthController::class, 'getShips']);
         Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);
     });
+});
+
+Route::prefix('/data')->middleware(['auth'])->group(function () {
+
+    /**
+     * Public Ships only
+     */
+    Route::get('/ships', [DataController::class, 'list']);
 });
 
 Route::prefix('/admin')->middleware(['role:admin'])->group(function () {

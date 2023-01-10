@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\User;
-
+use App\Services\ShipService;
 use Illuminate\Validation\Rules\Password;
 
 class UserAuthController extends Controller
@@ -97,5 +97,12 @@ class UserAuthController extends Controller
 
     public function getShips()
     {
+        $shipService = new ShipService;
+        $user = Auth::user();
+        $ships = $shipService->getUserShips($user->id);
+
+        return response()->json(
+            ['rows' => $ships->toArray()]
+        );
     }
 }
