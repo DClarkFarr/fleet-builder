@@ -4,6 +4,10 @@ import ContentBox from "../../components/Themed/ContentBox.vue";
 import useUserStore from "../../stores/userStore";
 
 const user = useUserStore();
+
+const onClickLogout = () => {
+    user.logout();
+};
 </script>
 
 <template>
@@ -26,6 +30,13 @@ const user = useUserStore();
                                 <a href="/builder" class="banner__link">
                                     My Fleets
                                 </a>
+                                <router-link
+                                    :to="{ name: 'login' }"
+                                    class="banner__link"
+                                    @click="onClickLogout"
+                                >
+                                    Logout
+                                </router-link>
                             </template>
                             <template v-else>
                                 <router-link
