@@ -51,6 +51,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserShip::class, 'id_user', 'id_user');
     }
+    public function workshops()
+    {
+        return $this->hasMany(Workshop::class, 'id_user', 'id_user');
+    }
 
 
     /**
