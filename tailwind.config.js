@@ -24,6 +24,7 @@ module.exports = {
                 "grow-green-text-alt": "#b1ffe8",
                 "grow-green-grad": "#05774e",
                 "text-blue": "#24c4ef",
+                caption: "#a8a8ac",
 
                 "legendary-strong": "#ff8c29",
                 "legendary-weak": "#532f14",

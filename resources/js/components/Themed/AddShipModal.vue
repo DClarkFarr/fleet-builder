@@ -2,6 +2,7 @@
 import ContentBox from "./ContentBox.vue";
 
 import { ref, reactive, computed } from "vue";
+import ShipSelectCard from "../Ship/ShipSelectCard.vue";
 
 const props = defineProps({
     ships: {
@@ -32,6 +33,10 @@ const hasFilters = computed(() => {
 const onClearFilters = () => {
     filters.search = "";
     filters.id_class = null;
+};
+
+const onClickSelect = (ship) => {
+    selectedShip.value = ship;
 };
 
 const computedShips = computed(() => {
@@ -67,7 +72,21 @@ const computedShips = computed(() => {
                 </h2>
 
                 <template v-if="selectedShip">
-                    You selected a ship! Show form
+                    <div class="flex gap-x-4 items-center">
+                        <div>
+                            <button
+                                class="btn btn-sm btn-red"
+                                @click="selectedShip = null"
+                            >
+                                Unselect Ship
+                            </button>
+                        </div>
+                        <div>
+                            <h2 class="text-xl text-modal-title">
+                                Add <b>{{ selectedShip.name }}</b> to your fleet
+                            </h2>
+                        </div>
+                    </div>
                 </template>
                 <template v-else>
                     <div
@@ -107,28 +126,20 @@ const computedShips = computed(() => {
                         </div>
                     </div>
                     <div class="add-ships__list flex flex-col w-full gap-y-2">
-                        <div
-                            class="ship ship-box"
-                            :class="[
-                                'ship-box--' +
-                                    ship.ship_level.name.toLowerCase(),
-                            ]"
+                        <ShipSelectCard
                             v-for="ship in computedShips"
                             :key="ship.id_ship"
+                            :ship="ship"
                         >
-                            <div class="ship-box__content">
-                                <div class="ship-box__content-bg p-2">
-                                    <div>Power {{ ship.energy }}</div>
-                                    <div>
-                                        {{ ship.abilities.length }} Abilities
-                                    </div>
-                                    <div>Weapon Strength</div>
-                                </div>
-                            </div>
-                            <div class="ship-box__caption">
-                                {{ ship.name }}
-                            </div>
-                        </div>
+                            <template #actions>
+                                <button
+                                    class="btn btn-sm btn-green"
+                                    @click="onClickSelect(ship)"
+                                >
+                                    Select
+                                </button>
+                            </template>
+                        </ShipSelectCard>
                     </div>
                 </template>
             </div>

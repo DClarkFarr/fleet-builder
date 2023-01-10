@@ -38,7 +38,7 @@ const props = defineProps({
     </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .content-box {
     &__body {
         box-shadow: inset 0 0 7px 0px #61656e;

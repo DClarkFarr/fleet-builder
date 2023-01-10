@@ -1,6 +1,11 @@
+import { sum } from "lodash";
 import DataService from "../services/DataService";
 
 export const parseShipSlotCounts = (ship) => {
+    if (ship.slotCounts) {
+        return ship.slotCounts;
+    }
+
     const slotTypes = DataService.SLOT_TYPES;
     const sizes = DataService.SIZES;
 
@@ -30,5 +35,33 @@ export const parseShipSlotCounts = (ship) => {
         slotCounts[slot.type][slot.size] += parseInt(slot.amount);
     });
 
+    ship.slotCounts = slotCounts;
+
     return slotCounts;
+};
+
+export const parseShipSlotStrengths = (ship) => {
+    if (ship.slotStrengths) {
+        return ship.slotStrengths;
+    }
+    const slotCounts = parseShipSlotCounts(ship);
+    const sizes = DataService.SIZES;
+
+    const slotStrengths = {};
+
+    Object.entries(slotCounts).forEach(([slotType, counts]) => {
+        slotStrengths[slotType] = {
+            [sizes.S]: counts[sizes.S] * 1,
+            [sizes.M]: counts[sizes.M] * 1.5,
+            [sizes.L]: counts[sizes.L] * 2,
+        };
+
+        slotStrengths[slotType].total = sum(
+            Object.values(slotStrengths[slotType])
+        );
+    });
+
+    ship.slotStrengths = slotStrengths;
+
+    return slotStrengths;
 };
