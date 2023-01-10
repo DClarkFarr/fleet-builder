@@ -107,7 +107,7 @@ watch(props, () => {
                     type="text"
                     class="form-control"
                     name="name"
-                    placeholder="Standard, Rare, Ledgendary..."
+                    placeholder="Standard, Rare, Legendary..."
                     v-model="form.name"
                     @input="onChangeInput"
                 />

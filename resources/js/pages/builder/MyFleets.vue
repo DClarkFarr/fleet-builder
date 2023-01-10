@@ -1,24 +1,38 @@
 <script setup>
 import { onBeforeMount, ref } from "vue";
+import { $vfm } from "vue-final-modal";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
 import useUserStore from "../../stores/userStore";
 import useBuilderStore from "../../stores/builderStore";
 
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
+import AddShipModal from "../../components/Themed/AddShipModal.vue";
 
 const userStore = useUserStore();
 const builderStore = useBuilderStore();
 
-const showShipsModal = () => {};
+const showShipsModal = () => {
+    $vfm.show({
+        component: AddShipModal,
+        bind: {
+            ships: builderStore.ships,
+            shipClasses: builderStore.shipClasses,
+            onAdd: (...xs) => {
+                console.log("add ship", ...xs);
+            },
+        },
+    });
+};
 
 const allLoaded = ref(false);
 
 onBeforeMount(() => {
     const def1 = userStore.loadShips();
     const def2 = builderStore.loadShips();
+    const def3 = builderStore.loadShipClasses();
 
-    Promise.all([def1, def2]).then(() => {
+    Promise.all([def1, def2, def3]).then(() => {
         allLoaded.value = true;
     });
 });
@@ -43,6 +57,7 @@ onBeforeMount(() => {
                                 <button
                                     class="btn btn-blue btn-sm ml-4"
                                     @click="showShipsModal"
+                                    v-if="allLoaded"
                                 >
                                     Add Ship
                                 </button>

@@ -25,10 +25,10 @@ module.exports = {
                 "grow-green-grad": "#05774e",
                 "text-blue": "#24c4ef",
 
-                "ledgendary-strong": "#ff8c29",
-                "ledgendary-weak": "#532f14",
-                "ledgendary-grad-start": "#97361a",
-                "ledgendary-grad-end": "#371f10",
+                "legendary-strong": "#ff8c29",
+                "legendary-weak": "#532f14",
+                "legendary-grad-start": "#97361a",
+                "legendary-grad-end": "#371f10",
 
                 "rare-strong": "#ad50fe",
                 "rare-weak": "#452570",

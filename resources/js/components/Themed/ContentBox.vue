@@ -1,4 +1,11 @@
-<script setup></script>
+<script setup>
+const props = defineProps({
+    bgClass: {
+        type: String,
+        default: "bg-modal-content/25",
+    },
+});
+</script>
 
 <template>
     <div class="content-box p-3">
@@ -13,7 +20,8 @@
         </div>
 
         <div
-            class="content-box__body modal-border bg-modal-content/25 py-3 px-3 text-modal-text m-4"
+            class="content-box__body modal-border py-3 px-3 text-modal-text m-4"
+            :class="[bgClass]"
         >
             <slot> </slot>
         </div>
@@ -34,6 +42,9 @@
 .content-box {
     &__body {
         box-shadow: inset 0 0 7px 0px #61656e;
+        max-height: 90vh;
+        overflow-x: visible;
+        overflow-y: auto;
     }
 
     &__tick {

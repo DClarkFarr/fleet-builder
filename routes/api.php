@@ -36,6 +36,7 @@ Route::prefix('/data')->middleware(['auth'])->group(function () {
      * Public Ships only
      */
     Route::get('/ships', [DataController::class, 'list']);
+    Route::get('/ships/classes', [DataController::class, 'getClasses']);
 });
 
 Route::prefix('/admin')->middleware(['role:admin'])->group(function () {

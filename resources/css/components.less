@@ -101,6 +101,27 @@
             border-bottom-width: 1.5px;
         }
 
+        .v-select {
+            @apply bg-input-bg border border-input-border;
+
+            .vs__dropdown-toggle {
+                min-height: 40px;
+            }
+
+            .vs__open-indicator,
+            .vs__clear {
+                fill: #b4cfd6;
+            }
+
+            .vs__dropdown-menu {
+                @apply bg-input-bg border border-input-border;
+            }
+
+            .vs__selected {
+                @apply text-white;
+            }
+        }
+
         .btn {
             @apply flex gap-x-2 justify-center border rounded-none cursor-pointer disabled:border-box-gray-text disabled:bg-badge-gray disabled:text-box-gray-text px-6 py-3 font-medium disabled:cursor-not-allowed;
             border-top-width: 0.5px;
@@ -128,42 +149,70 @@
         }
 
         .ship-box {
-            @apply border border-b-2;
-
             &__content {
-                background: linear-gradient(0deg, black, transparent);
+                @apply border-2 border-b-4;
+                background: #03040a;
+
+                &-bg {
+                    background: linear-gradient(0deg, black, transparent);
+                }
             }
 
             &__caption {
                 @apply text-center text-dark-text-white text-sm;
+                background: linear-gradient(
+                    180deg,
+                    rgba(29, 31, 55, 1),
+                    rgba(98, 103, 158, 0.5)
+                );
             }
 
-            &--ledgendary {
+            &--legendary {
                 .ship-box {
-                    @border border-ledgendary-weak border-b-ledgendary-string;
-
                     &__content {
-                        background: linear-gradient(0deg, #97361a, transparent);
+                        @apply border-legendary-weak border-b-legendary-strong;
+
+                        &-bg {
+                            background: linear-gradient(
+                                0deg,
+                                rgba(151, 54, 26, 1) 2%,
+                                rgba(151, 54, 26, 0.5) 15%,
+                                rgba(151, 54, 26, 0.25) 35%,
+                                rgba(151, 54, 26, 0) 50%
+                            );
+                        }
                     }
                 }
             }
 
             &--rare {
                 .ship-box {
-                    @border border-rare-weak border-b-rare-string;
-
                     &__content {
-                        background: linear-gradient(0deg, #3f2266, transparent);
+                        @apply border-rare-weak border-b-rare-strong;
+
+                        &-bg {
+                            background: linear-gradient(
+                                0deg,
+                                #3f2266,
+                                transparent
+                            );
+                        }
                     }
                 }
             }
 
             &--standard {
                 .ship-box {
-                    @border border-standard-weak border-b-standard-string;
-
                     &__content {
-                        background: linear-gradient(0deg, #173356, transparent);
+                        @apply border-standard-weak border-b-standard-strong;
+
+                        &-bg {
+                            background: linear-gradient(
+                                0deg,
+                                #173356,
+                                transparent
+                            );
+                        }
                     }
                 }
             }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShipClass;
 use App\Services\ShipService;
 use Illuminate\Http\Request;
 
@@ -40,6 +41,15 @@ class DataController extends Controller
 
         return response()->json(
             ['rows' => $ships->toArray()]
+        );
+    }
+
+    public function getClasses()
+    {
+        $shipClasses = ShipClass::orderBy('sort', 'asc')->get();
+
+        return response()->json(
+            ['rows' => $shipClasses->values()->toArray()]
         );
     }
 }

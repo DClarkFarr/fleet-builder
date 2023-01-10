@@ -34,5 +34,7 @@ onMounted(() => {
                 </div>
             </div>
         </template>
+
+        <modals-container></modals-container>
     </div>
 </template>

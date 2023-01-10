@@ -6,6 +6,8 @@ const useBuilderStore = defineStore("builder", () => {
     const ships = ref([]);
     const isLoadingShips = ref(false);
 
+    const shipClasses = ref([]);
+
     const loadShips = async () => {
         isLoadingShips.value = true;
 
@@ -17,9 +19,18 @@ const useBuilderStore = defineStore("builder", () => {
         isLoadingShips.value = false;
     };
 
+    const loadShipClasses = async () => {
+        return apiClient.get("data/ships/classes").then((response) => {
+            shipClasses.value = response.data.rows;
+        });
+    };
+
     return {
         isLoadingShips,
+        ships,
+        shipClasses,
         loadShips,
+        loadShipClasses,
     };
 });
 
