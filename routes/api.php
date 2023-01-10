@@ -23,6 +23,7 @@ Route::prefix('/user')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
 
     Route::middleware(['auth'])->group(function () {
+        Route::get('/ships', [UserAuthController::class, 'getShips']);
         Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);
     });

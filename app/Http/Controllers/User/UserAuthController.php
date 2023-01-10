@@ -94,4 +94,8 @@ class UserAuthController extends Controller
 
         return response()->json(['message' => 'Logout success']);
     }
+
+    public function getShips()
+    {
+    }
 }

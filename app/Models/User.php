@@ -44,6 +44,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Relations
+     */
+    public function ships()
+    {
+        return $this->hasMany(UserShip::class, 'id_user', 'id_user');
+    }
+
+
+    /**
+     * Methods
+     */
+
     public function toFeObject()
     {
         $obj = (object) $this->toArray();

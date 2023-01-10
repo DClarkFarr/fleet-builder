@@ -305,4 +305,8 @@ class ShipService
 
         $ship->abilities()->where('id_ability', $id_ability)->delete();
     }
+
+    public function getUserShips($id_user)
+    {
+    }
 }

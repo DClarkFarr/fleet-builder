@@ -10,9 +10,6 @@
             @apply brightness-75;
         }
     }
-    .btn-primary {
-        @apply bg-primary;
-    }
     .btn-dark {
         @apply bg-gray-800 hover:bg-gray-900;
     }
@@ -53,6 +50,7 @@
     .view {
         min-height: 100vh;
         width: 100%;
+        height: 100%;
         background-repeat: repeat;
         background-position: top left;
 
@@ -107,6 +105,14 @@
             @apply flex gap-x-2 justify-center border rounded-none cursor-pointer disabled:border-box-gray-text disabled:bg-badge-gray disabled:text-box-gray-text px-6 py-3 font-medium disabled:cursor-not-allowed;
             border-top-width: 0.5px;
             border-bottom-width: 1.5px;
+
+            &.btn-sm {
+                @apply text-xs p-1;
+            }
+        }
+
+        .btn-gray {
+            @apply border-box-gray-text bg-badge-gray text-box-gray-text;
         }
 
         .btn-blue {

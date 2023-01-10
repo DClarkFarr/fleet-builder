@@ -7,6 +7,9 @@ const useUserStore = defineStore("user", () => {
 
     const isLoading = ref(true);
 
+    const ships = ref([]);
+    const isLoadingShips = ref(false);
+
     const setUser = (u) => {
         user.value = u;
         isLoading.value = false;
@@ -39,6 +42,16 @@ const useUserStore = defineStore("user", () => {
         return (user.value && user.value.roles?.includes("admin")) || false;
     });
 
+    const loadShips = async () => {
+        isLoadingShips.value = true;
+
+        await apiClient.get("user/ships").then((response) => {
+            ships.value = response.data.rows;
+        });
+
+        isLoadingShips.value = false;
+    };
+
     return {
         user,
         isAdmin,
@@ -46,6 +59,7 @@ const useUserStore = defineStore("user", () => {
         setUser,
         refresh,
         logout,
+        loadShips,
     };
 });
 
