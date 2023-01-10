@@ -25,6 +25,7 @@ Route::prefix('/user')->group(function () {
     Route::middleware(['auth'])->group(function () {
         /** UserShips */
         Route::get('/ships', [UserAuthController::class, 'getShips']);
+        Route::post('/ships', [UserAuthController::class, 'createOrUpdateShip']);
         Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);
     });

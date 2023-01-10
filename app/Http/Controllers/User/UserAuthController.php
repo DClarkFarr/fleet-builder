@@ -105,4 +105,30 @@ class UserAuthController extends Controller
             ['rows' => $ships->toArray()]
         );
     }
+
+    public function createOrUpdateShip(Request $request)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $validator = Validator::make($request->all(), [
+            'id_ship' => 'required|integer|min:0',
+            'id_user_ship' => 'integer|min:0',
+            // 'name' => 'string',
+            'chip_level' => 'required|integer|min:0|max:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $shipService = new ShipService;
+
+        $userShip = $shipService->createOrUpdateUserShip($user, $request->all());
+
+
+        return response()->json(
+            ['row' => $userShip->toArray()]
+        );
+    }
 }

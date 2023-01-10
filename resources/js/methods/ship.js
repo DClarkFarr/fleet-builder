@@ -65,3 +65,18 @@ export const parseShipSlotStrengths = (ship) => {
 
     return slotStrengths;
 };
+
+export const getShipChipsCount = (ship) => {
+    const chipsMap = {};
+
+    return ship.abilities.reduce((total, ability) => {
+        if (ability.location.includes("chip_")) {
+            if (!chipsMap[ability.location]) {
+                chipsMap[ability.location] = 1;
+                return total + 1;
+            }
+        }
+
+        return total;
+    }, 0);
+};

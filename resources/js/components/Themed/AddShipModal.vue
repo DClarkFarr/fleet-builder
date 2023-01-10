@@ -3,6 +3,7 @@ import ContentBox from "./ContentBox.vue";
 
 import { ref, reactive, computed } from "vue";
 import ShipSelectCard from "../Ship/ShipSelectCard.vue";
+import UserShipForm from "../Ship/UserShipForm.vue";
 
 const props = defineProps({
     ships: {
@@ -58,6 +59,10 @@ const computedShips = computed(() => {
 
     return ships;
 });
+
+const onCreateUserShip = (data) => {
+    return props.onAdd(data);
+};
 </script>
 
 <template>
@@ -72,7 +77,7 @@ const computedShips = computed(() => {
                 </h2>
 
                 <template v-if="selectedShip">
-                    <div class="flex gap-x-4 items-center">
+                    <div class="flex gap-x-4 items-center mb-4">
                         <div>
                             <button
                                 class="btn btn-sm btn-red"
@@ -87,6 +92,10 @@ const computedShips = computed(() => {
                             </h2>
                         </div>
                     </div>
+                    <UserShipForm
+                        :ship="selectedShip"
+                        :onSave="onCreateUserShip"
+                    />
                 </template>
                 <template v-else>
                     <div

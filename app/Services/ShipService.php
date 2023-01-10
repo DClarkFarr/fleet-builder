@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Ship;
 use App\Models\ShipClass;
 use App\Models\ShipLevel;
+use App\Models\User;
 use App\Models\UserShip;
 use Exception;
 
@@ -341,5 +342,29 @@ class ShipService
 
 
         return $ships;
+    }
+
+    public function createOrUpdateUserShip(User $user, array $data)
+    {
+        $id_user_ship = $data['id_user_ship'] ?? null;
+        unset($data['id_user_ship']);
+
+        if ($id_user_ship) {
+            $userShip = UserShip::find($id_user_ship);
+            if (!$userShip) {
+                throw new \Exception('User ship not found', 404);
+            }
+        } else {
+            $userShip = new UserShip();
+            $userShip->id_user = $user->id;
+            $userShip->visible = true;
+        }
+
+        $userShip->fill($data);
+        $userShip->save();
+
+        $userShip->ship = $this->populateShipForResponse($userShip->ship);
+
+        return $userShip;
     }
 }

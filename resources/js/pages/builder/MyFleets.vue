@@ -8,6 +8,7 @@ import useBuilderStore from "../../stores/builderStore";
 
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import AddShipModal from "../../components/Themed/AddShipModal.vue";
+import UserShipCard from "../../components/Ship/UserShipCard.vue";
 
 const userStore = useUserStore();
 const builderStore = useBuilderStore();
@@ -18,8 +19,9 @@ const showShipsModal = () => {
         bind: {
             ships: builderStore.ships,
             shipClasses: builderStore.shipClasses,
-            onAdd: (...xs) => {
-                console.log("add ship", ...xs);
+            onAdd: async (data) => {
+                await userStore.createOrUpdateUserShip(data);
+                $vfm.hideAll();
             },
         },
     });
@@ -63,8 +65,18 @@ onBeforeMount(() => {
                                 </button>
                             </div>
                         </div>
-                        <div class="bordered p-6">
-                            <template v-if="allLoaded"> </template>
+                        <div class="bordered p-4">
+                            <template v-if="allLoaded">
+                                <div
+                                    class="user-ships flex flex-col w-full gap-y-2"
+                                >
+                                    <UserShipCard
+                                        v-for="userShip in userStore.ships"
+                                        :key="userShip.id_user_ship"
+                                        :userShip="userShip"
+                                    />
+                                </div>
+                            </template>
                             <template v-else>
                                 <div
                                     class="p-10 flex justify-center items-center text-3xl"
