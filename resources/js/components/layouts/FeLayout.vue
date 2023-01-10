@@ -1,6 +1,9 @@
 <script setup>
 import UserLayout from "./UserLayout.vue";
 import ContentBox from "../../components/Themed/ContentBox.vue";
+import useUserStore from "../../stores/userStore";
+
+const user = useUserStore();
 </script>
 
 <template>
@@ -15,7 +18,25 @@ import ContentBox from "../../components/Themed/ContentBox.vue";
                     </router-link>
                 </div>
                 <div class="banner__top">
-                    <slot name="bannerTop"></slot>
+                    <slot name="bannerTop">
+                        <div
+                            class="flex justify-end gap-x-4 items-center w-full p-2"
+                        >
+                            <template v-if="user.user">
+                                <a href="/builder" class="banner__link">
+                                    My Fleets
+                                </a>
+                            </template>
+                            <template v-else>
+                                <router-link
+                                    :to="{ name: 'login' }"
+                                    class="banner__link"
+                                >
+                                    Login
+                                </router-link>
+                            </template>
+                        </div>
+                    </slot>
                 </div>
             </div>
 
@@ -28,16 +49,29 @@ import ContentBox from "../../components/Themed/ContentBox.vue";
 
 <style lang="less">
 .banner {
+    &__link {
+        @apply text-grow-green-text-alt;
+
+        text-shadow: 0 0 10px #05774e;
+    }
+
     &__logo {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-
+        z-index: 1;
         img {
             filter: brightness(1.5);
             background: rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 33px 0px rgb(0, 0, 0, 0.5);
         }
+    }
+
+    &__top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
     }
 }
 </style>

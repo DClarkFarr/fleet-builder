@@ -5,7 +5,7 @@ import tooltip from "./directives/tooltip.js";
 
 import App from "./App.vue";
 
-import router from "./routes/appRouter";
+import router from "./routes/builderRouter";
 
 import.meta.glob(["../images/**"]);
 

@@ -67,9 +67,7 @@ const onSubmit = async () => {
 
         userStore.setUser(res.data.user);
 
-        router.push({
-            name: "home",
-        });
+        window.location.href = "/builder";
     } catch (err) {
         if (err.response?.data?.errors) {
             Object.keys(err.response.data.errors).forEach((key) => {
@@ -86,33 +84,39 @@ const onSubmit = async () => {
 <template>
     <form action="" @submit.prevent="onSubmit">
         <div class="form-group">
-            <label> Email </label>
             <input
                 type="email"
                 v-model="form.email"
-                class="form-control"
+                class="input"
                 name="email"
+                placeholder="Email address"
             />
 
-            <p class="text-red-600" v-if="dirty.email && errors.email">
+            <p
+                class="text-btn-red-text bg-black/25 p-2"
+                v-if="dirty.email && errors.email"
+            >
                 {{ errors.email }}
             </p>
         </div>
         <div class="form-group">
-            <label> Password </label>
             <input
                 type="password"
                 v-model="form.password"
-                class="form-control"
+                class="input"
                 name="password"
+                placeholder="Password"
             />
-            <p class="text-red-600" v-if="dirty.password && errors.password">
+            <p
+                class="text-btn-red-text bg-black/25 p-2"
+                v-if="dirty.password && errors.password"
+            >
                 {{ errors.password }}
             </p>
         </div>
-        <div class="form-control" v-if="errorMessage.length">
+        <div class="input" v-if="errorMessage.length">
             <p>
-                <span class="text-red-600">
+                <span class="text-btn-red-text bg-black/25 p-2">
                     {{ errorMessage }}
                 </span>
             </p>
@@ -121,7 +125,7 @@ const onSubmit = async () => {
             <button
                 type="submit"
                 :disabled="!isValid || isSubmitting"
-                class="btn bg-sky-600 hover:bg-sky-800"
+                class="btn btn-blue w-full"
             >
                 <template v-if="isSubmitting">
                     <CircleNotchIcon class="animate-spin" />

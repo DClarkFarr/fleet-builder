@@ -21,6 +21,7 @@ module.exports = {
                 "box-gray": "#1b1d2f",
                 "box-gray-text": "#a9aaab",
                 "grow-green-text": "#dbeaed",
+                "grow-green-text-alt": "#b1ffe8",
                 "grow-green-grad": "#05774e",
                 "text-blue": "#24c4ef",
 

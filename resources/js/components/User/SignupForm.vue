@@ -101,9 +101,7 @@ const onSubmit = async () => {
 
         userStore.setUser(res.data.user);
 
-        router.push({
-            name: "home",
-        });
+        window.location.href = "/builder";
     } catch (err) {
         if (err.response?.data?.errors) {
             Object.keys(err.response.data.errors).forEach((key) => {

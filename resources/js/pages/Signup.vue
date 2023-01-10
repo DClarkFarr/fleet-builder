@@ -4,7 +4,7 @@ import SignupForm from "../components/User/SignupForm.vue";
 </script>
 <template>
     <FeLayout>
-        <div class="modal__content/50 p-6">
+        <div class="p-6">
             <h1 class="modal__title text-center text-2xl font-medium mb-6">
                 Create Account
             </h1>

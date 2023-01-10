@@ -1,12 +1,14 @@
 <script setup>
-import UserLayout from "../components/layouts/UserLayout.vue";
+import FeLayout from "../components/layouts/FeLayout.vue";
 import LoginForm from "../components/User/LoginForm.vue";
 </script>
 <template>
-    <UserLayout>
-        <div class="bg-gray-300 rounded-lg p-6 max-w-lg">
-            <h1>Login</h1>
+    <FeLayout>
+        <div class="p-6">
+            <h1 class="modal__title text-center text-2xl font-medium mb-6">
+                Login
+            </h1>
             <LoginForm />
         </div>
-    </UserLayout>
+    </FeLayout>
 </template>

@@ -1,5 +1,18 @@
 <script setup>
+import { useRouter } from "vue-router";
 import FeLayout from "../components/layouts/FeLayout.vue";
+import useUserStore from "../stores/userStore";
+
+const user = useUserStore();
+const router = useRouter();
+
+const onClickGetStarted = () => {
+    if (user.user) {
+        window.location.href = "/builder";
+    } else {
+        router.push({ name: "signup" });
+    }
+};
 </script>
 
 <template>
@@ -39,12 +52,12 @@ import FeLayout from "../components/layouts/FeLayout.vue";
             </ul>
 
             <div class="w-full">
-                <router-link
-                    :to="{ name: 'signup' }"
+                <button
+                    @click="onClickGetStarted"
                     class="btn block btn-blue w-full"
                 >
                     Get started
-                </router-link>
+                </button>
             </div>
         </div>
     </FeLayout>
