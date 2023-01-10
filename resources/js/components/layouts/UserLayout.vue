@@ -12,7 +12,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="layout layout--user">
+    <div
+        class="layout layout--user"
+        :class="{ 'has-admin-bar': userStore.isAdmin }"
+    >
         <template v-if="userStore.isAdmin">
             <div
                 class="bg-indigo-900 text-indigo-200 px-3 py-1 md:flex gap-x-2"
