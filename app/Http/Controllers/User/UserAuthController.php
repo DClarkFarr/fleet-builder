@@ -47,6 +47,7 @@ class UserAuthController extends Controller
     public function register(Request $req)
     {
         $validator = Validator::make($req->all(), [
+            'alliance' => 'required|string|min:3',
             'name' => 'required|string|min:3',
             'email' => 'required|email|unique:users',
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
@@ -57,6 +58,7 @@ class UserAuthController extends Controller
         }
 
         $user = new User;
+        $user->alliance = $req->alliance;
         $user->password = Hash::make($req->password);
         $user->email = $req->email;
         $user->name = $req->name;

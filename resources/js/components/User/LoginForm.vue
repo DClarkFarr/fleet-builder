@@ -131,7 +131,7 @@ const onSubmit = async () => {
         </div>
 
         <div class="form-group text-center">
-            <router-link class="text-sky-600" :to="{ name: 'user.signup' }">
+            <router-link class="text-sky-600" :to="{ name: 'signup' }">
                 Create Account
             </router-link>
         </div>

@@ -68,8 +68,8 @@ module.exports = {
 
                 "modal-tick": "#fefeff",
                 "modal-border": "#61656e",
-                "modal-bg": "#191f2b",
-                "modal-content": "#293546",
+                "modal-bg": "#b1d1dc",
+                "modal-content": "#697381",
                 "modal-title": "#20cbf7",
                 "modal-text": "#bbd9e3",
             },

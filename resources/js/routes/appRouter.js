@@ -5,8 +5,8 @@ import Login from "../pages/Login.vue";
 import Signup from "../pages/Signup.vue";
 
 const routes = [
-    { path: "/login", component: Login, name: "user.login" },
-    { path: "/signup", component: Signup, name: "user.signup" },
+    { path: "/login", component: Login, name: "login" },
+    { path: "/signup", component: Signup, name: "signup" },
     { path: "/", component: Home, name: "home" },
 ];
 

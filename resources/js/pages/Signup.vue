@@ -1,12 +1,14 @@
 <script setup>
-import UserLayout from "../components/layouts/UserLayout.vue";
+import FeLayout from "../components/layouts/FeLayout.vue";
 import SignupForm from "../components/User/SignupForm.vue";
 </script>
 <template>
-    <UserLayout>
-        <div class="bg-gray-300 rounded-lg p-6 max-w-lg">
-            <h1>Create Account</h1>
+    <FeLayout>
+        <div class="modal__content/50 p-6">
+            <h1 class="modal__title text-center text-2xl font-medium mb-6">
+                Create Account
+            </h1>
             <SignupForm />
         </div>
-    </UserLayout>
+    </FeLayout>
 </template>

@@ -1,25 +1,53 @@
 <script setup>
-import UserLayout from "../components/layouts/UserLayout.vue";
-import ContentBox from "../components/Themed/ContentBox.vue";
+import FeLayout from "../components/layouts/FeLayout.vue";
 </script>
 
 <template>
-    <UserLayout class="themed">
-        <div class="view view space-bg">
-            <div class="banner relative">
-                <img src="/images/banner-2.jpg" alt="banner" />
-                <div class="banner__logo absolute max-w-full w-[300px]">
-                    <img src="/images/big-logo.png" alt="logo" />
-                </div>
-            </div>
+    <FeLayout>
+        <div class="p-4">
+            <h1 class="text-4xl font-medium text-text-blue mb-2">
+                Welcome, fleet builder!
+            </h1>
+            <p class="text-lg text-white/75 mb-8">
+                What to do here, is as easy as 1, 2, 3!
+            </p>
 
-            <ContentBox>
-                <h1>Happy happy</h1>
-                <h1>Happy birthday</h1>
-                <h1>Happy we all belong to you</h1>
-            </ContentBox>
+            <ul
+                class="steps list-unstyled ml-6 mr-3 flex flex-col gap-y-4 mb-10"
+            >
+                <li class="steps__li">
+                    <div class="steps__number text-text-blue text-2xl">1.</div>
+                    <div class="steps__text text-white/75">
+                        Select which ships you have in your fleet, their chip
+                        level, etc.
+                    </div>
+                </li>
+                <li class="steps__li">
+                    <div class="steps__number text-text-blue text-2xl">2.</div>
+                    <div class="steps__text text-white/75">
+                        Build as many fleets as you want, compare bonsus stats
+                        and unlock the most effective combinations for you!
+                    </div>
+                </li>
+                <li class="steps__li">
+                    <div class="steps__number text-text-blue text-2xl">3.</div>
+                    <div class="steps__text text-white/75">
+                        Share with your friends, so they can see how awesome you
+                        are!
+                    </div>
+                </li>
+            </ul>
+
+            <div class="w-full">
+                <router-link
+                    :to="{ name: 'signup' }"
+                    class="btn block btn-blue w-full"
+                >
+                    Get started
+                </router-link>
+            </div>
         </div>
-    </UserLayout>
+    </FeLayout>
 </template>
 
 <style lang="less">
@@ -34,6 +62,15 @@ import ContentBox from "../components/Themed/ContentBox.vue";
             background: rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 33px 0px rgb(0, 0, 0, 0.5);
         }
+    }
+}
+
+.steps {
+    &__li {
+        @apply flex items-start gap-x-2;
+    }
+    &__text {
+        min-height: 30px;
     }
 }
 </style>

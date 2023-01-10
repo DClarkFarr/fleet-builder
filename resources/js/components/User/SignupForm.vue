@@ -10,6 +10,7 @@ import useUserStore from "../../stores/userStore";
 const userStore = useUserStore();
 
 const form = reactive({
+    alliance: "",
     name: "",
     email: "",
     password: "",
@@ -17,6 +18,7 @@ const form = reactive({
 });
 
 const errors = reactive({
+    alliance: "",
     name: "",
     email: "",
     password: "",
@@ -24,6 +26,7 @@ const errors = reactive({
 });
 
 const dirty = reactive({
+    alliance: false,
     name: false,
     email: false,
     password: false,
@@ -36,6 +39,14 @@ const isSubmitting = ref(false);
 const errorMessage = ref("");
 
 const validate = () => {
+    if (form.alliance) {
+        dirty.alliance = true;
+        errors.alliance = "";
+    } else {
+        errors.alliance =
+            "You'll need to have an alliance name, to share with others";
+    }
+
     if (form.email) {
         dirty.email = true;
         errors.email = validator.isEmail(form.email) ? "" : "Invalid email";
@@ -83,19 +94,20 @@ const onSubmit = async () => {
     errorMessage.value = "";
     errors.email = "";
     errors.password = "";
+    errors.alliance = "";
 
     try {
         const res = await apiClient.post("user/register", form);
 
-        userStore.setUser(user);
+        userStore.setUser(res.data.user);
 
         router.push({
             name: "home",
         });
     } catch (err) {
         if (err.response?.data?.errors) {
-            Object.keys(error.response.data.errors).forEach((key) => {
-                errors[key] = error.response.data.errors[key][0];
+            Object.keys(err.response.data.errors).forEach((key) => {
+                errors[key] = err.response.data.errors[key][0];
             });
         } else {
             errorMessage.value = err.response?.data?.message || err.message;
@@ -108,41 +120,74 @@ const onSubmit = async () => {
 <template>
     <form action="" @submit.prevent="onSubmit">
         <div class="form-group">
-            <label> Name </label>
-            <input type="text" v-model="form.name" class="form-control" />
+            <input
+                type="text"
+                v-model="form.alliance"
+                class="input"
+                placeholder="Alliance Name"
+            />
 
-            <p class="text-red-600" v-if="dirty.name && errors.name">
+            <p
+                class="text-btn-red-text bg-black/25 p-2"
+                v-if="dirty.alliance && errors.alliance"
+            >
+                {{ errors.alliance }}
+            </p>
+        </div>
+
+        <div class="form-group">
+            <input
+                type="text"
+                v-model="form.name"
+                class="input"
+                placeholder="Fleet Name"
+            />
+
+            <p
+                class="text-btn-red-text bg-black/25 p-2"
+                v-if="dirty.name && errors.name"
+            >
                 {{ errors.name }}
             </p>
         </div>
         <div class="form-group">
-            <label> Email </label>
-            <input type="email" v-model="form.email" class="form-control" />
+            <input
+                type="email"
+                v-model="form.email"
+                class="input"
+                placeholder="Email address"
+            />
 
-            <p class="text-red-600" v-if="dirty.email && errors.email">
+            <p
+                class="text-btn-red-text bg-black/25 p-2"
+                v-if="dirty.email && errors.email"
+            >
                 {{ errors.email }}
             </p>
         </div>
         <div class="form-group">
-            <label> Password </label>
             <input
                 type="password"
                 v-model="form.password"
-                class="form-control"
+                class="input"
+                placeholder="Password"
             />
-            <p class="text-red-600" v-if="dirty.password && errors.password">
+            <p
+                class="text-btn-red-text bg-black/25 p-1"
+                v-if="dirty.password && errors.password"
+            >
                 {{ errors.password }}
             </p>
         </div>
         <div class="form-group">
-            <label> Confirm Password </label>
             <input
                 type="password"
                 v-model="form.password_confirmation"
-                class="form-control"
+                class="input"
+                placeholder="Confirm Password"
             />
             <p
-                class="text-red-600"
+                class="text-btn-red-text bg-black/25 p-2"
                 v-if="
                     dirty.password_confirmation && errors.password_confirmation
                 "
@@ -150,18 +195,18 @@ const onSubmit = async () => {
                 {{ errors.password_confirmation }}
             </p>
         </div>
-        <div class="form-control" v-if="errorMessage.length">
+        <div class="input" v-if="errorMessage.length">
             <p>
-                <span class="text-red-600">
+                <span class="text-btn-red-text bg-black/25 p-2">
                     {{ errorMessage }}
                 </span>
             </p>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-8">
             <button
                 type="submit"
                 :disabled="!isValid || isSubmitting"
-                class="btn bg-sky-600 hover:bg-sky-800"
+                class="btn btn-blue block w-full"
             >
                 <template v-if="isSubmitting">
                     <CircleNotchIcon class="animate-spin" />
@@ -171,7 +216,7 @@ const onSubmit = async () => {
         </div>
 
         <div class="form-group text-center">
-            <router-link class="text-sky-600" :to="{ name: 'user.login' }">
+            <router-link class="text-sky-600" :to="{ name: 'login' }">
                 Login
             </router-link>
         </div>
