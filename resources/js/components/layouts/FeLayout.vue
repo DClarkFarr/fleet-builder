@@ -3,10 +3,10 @@ import UserLayout from "./UserLayout.vue";
 import ContentBox from "../../components/Themed/ContentBox.vue";
 import useUserStore from "../../stores/userStore";
 
-const user = useUserStore();
+const userStore = useUserStore();
 
 const onClickLogout = () => {
-    user.logout();
+    userStore.logout();
 };
 </script>
 
@@ -26,7 +26,7 @@ const onClickLogout = () => {
                         <div
                             class="flex justify-end gap-x-4 items-center w-full p-2"
                         >
-                            <template v-if="user.user">
+                            <template v-if="userStore.user">
                                 <a href="/builder" class="banner__link">
                                     My Fleets
                                 </a>

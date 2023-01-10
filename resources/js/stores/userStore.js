@@ -5,8 +5,11 @@ import apiClient from "../services/apiClient";
 const useUserStore = defineStore("user", () => {
     const user = ref(null);
 
+    const isLoading = ref(true);
+
     const setUser = (u) => {
         user.value = u;
+        isLoading.value = false;
     };
 
     const refresh = async () => {
@@ -39,6 +42,7 @@ const useUserStore = defineStore("user", () => {
     return {
         user,
         isAdmin,
+        isLoading,
         setUser,
         refresh,
         logout,

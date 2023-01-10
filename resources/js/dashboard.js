@@ -9,6 +9,7 @@ import Toast, { POSITION } from "vue-toastification";
 import App from "./App.vue";
 
 import router from "./routes/dashboardRouter.js";
+import useMustAuthState from "./hooks/useMustAuthState.js";
 
 import.meta.glob(["../images/**"]);
 
@@ -28,3 +29,5 @@ app.use(Toast, {
 });
 
 app.mount("#app");
+
+useMustAuthState();

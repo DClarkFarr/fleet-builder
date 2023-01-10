@@ -3,11 +3,11 @@ import { useRouter } from "vue-router";
 import FeLayout from "../components/layouts/FeLayout.vue";
 import useUserStore from "../stores/userStore";
 
-const user = useUserStore();
+const userStore = useUserStore();
 const router = useRouter();
 
 const onClickGetStarted = () => {
-    if (user.user) {
+    if (userStore.user) {
         window.location.href = "/builder";
     } else {
         router.push({ name: "signup" });
