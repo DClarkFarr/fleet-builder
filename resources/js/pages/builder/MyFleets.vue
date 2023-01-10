@@ -9,6 +9,7 @@ import useBuilderStore from "../../stores/builderStore";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import AddShipModal from "../../components/Themed/AddShipModal.vue";
 import UserShipCard from "../../components/Ship/UserShipCard.vue";
+import UserShipModal from "../../components/Themed/UserShipModal.vue";
 
 const userStore = useUserStore();
 const builderStore = useBuilderStore();
@@ -20,6 +21,20 @@ const showShipsModal = () => {
             ships: builderStore.ships,
             shipClasses: builderStore.shipClasses,
             onAdd: async (data) => {
+                await userStore.createOrUpdateUserShip(data);
+                $vfm.hideAll();
+            },
+        },
+    });
+};
+
+const showEditShipModal = (userShip) => {
+    $vfm.show({
+        component: UserShipModal,
+        bind: {
+            ship: userShip.ship,
+            userShip: userShip,
+            onSave: async (data) => {
                 await userStore.createOrUpdateUserShip(data);
                 $vfm.hideAll();
             },
@@ -74,6 +89,7 @@ onBeforeMount(() => {
                                         v-for="userShip in userStore.ships"
                                         :key="userShip.id_user_ship"
                                         :userShip="userShip"
+                                        @click="showEditShipModal(userShip)"
                                     />
                                 </div>
                             </template>

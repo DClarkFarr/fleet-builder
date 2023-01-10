@@ -23,9 +23,11 @@ const chipCount = computed(() => {
 
 <template>
     <div
-        class="ship ship-box"
+        v-tooltip="computedUserShip.visible ? false : 'Hidden from workshops'"
+        class="ship ship-box relative"
         :class="[
             'ship-box--' + computedUserShip.ship.ship_level.name.toLowerCase(),
+            { 'ship--hidden': !computedUserShip.visible },
         ]"
     >
         <div class="ship-box__content">
@@ -41,13 +43,13 @@ const chipCount = computed(() => {
                         </div>
                         <div>
                             <div
-                                class="ship__chips flex gap-x-1 mb-4"
+                                class="ship__chips flex gap-x-1 mb-4 cursor-pointer"
                                 v-tooltip="
                                     'Chip level: ' + computedUserShip.chip_level
                                 "
                             >
                                 <div
-                                    class="chip cursor-pointer"
+                                    class="chip"
                                     v-for="i of chipCount"
                                     :key="i"
                                     :class="{
@@ -121,6 +123,11 @@ const chipCount = computed(() => {
 </template>
 
 <style lang="less" scoped>
+.ship {
+    &--hidden {
+        filter: grayscale(0.65);
+    }
+}
 .ship-box {
     &__strengths-total {
         div {

@@ -1,6 +1,8 @@
 <script setup>
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
+import ToggleSwitch from "../controls/ToggleSwitch.vue";
+
 import { getShipChipsCount } from "../../methods/ship";
 
 const props = defineProps({
@@ -23,6 +25,7 @@ const isSaving = ref(false);
 const form = reactive({
     name: "",
     chip_level: 0,
+    visible: true,
 });
 
 const onSubmit = async () => {
@@ -39,9 +42,30 @@ const onSubmit = async () => {
     isSaving.value = false;
 };
 
+const resetForm = () => {
+    if (props.userShip) {
+        form.name = props.userShip.name;
+        form.chip_level = props.userShip.chip_level;
+        form.visible = props.userShip.visible;
+    } else {
+        form.name = "";
+        form.chip_level = 0;
+        form.visible = true;
+    }
+};
 const chipCount = computed(() => {
     return getShipChipsCount(props.ship);
 });
+
+watch(
+    () => props.userShip,
+    () => {
+        resetForm();
+    },
+    {
+        immediate: true,
+    }
+);
 </script>
 
 <template>
@@ -70,6 +94,19 @@ const chipCount = computed(() => {
             </div>
         </div>
         <div class="form-group">
+            <label>Visibility</label>
+            <div>
+                <ToggleSwitch
+                    v-model="form.visible"
+                    :label="
+                        form.visible
+                            ? `Visible to workshops`
+                            : `Hidden from workshops`
+                    "
+                />
+            </div>
+        </div>
+        <div class="form-group pt-4">
             <button class="btn btn-blue" type="submit" :disabled="isSaving">
                 <template v-if="isSaving">
                     <CircleNotchIcon class="animate-spin" />
