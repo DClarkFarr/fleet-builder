@@ -14,10 +14,19 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    onDelete: {
+        type: Function,
+        default: null,
+    },
 });
 
 const onSaveShip = (data) => {
     return props.onSave(data);
+};
+const onDeleteShip = (userShip) => {
+    if (props.onDelete) {
+        return props.onDelete(userShip);
+    }
 };
 </script>
 
@@ -36,6 +45,7 @@ const onSaveShip = (data) => {
                     :ship="userShip.ship"
                     :userShip="userShip"
                     :onSave="onSaveShip"
+                    :onDelete="onDeleteShip"
                 />
             </div>
         </ContentBox>

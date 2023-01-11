@@ -38,6 +38,10 @@ const showEditShipModal = (userShip) => {
                 await userStore.createOrUpdateUserShip(data);
                 $vfm.hideAll();
             },
+            onDelete: async (userShip) => {
+                await userStore.deleteUserShip(userShip.id_user_ship);
+                $vfm.hideAll();
+            },
         },
     });
 };

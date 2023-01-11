@@ -49,11 +49,11 @@ class User extends Authenticatable
      */
     public function ships()
     {
-        return $this->hasMany(UserShip::class, 'id_user', 'id_user');
+        return $this->hasMany(UserShip::class, 'id_user', 'id');
     }
     public function workshops()
     {
-        return $this->hasMany(Workshop::class, 'id_user', 'id_user');
+        return $this->hasMany(Workshop::class, 'id_user', 'id');
     }
 
 

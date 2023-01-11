@@ -367,4 +367,13 @@ class ShipService
 
         return $userShip;
     }
+
+    public function deleteUserShip(User $user, $id_user_ship)
+    {
+        $ship = $user->ships()->find($id_user_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+        $ship->delete();
+    }
 }

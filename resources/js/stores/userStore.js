@@ -83,6 +83,27 @@ const useUserStore = defineStore("user", () => {
         }
     };
 
+    const deleteUserShip = async (id_user_ship) => {
+        try {
+            await apiClient.delete("user/ships/" + id_user_ship);
+
+            const ss = [...ships.value].map((s) => toRaw(s));
+
+            const index = ss.findIndex((s) => s.id_user_ship === id_user_ship);
+            ss.splice(index, 1);
+
+            ships.value = ss;
+
+            return true;
+        } catch (err) {
+            toast.error(
+                "Error deleting ship: " +
+                    (err.response?.data?.message || err.message)
+            );
+            return false;
+        }
+    };
+
     return {
         user,
         ships,
@@ -93,6 +114,7 @@ const useUserStore = defineStore("user", () => {
         refresh,
         logout,
         loadShips,
+        deleteUserShip,
         createOrUpdateUserShip,
     };
 });

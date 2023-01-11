@@ -4,6 +4,7 @@ import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import ToggleSwitch from "../controls/ToggleSwitch.vue";
 
 import { getShipChipsCount } from "../../methods/ship";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     ship: {
@@ -18,7 +19,13 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    onDelete: {
+        type: Function,
+        default: null,
+    },
 });
+
+const toast = useToast();
 
 const isSaving = ref(false);
 
@@ -37,7 +44,24 @@ const onSubmit = async () => {
             id_ship: props.ship.id_ship,
             id_user_ship: props.userShip?.id_user_ship,
         });
-    } catch (err) {}
+    } catch (err) {
+        toast.error(error.response?.data?.message || err.message);
+    }
+
+    isSaving.value = false;
+};
+
+const onClickDelete = async (userShip) => {
+    if (!props.onDelete) {
+        return false;
+    }
+    isSaving.value = true;
+
+    try {
+        props.onDelete(userShip);
+    } catch (err) {
+        toast.error(error.response?.data?.message || err.message);
+    }
 
     isSaving.value = false;
 };
@@ -93,7 +117,7 @@ watch(
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="userShip">
             <label>Visibility</label>
             <div>
                 <ToggleSwitch
@@ -106,15 +130,30 @@ watch(
                 />
             </div>
         </div>
-        <div class="form-group pt-4">
-            <button class="btn btn-blue" type="submit" :disabled="isSaving">
-                <template v-if="isSaving">
-                    <CircleNotchIcon class="animate-spin" />
-                </template>
-                <template v-else>
-                    {{ userShip ? "Update Ship" : "Add Ship" }}
-                </template>
-            </button>
+        <div class="form-group pt-4 flex gap-x-4 justify-between">
+            <div>
+                <button class="btn btn-blue" type="submit" :disabled="isSaving">
+                    <template v-if="isSaving">
+                        <CircleNotchIcon class="animate-spin" />
+                    </template>
+                    <template v-else>
+                        {{ userShip ? "Update Ship" : "Add Ship" }}
+                    </template>
+                </button>
+            </div>
+            <div v-if="userShip && onDelete">
+                <button
+                    class="btn btn-red"
+                    type="submit"
+                    @click.prevent="onClickDelete(userShip)"
+                    :disabled="isSaving"
+                >
+                    <template v-if="isSaving">
+                        <CircleNotchIcon class="animate-spin" />
+                    </template>
+                    <template v-else> Delete </template>
+                </button>
+            </div>
         </div>
     </form>
 </template>

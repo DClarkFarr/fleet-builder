@@ -131,4 +131,19 @@ class UserAuthController extends Controller
             ['row' => $userShip->toArray()]
         );
     }
+
+    public function deleteShip(Request $request, $id_user_ship)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+
+        $shipService = new ShipService;
+
+        $shipService->deleteUserShip($user, $id_user_ship);
+
+        return response()->json(
+            ['message' => 'Ship deleted']
+        );
+    }
 }
