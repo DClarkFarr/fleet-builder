@@ -411,4 +411,13 @@ class ShipService
 
         return $this->populateWorkshopForResponse($workshop);
     }
+
+    public function listWorkshops(User $user)
+    {
+        $workshops = $user->workshops->map(function ($workshop) {
+            return $this->populateWOrkshopForResponse($workshop);
+        });
+
+        return $workshops;
+    }
 }

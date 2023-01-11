@@ -159,4 +159,18 @@ class UserAuthController extends Controller
             'row' => $workshop->toArray(),
         ]);
     }
+
+    public function listWorkshops()
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $workshops = $shipService->listWorkshops($user);
+
+        return response()->json([
+            'rows' => $workshops->toArray(),
+        ]);
+    }
 }

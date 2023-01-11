@@ -28,6 +28,7 @@ Route::prefix('/user')->group(function () {
         Route::post('/ships', [UserAuthController::class, 'createOrUpdateShip']);
         Route::delete('/ships/{id_user_ship}', [UserAuthController::class, 'deleteShip']);
 
+        Route::get('/workshops', [UserAuthController::class, 'listWorkshops']);
         Route::post('/workshops', [UserAuthController::class, 'createOrUpdateWorkshop']);
 
         Route::post('/logout', [UserAuthController::class, 'logout']);

@@ -21,7 +21,7 @@ const showWorkshopModal = () => {
         component: CreateWorkshopModal,
         bind: {
             onSave: async (data) => {
-                await userStore.createWorkshop(data);
+                await builderStore.createWorkshop(data);
                 $vfm.hideAll();
             },
         },
@@ -35,7 +35,7 @@ const showShipsModal = () => {
             ships: builderStore.ships,
             shipClasses: builderStore.shipClasses,
             onAdd: async (data) => {
-                await userStore.createOrUpdateUserShip(data);
+                await builderStore.createOrUpdateUserShip(data);
                 $vfm.hideAll();
             },
         },
@@ -49,11 +49,11 @@ const showEditShipModal = (userShip) => {
             ship: userShip.ship,
             userShip: userShip,
             onSave: async (data) => {
-                await userStore.createOrUpdateUserShip(data);
+                await builderStore.createOrUpdateUserShip(data);
                 $vfm.hideAll();
             },
             onDelete: async (userShip) => {
-                await userStore.deleteUserShip(userShip.id_user_ship);
+                await builderStore.deleteUserShip(userShip.id_user_ship);
                 $vfm.hideAll();
             },
         },
@@ -63,11 +63,12 @@ const showEditShipModal = (userShip) => {
 const allLoaded = ref(false);
 
 onBeforeMount(() => {
-    const def1 = userStore.loadShips();
-    const def2 = builderStore.loadShips();
+    const def1 = builderStore.loadShips();
+    const def2 = builderStore.loadUserShips();
     const def3 = builderStore.loadShipClasses();
+    const def4 = builderStore.loadWorkshops();
 
-    Promise.all([def1, def2, def3]).then(() => {
+    Promise.all([def1, def2, def3, def4]).then(() => {
         allLoaded.value = true;
     });
 });
@@ -104,7 +105,7 @@ onBeforeMount(() => {
                                     class="user-ships flex flex-col w-full gap-y-2"
                                 >
                                     <UserShipCard
-                                        v-for="userShip in userStore.ships"
+                                        v-for="userShip in builderStore.userShips"
                                         :key="userShip.id_user_ship"
                                         :userShip="userShip"
                                         @click="showEditShipModal(userShip)"
