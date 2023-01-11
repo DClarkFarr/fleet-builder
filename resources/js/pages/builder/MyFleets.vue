@@ -12,8 +12,10 @@ import UserShipModal from "../../components/Themed/UserShipModal.vue";
 
 import CreateWorkshopModal from "../../components/Themed/workshop/CreateWorkshopModal.vue";
 import WorkshopListItem from "../../components/Themed/workshop/WorkshopListItem.vue";
+import { useRouter } from "vue-router";
 
 const builderStore = useBuilderStore();
+const router = useRouter();
 
 const showWorkshopModal = () => {
     $vfm.show({
@@ -60,7 +62,12 @@ const showEditShipModal = (userShip) => {
 };
 
 const onSelectWorkshop = (workshop) => {
-    console.log("you selected workshop", workshop);
+    router.push({
+        name: "builder.workshop",
+        params: {
+            id_workshop: workshop.id_workshop,
+        },
+    });
 };
 
 const onDeleteWorkshop = async (workshop) => {
