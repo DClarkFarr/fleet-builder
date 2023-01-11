@@ -3,7 +3,6 @@ import { onBeforeMount, ref } from "vue";
 import { $vfm } from "vue-final-modal";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
-import useUserStore from "../../stores/userStore";
 import useBuilderStore from "../../stores/builderStore";
 
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
@@ -12,8 +11,8 @@ import UserShipCard from "../../components/Ship/UserShipCard.vue";
 import UserShipModal from "../../components/Themed/UserShipModal.vue";
 
 import CreateWorkshopModal from "../../components/Themed/workshop/CreateWorkshopModal.vue";
+import WorkshopListItem from "../../components/Themed/workshop/WorkshopListItem.vue";
 
-const userStore = useUserStore();
 const builderStore = useBuilderStore();
 
 const showWorkshopModal = () => {
@@ -58,6 +57,15 @@ const showEditShipModal = (userShip) => {
             },
         },
     });
+};
+
+const onSelectWorkshop = (workshop) => {
+    console.log("you selected workshop", workshop);
+};
+
+const onDeleteWorkshop = async (workshop) => {
+    console.log("delete workshop", workshop);
+    //await builderStore.deleteWorkshop(workshop.id_workshop);
 };
 
 const allLoaded = ref(false);
@@ -140,7 +148,15 @@ onBeforeMount(() => {
                                 </button>
                             </div>
                         </div>
-                        <div class="bordered p-6"></div>
+                        <div class="bordered p-6 grid gap-y-2">
+                            <WorkshopListItem
+                                v-for="workshop in builderStore.workshops"
+                                :key="workshop.id_workshop"
+                                :workshop="workshop"
+                                :onDelete="onDeleteWorkshop"
+                                @select="onSelectWorkshop"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
