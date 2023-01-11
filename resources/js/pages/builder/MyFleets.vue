@@ -78,10 +78,18 @@ const onDeleteWorkshop = async (workshop) => {
 const allLoaded = ref(false);
 
 onBeforeMount(() => {
-    const def1 = builderStore.loadShips();
-    const def2 = builderStore.loadUserShips();
-    const def3 = builderStore.loadShipClasses();
-    const def4 = builderStore.loadWorkshops();
+    const def1 = builderStore.ships.length
+        ? Promise.resolve()
+        : builderStore.loadShips();
+    const def2 = builderStore.userShips.length
+        ? Promise.resolve()
+        : builderStore.loadUserShips();
+    const def3 = builderStore.shipClasses.length
+        ? Promise.resolve()
+        : builderStore.loadShipClasses();
+    const def4 = builderStore.workshops.length
+        ? Promise.resolve()
+        : builderStore.loadWorkshops();
 
     Promise.all([def1, def2, def3, def4]).then(() => {
         allLoaded.value = true;
