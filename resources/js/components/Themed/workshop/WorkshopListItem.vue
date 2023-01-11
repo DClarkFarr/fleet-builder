@@ -49,7 +49,7 @@ const onClickSelect = () => {
                             {{ workshop.name }}
                         </div>
                     </div>
-                    <div>
+                    <div class="self-end">
                         <div class="text-sm">
                             Ships: <b>{{ shipCount }}</b>
                         </div>

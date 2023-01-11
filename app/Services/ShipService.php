@@ -420,4 +420,15 @@ class ShipService
 
         return $workshops;
     }
+
+    public function deleteWorkshop(User $user, $id_workshop)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $workshop->fleets()->delete();
+        $workshop->delete();
+    }
 }

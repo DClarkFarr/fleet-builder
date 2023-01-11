@@ -10,6 +10,8 @@ import App from "./App.vue";
 import router from "./routes/builderRouter";
 import useMustAuthState from "./hooks/useMustAuthState.js";
 
+import ConfirMModal from "./components/Themed/controls/ConfirmModal.vue";
+
 import.meta.glob(["../images/**"]);
 
 const app = createApp(App);
@@ -17,6 +19,7 @@ const pinia = createPinia();
 app.use(pinia);
 
 app.component("VSelect", VSelect);
+app.component("ConfirmModal", ConfirMModal);
 
 app.use(router);
 app.use(vfmPlugin);

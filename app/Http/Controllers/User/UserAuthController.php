@@ -173,4 +173,18 @@ class UserAuthController extends Controller
             'rows' => $workshops->toArray(),
         ]);
     }
+
+    public function deleteWorkshop($id_workshop)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $shipService->deleteWorkshop($user, $id_workshop);
+
+        return response()->json(
+            ['message' => 'Workshop deleted']
+        );
+    }
 }

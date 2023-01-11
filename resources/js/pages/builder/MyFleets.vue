@@ -13,9 +13,12 @@ import UserShipModal from "../../components/Themed/UserShipModal.vue";
 import CreateWorkshopModal from "../../components/Themed/workshop/CreateWorkshopModal.vue";
 import WorkshopListItem from "../../components/Themed/workshop/WorkshopListItem.vue";
 import { useRouter } from "vue-router";
+import { showConfirmModal } from "../../components/Themed/controls/ConfirmModal.vue";
+import { useToast } from "vue-toastification";
 
 const builderStore = useBuilderStore();
 const router = useRouter();
+const toast = useToast();
 
 const showWorkshopModal = () => {
     $vfm.show({
@@ -70,9 +73,38 @@ const onSelectWorkshop = (workshop) => {
     });
 };
 
-const onDeleteWorkshop = async (workshop) => {
-    console.log("delete workshop", workshop);
-    //await builderStore.deleteWorkshop(workshop.id_workshop);
+const onClickDeleteWorkshop = async (workshop) => {
+    showConfirmModal({
+        title: `Really delete ${
+            workshop.arcade ? "arcade" : "simulation"
+        } workshop "${workshop.name}" ?`,
+        message:
+            "On a moral level, it's totally fine. Your ships will be fine, as well. But all fleet configurations will be gone. Proceed?",
+        onConfirm: () => {
+            onClickDeleteWorkshop2(workshop);
+        },
+    });
+};
+
+const onClickDeleteWorkshop2 = async (workshop) => {
+    showConfirmModal({
+        title: `For sure?`,
+        message: `Think of all the fun you and workshop "${workshop.name}" had together.`,
+        onConfirm: () => {
+            onClickDeleteWorkshop3(workshop);
+        },
+    });
+};
+
+const onClickDeleteWorkshop3 = async (workshop) => {
+    showConfirmModal({
+        title: `Last chance for real!`,
+        message: `Think of the children...`,
+        onConfirm: () => {
+            builderStore.deleteWorkshop(workshop.id_workshop);
+            toast.info("Workshop delete successfully");
+        },
+    });
 };
 
 const allLoaded = ref(false);
@@ -168,7 +200,7 @@ onBeforeMount(() => {
                                 v-for="workshop in builderStore.workshops"
                                 :key="workshop.id_workshop"
                                 :workshop="workshop"
-                                :onDelete="onDeleteWorkshop"
+                                :onDelete="onClickDeleteWorkshop"
                                 @select="onSelectWorkshop"
                             />
                         </div>

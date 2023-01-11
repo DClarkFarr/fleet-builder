@@ -30,6 +30,7 @@ Route::prefix('/user')->group(function () {
 
         Route::get('/workshops', [UserAuthController::class, 'listWorkshops']);
         Route::post('/workshops', [UserAuthController::class, 'createOrUpdateWorkshop']);
+        Route::delete('/workshops/{id_workshop}', [UserAuthController::class, 'deleteWorkshop']);
 
         Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);

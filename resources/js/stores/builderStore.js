@@ -117,6 +117,27 @@ const useBuilderStore = defineStore("builder", () => {
         }
     };
 
+    const deleteWorkshop = async (id_workshop) => {
+        try {
+            await apiClient.delete(`user/workshops/${id_workshop}`);
+
+            const ws = [...workshops.value].map((w) => toRaw(w));
+
+            const index = ws.findIndex((w) => w.id_workshop === id_workshop);
+            ws.splice(index, 1);
+
+            workshops.value = ws;
+
+            return true;
+        } catch (err) {
+            toast.error(
+                "Error deleting workshop: " +
+                    (err.response?.data?.message || err.message)
+            );
+            return false;
+        }
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -132,6 +153,7 @@ const useBuilderStore = defineStore("builder", () => {
         createWorkshop,
         deleteUserShip,
         createOrUpdateUserShip,
+        deleteWorkshop,
     };
 });
 
