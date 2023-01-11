@@ -27,6 +27,9 @@ Route::prefix('/user')->group(function () {
         Route::get('/ships', [UserAuthController::class, 'getShips']);
         Route::post('/ships', [UserAuthController::class, 'createOrUpdateShip']);
         Route::delete('/ships/{id_user_ship}', [UserAuthController::class, 'deleteShip']);
+
+        Route::post('/workshops', [UserAuthController::class, 'createOrUpdateWorkshop']);
+
         Route::post('/logout', [UserAuthController::class, 'logout']);
         Route::get('/', [UserAuthController::class, 'auth']);
     });

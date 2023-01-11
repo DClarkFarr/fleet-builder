@@ -14,6 +14,9 @@ const useUserStore = defineStore("user", () => {
     const ships = ref([]);
     const isLoadingShips = ref(false);
 
+    const workshops = ref([]);
+    const isLoadingWorkshops = ref(false);
+
     const setUser = (u) => {
         user.value = u;
         isLoading.value = false;
@@ -54,6 +57,16 @@ const useUserStore = defineStore("user", () => {
         });
 
         isLoadingShips.value = false;
+    };
+
+    const loadWorkshops = async () => {
+        isLoadingWorkshops.value = true;
+
+        await apiClient.get("user/workshops").then((response) => {
+            workshops.value = response.data.rows;
+        });
+
+        isLoadingWorkshops.value = false;
     };
 
     const createOrUpdateUserShip = async (data) => {
@@ -104,16 +117,35 @@ const useUserStore = defineStore("user", () => {
         }
     };
 
+    const createWorkshop = async (data) => {
+        try {
+            const res = await apiClient.post("user/workshops", data);
+
+            workshops.value.push(res.data.row);
+
+            return res.data.row;
+        } catch (err) {
+            toast.error(
+                "Error creating workshop: " +
+                    (err.response?.data?.message || err.message)
+            );
+            return false;
+        }
+    };
+
     return {
         user,
         ships,
         isAdmin,
         isLoading,
         isLoadingShips,
+        workshops,
+        isLoadingWorkshops,
         setUser,
         refresh,
         logout,
         loadShips,
+        createWorkshop,
         deleteUserShip,
         createOrUpdateUserShip,
     };

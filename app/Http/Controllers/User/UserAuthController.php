@@ -137,7 +137,6 @@ class UserAuthController extends Controller
         $auth = Auth::user();
         $user = User::find($auth->id);
 
-
         $shipService = new ShipService;
 
         $shipService->deleteUserShip($user, $id_user_ship);
@@ -145,5 +144,19 @@ class UserAuthController extends Controller
         return response()->json(
             ['message' => 'Ship deleted']
         );
+    }
+
+    public function createOrUpdateWorkshop(Request $request)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $workshop = $shipService->createOrUpdateWorkshop($user, $request->all());
+
+        return response()->json([
+            'row' => $workshop->toArray(),
+        ]);
     }
 }

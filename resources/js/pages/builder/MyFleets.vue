@@ -11,8 +11,22 @@ import AddShipModal from "../../components/Themed/AddShipModal.vue";
 import UserShipCard from "../../components/Ship/UserShipCard.vue";
 import UserShipModal from "../../components/Themed/UserShipModal.vue";
 
+import CreateWorkshopModal from "../../components/Themed/workshop/CreateWorkshopModal.vue";
+
 const userStore = useUserStore();
 const builderStore = useBuilderStore();
+
+const showWorkshopModal = () => {
+    $vfm.show({
+        component: CreateWorkshopModal,
+        bind: {
+            onSave: async (data) => {
+                await userStore.createWorkshop(data);
+                $vfm.hideAll();
+            },
+        },
+    });
+};
 
 const showShipsModal = () => {
     $vfm.show({
@@ -107,10 +121,23 @@ onBeforeMount(() => {
                         </div>
                     </div>
                     <div class="my-fleets__workshops h-full lg:w-1/2">
-                        <div
-                            class="title text-2xl text-modal-title font-medium"
-                        >
-                            My Workshops
+                        <div class="flex w-full items-end mb-2">
+                            <div>
+                                <div
+                                    class="title leading-none text-2xl text-modal-title font-medium"
+                                >
+                                    My Workshops
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <button
+                                    class="btn btn-blue btn-sm ml-4"
+                                    @click="showWorkshopModal"
+                                    v-if="allLoaded"
+                                >
+                                    Add Workshop
+                                </button>
+                            </div>
                         </div>
                         <div class="bordered p-6"></div>
                     </div>

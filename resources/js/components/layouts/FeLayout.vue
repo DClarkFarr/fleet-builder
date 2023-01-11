@@ -13,8 +13,8 @@ const onClickLogout = () => {
 <template>
     <UserLayout class="themed">
         <div class="view view space-bg">
-            <div class="banner relative mb-10">
-                <img src="/images/banner-2.jpg" alt="banner" />
+            <div class="banner relative mb-10 max-w-[1920px] mx-auto">
+                <img src="/images/banner-2.jpg" alt="banner" class="mx-auto" />
 
                 <div class="banner__logo absolute max-w-full w-[300px]">
                     <router-link :to="{ name: 'home' }">

@@ -11,7 +11,6 @@ const useBuilderStore = defineStore("builder", () => {
     const loadShips = async () => {
         isLoadingShips.value = true;
 
-        console.log("should be calling data/ships");
         await apiClient.get("data/ships").then((response) => {
             ships.value = response.data.rows;
         });

@@ -41,9 +41,9 @@ class WorkshopFleet extends Model
      * Relations
      */
 
-    public function ships()
+    public function userShips()
     {
-        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_user_ship', 'id_workshop_fleet', 'ships');
+        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_user_ship', 'id_workshop_fleet', 'userShips');
     }
 
 

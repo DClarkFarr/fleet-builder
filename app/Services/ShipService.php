@@ -7,6 +7,7 @@ use App\Models\ShipClass;
 use App\Models\ShipLevel;
 use App\Models\User;
 use App\Models\UserShip;
+use App\Models\Workshop;
 use Exception;
 
 class ShipService
@@ -241,6 +242,19 @@ class ShipService
         return $ship;
     }
 
+    public function populateWorkshopForResponse(Workshop $workshop)
+    {
+        $workshop->load(['fleets', 'fleets.userShips']);
+
+        $workshop->fleets->each(function ($fleet) {
+            $fleet->userShips->each(function ($userShip) {
+                $userShip->ship = $this->populateShipForResponse($userShip->ship);
+            });
+        });
+
+        return $workshop;
+    }
+
     public function updateSlotsByType(int $id_ship, string $type, array $slots)
     {
         $ship = Ship::find($id_ship);
@@ -375,5 +389,26 @@ class ShipService
             throw new \Exception('Ship not found', 404);
         }
         $ship->delete();
+    }
+
+    public function createOrUpdateWorkshop(User $user, $data)
+    {
+        $id_workshop = $data['id_workshop'] ?? null;
+        unset($data['id_workshop']);
+
+        if ($id_workshop) {
+            $workshop = Workshop::find($id_workshop);
+            if (!$workshop) {
+                throw new \Exception('Workshop not found', 404);
+            }
+        } else {
+            $workshop = new Workshop();
+            $workshop->id_user = $user->id;
+        }
+
+        $workshop->fill($data);
+        $workshop->save();
+
+        return $this->populateWorkshopForResponse($workshop);
     }
 }
