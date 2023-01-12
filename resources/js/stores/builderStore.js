@@ -179,6 +179,25 @@ const useBuilderStore = defineStore("builder", () => {
             });
     };
 
+    const deleteFleet = async (id_workshop, id_workshop_fleet) => {
+        return apiClient
+            .delete(`user/workshops/${id_workshop}/fleets/${id_workshop_fleet}`)
+            .then(() => {
+                const ws = [...workshops.value].map((w) => toRaw(w));
+
+                const wsIndex = ws.findIndex(
+                    (w) => w.id_workshop === parseInt(id_workshop)
+                );
+
+                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                    (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
+                );
+                ws[wsIndex].fleets.splice(fleetIndex, 1);
+
+                workshops.value = ws;
+            });
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -197,6 +216,7 @@ const useBuilderStore = defineStore("builder", () => {
         deleteWorkshop,
         loadWorkshopFleets,
         createOrUpdateFleet,
+        deleteFleet,
     };
 });
 

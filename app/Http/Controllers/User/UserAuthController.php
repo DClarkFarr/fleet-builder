@@ -226,4 +226,18 @@ class UserAuthController extends Controller
             'row' => $workshopFleet->toArray(),
         ]);
     }
+
+    public function deleteWorkshopFleet($id_workshop, $id_workshop_fleet)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $shipService->deleteWorkshopFleet($user, $id_workshop, $id_workshop_fleet);
+
+        return response()->json(
+            ['message' => 'Workshop fleet deleted']
+        );
+    }
 }

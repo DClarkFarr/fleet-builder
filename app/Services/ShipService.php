@@ -482,4 +482,19 @@ class ShipService
 
         return $fleets;
     }
+
+    public function deleteWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $fleet = $workshop->fleets()->find($id_workshop_fleet);
+        if (!$fleet) {
+            throw new \Exception('Fleet not found', 404);
+        }
+
+        $fleet->delete();
+    }
 }

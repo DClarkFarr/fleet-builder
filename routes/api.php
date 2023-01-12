@@ -36,6 +36,8 @@ Route::prefix('/user')->group(function () {
                 Route::delete('/', [UserAuthController::class, 'deleteWorkshop']);
                 Route::get('/fleets', [UserAuthController::class, 'getWorkshopFleets']);
                 Route::post('/fleets', [UserAuthController::class, 'createOrUpdateWorkshopFleet']);
+
+                Route::delete('/fleets/{id_workshop_fleet}', [UserAuthController::class, 'deleteWorkshopFleet']);
             });
         });
 

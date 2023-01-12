@@ -35,8 +35,11 @@ const onSelectFleet = (location, fleet) => {
                 );
                 toast.success("Fleet saved successfully");
             },
-            onDelete: async (fleet) => {
-                await builderStore.deleteFleet(fleet.id_workshop_fleet);
+            onDelete: async (id_workshop_fleet) => {
+                await builderStore.deleteFleet(
+                    workshop.value?.id_workshop,
+                    id_workshop_fleet
+                );
                 $vfm.hideAll();
             },
         },
