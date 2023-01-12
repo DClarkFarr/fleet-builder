@@ -51,7 +51,12 @@ const isEmpty = computed(() => {
             @click="onSelectFleet"
         >
             <div class="fleet-slot__button">
-                <LockIcon />
+                <template v-if="!isEmpty">
+                    <img src="/images/fleet-icon.png" />
+                </template>
+                <template v-else>
+                    <LockIcon />
+                </template>
             </div>
             <div class="sleet-slot__label text-xs text-white">
                 {{ locationName }}
