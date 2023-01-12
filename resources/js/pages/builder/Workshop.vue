@@ -85,6 +85,14 @@ onBeforeMount(() => {
     <BuilderLayout>
         <div class="workshop max-w-6xl flex flex-col justify-center mx-auto">
             <div class="workshop__heading mb-8">
+                <div class="mb-2">
+                    <router-link
+                        class="text-grow-green-text-alt"
+                        :to="{ name: 'builder.fleets' }"
+                    >
+                        Back to Fleets
+                    </router-link>
+                </div>
                 <h1 class="text-2xl font-medium mb-2 modal__title">
                     {{ workshop?.name || "Workshop" }}
                 </h1>

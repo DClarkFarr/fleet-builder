@@ -21,7 +21,7 @@ const fleetCount = computed(() => {
 
 const shipCount = computed(() => {
     return props.workshop.fleets.reduce((acc, fleet) => {
-        return acc + fleet.ships.length;
+        return acc + fleet.user_ships.length;
     }, 0);
 });
 

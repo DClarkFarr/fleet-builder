@@ -48,7 +48,7 @@ const useBuilderStore = defineStore("builder", () => {
 
         await apiClient.get("user/workshops").then((response) => {
             workshops.value = response.data.rows.map((r) => {
-                return { ...r, fleets: [] };
+                return { ...r };
             });
         });
 

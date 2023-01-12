@@ -243,13 +243,15 @@ class ShipService
         return $ship;
     }
 
-    public function populateWorkshopForResponse(Workshop $workshop)
+    public function populateWorkshopForResponse(Workshop $workshop, $shallow = false)
     {
         $workshop->load(['fleets', 'fleets.userShips']);
 
-        $workshop->fleets->each(function ($fleet) {
-            $this->populateFleetForResponse($fleet);
-        });
+        if (!$shallow) {
+            $workshop->fleets->each(function ($fleet) {
+                $this->populateFleetForResponse($fleet);
+            });
+        }
 
         return $workshop;
     }
@@ -425,9 +427,7 @@ class ShipService
     public function listWorkshops(User $user)
     {
         $workshops = $user->workshops->map(function ($workshop) {
-            // return $this->populateWOrkshopForResponse($workshop);
-
-            return $workshop;
+            return $this->populateWOrkshopForResponse($workshop, true);
         });
 
         return $workshops;
