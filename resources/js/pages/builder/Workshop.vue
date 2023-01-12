@@ -1,15 +1,64 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, computed } from "vue";
 import { $vfm } from "vue-final-modal";
+import DataService from "../../services/DataService";
+
+import { useToast } from "vue-toastification";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
 import useBuilderStore from "../../stores/builderStore";
+import { useRoute } from "vue-router";
+import FleetItem from "../../components/Themed/workshop/FleetItem.vue";
+import FleetFormModal from "../../components/Themed/workshop/FleetFormModal.vue";
 
-import LockIcon from "~icons/fa-solid/unlock-alt";
+const route = useRoute();
+
+const fleetLocations = DataService.getFleetLocations();
 
 const builderStore = useBuilderStore();
 
 const allLoaded = ref(false);
+
+const onSelectFleet = (location, fleet) => {
+    $vfm.show({
+        component: FleetFormModal,
+        bind: {
+            location,
+            fleet,
+            onSave: async (locationSlug, data) => {
+                await builderStore.createOrUpdateFleet(
+                    workshop.value?.id_workshop,
+                    locationSlug,
+                    data
+                );
+                toast.success("Fleet saved successfully");
+            },
+            onDelete: async (fleet) => {
+                await builderStore.deleteFleet(fleet.id_workshop_fleet);
+                $vfm.hideAll();
+            },
+        },
+    });
+};
+
+const workshop = computed(() => {
+    return builderStore.workshops.find(
+        (w) => w.id_workshop === parseInt(route.params.id_workshop)
+    );
+});
+
+const computedFleetLocations = computed(() => {
+    return fleetLocations.map((location) => {
+        const fleet = workshop.value?.fleets?.find(
+            (f) => f.location === location.slug
+        );
+
+        return {
+            ...location,
+            fleet,
+        };
+    });
+});
 
 onBeforeMount(() => {
     const def1 = builderStore.ships.length
@@ -25,95 +74,35 @@ onBeforeMount(() => {
         ? Promise.resolve()
         : builderStore.loadWorkshops();
 
-    Promise.all([def1, def2, def3, def4]).then(() => {
+    const def5 = builderStore.loadWorkshopFleets(route.params.id_workshop);
+
+    Promise.all([def1, def2, def3, def4, def5]).then(() => {
         allLoaded.value = true;
     });
 });
 </script>
 <template>
     <BuilderLayout>
-        <div class="workshop flex w-full justify-center items-center">
-            <div class="workshop__content w-full max-w-6xl p-6 text-modal-text">
-                <div class="grid gap-4">
-                    <div class="fleet-slot fleet-slot--empty">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <LockIcon />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 1
-                            </div>
-                        </div>
-                    </div>
+        <div class="workshop max-w-6xl flex flex-col justify-center mx-auto">
+            <div class="workshop__heading mb-8">
+                <h1 class="text-2xl font-medium mb-2 modal__title">
+                    {{ workshop?.name || "Workshop" }}
+                </h1>
+                <p class="font-xl text-white">
+                    {{ workshop?.arcade ? "Arcade" : "Simulation" }}
+                </p>
+            </div>
 
-                    <div class="fleet-slot fleet-slot--busy">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <img src="/images/fleet-icon.png" />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 2
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fleet-slot fleet-slot--busy">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <img src="/images/fleet-icon.png" />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 3
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fleet-slot fleet-slot--busy">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <img src="/images/fleet-icon.png" />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 4
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fleet-slot fleet-slot--busy">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <img src="/images/fleet-icon.png" />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 5
-                            </div>
-                        </div>
-                    </div>
-                    <div class="fleet-slot fleet-slot--busy">
-                        <div class="fleet-slot__info"></div>
-                        <div
-                            class="fleet-slot__bottom flex flex-col items-center"
-                        >
-                            <div class="fleet-slot__button">
-                                <img src="/images/fleet-icon.png" />
-                            </div>
-                            <div class="sleet-slot__label text-xs text-white">
-                                Fleet 6
-                            </div>
-                        </div>
-                    </div>
+            <div class="workshop__content w-full text-modal-text">
+                <div class="grid gap-x-4 gap-y-8 w-full">
+                    <FleetItem
+                        v-for="fleetLocation in computedFleetLocations"
+                        :key="fleetLocation.slug"
+                        :location="fleetLocation.slug"
+                        :locationName="fleetLocation.name"
+                        :fleet="fleetLocation.fleet"
+                        @select="onSelectFleet"
+                    />
                 </div>
             </div>
         </div>
@@ -131,33 +120,6 @@ onBeforeMount(() => {
 </style>
 
 <style lang="less" scoped>
-.fleet-slot {
-    &__button {
-        @apply flex items-center justify-center cursor-pointer;
-
-        background-image: url("/resources/images/hexagon-md.png");
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-
-        height: 50px;
-        width: 50px;
-
-        .fleet-slot--empty & {
-            color: #485562;
-
-            &:hover {
-                color: #8096ac;
-            }
-        }
-
-        .fleet-slot--busy & {
-            img {
-                width: 25px;
-            }
-        }
-    }
-}
 .grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }

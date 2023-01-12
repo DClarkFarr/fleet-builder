@@ -8,6 +8,7 @@ use App\Models\ShipLevel;
 use App\Models\User;
 use App\Models\UserShip;
 use App\Models\Workshop;
+use App\Models\WorkshopFleet;
 use Exception;
 
 class ShipService
@@ -247,12 +248,21 @@ class ShipService
         $workshop->load(['fleets', 'fleets.userShips']);
 
         $workshop->fleets->each(function ($fleet) {
-            $fleet->userShips->each(function ($userShip) {
-                $userShip->ship = $this->populateShipForResponse($userShip->ship);
-            });
+            $this->populateFleetForResponse($fleet);
         });
 
         return $workshop;
+    }
+
+    public function populateFleetForResponse(WorkshopFleet $fleet)
+    {
+        $fleet->load(['userShips']);
+
+        $fleet->userShips->each(function ($userShip) {
+            $userShip->ship = $this->populateShipForResponse($userShip->ship);
+        });
+
+        return $fleet;
     }
 
     public function updateSlotsByType(int $id_ship, string $type, array $slots)
@@ -409,13 +419,15 @@ class ShipService
         $workshop->fill($data);
         $workshop->save();
 
-        return $this->populateWorkshopForResponse($workshop);
+        return $workshop;
     }
 
     public function listWorkshops(User $user)
     {
         $workshops = $user->workshops->map(function ($workshop) {
-            return $this->populateWOrkshopForResponse($workshop);
+            // return $this->populateWOrkshopForResponse($workshop);
+
+            return $workshop;
         });
 
         return $workshops;
@@ -430,5 +442,51 @@ class ShipService
 
         $workshop->fleets()->delete();
         $workshop->delete();
+    }
+
+    public function createOrUpdateWorkshopFleet(User $user, $id_workshop, $data)
+    {
+        $id_workshop_fleet = $data['id_workshop_fleet'] ?? null;
+        unset($data['id_workshop_fleet']);
+
+        $workshop = $user->workshops()
+            ->where('id_workshop', $id_workshop)->where('location', $data['location'])
+            ->first();
+
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        if ($id_workshop_fleet) {
+            $fleet = $workshop->fleets()->find($id_workshop_fleet);
+            if (!$fleet) {
+                throw new \Exception('Fleet not found', 404);
+            }
+        } else {
+            $fleet = new WorkshopFleet();
+            $fleet->id_workshop = $workshop->id_workshop;
+            $fleet->id_user = $user->id;
+            $fleet->location = $data['location'];
+        }
+
+        $fleet->name = $data['name'];
+        $fleet->leadership = $data['leadership'];
+        $fleet->save();
+
+        return $this->populateFleetForResponse($fleet);
+    }
+
+    public function getWorkshopFleets(User $user, $id_workshop)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $fleets = $workshop->fleets->map(function ($fleet) {
+            return $this->populateFleetForResponse($fleet);
+        });
+
+        return $fleets;
     }
 }

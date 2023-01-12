@@ -18,6 +18,8 @@ class WorkshopFleet extends Model
         'id_workshop',
         'id_user',
         'name',
+        'location',
+        'leadership',
     ];
 
     /**
@@ -43,7 +45,7 @@ class WorkshopFleet extends Model
 
     public function userShips()
     {
-        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_user_ship', 'id_workshop_fleet', 'userShips');
+        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_workshop_fleet', 'id_user_ship', 'userShips');
     }
 
 

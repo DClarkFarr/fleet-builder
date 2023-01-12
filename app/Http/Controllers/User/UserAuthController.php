@@ -162,6 +162,7 @@ class UserAuthController extends Controller
 
     public function listWorkshops()
     {
+
         $auth = Auth::user();
         $user = User::find($auth->id);
 
@@ -186,5 +187,44 @@ class UserAuthController extends Controller
         return response()->json(
             ['message' => 'Workshop deleted']
         );
+    }
+
+    public function getWorkshopFleets($id_workshop)
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $workshopFleets = $shipService->getWorkshopFleets($user, $id_workshop);
+
+        return response()->json([
+            'rows' => $workshopFleets->toArray(),
+        ]);
+    }
+
+    public function createOrUpdateWorkshopFleet(Request $request, $id_workshop)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_workshop_fleet' => 'integer|min:0',
+            'leadership' => 'required|integer|min:0',
+            'location' => 'required|string',
+            'name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $workshopFleet = $shipService->createOrUpdateWorkshopFleet($user, $id_workshop, $request->all());
+
+        return response()->json([
+            'row' => $workshopFleet->toArray(),
+        ]);
     }
 }

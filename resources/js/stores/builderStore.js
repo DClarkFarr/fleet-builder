@@ -47,7 +47,9 @@ const useBuilderStore = defineStore("builder", () => {
         isLoadingWorkshops.value = true;
 
         await apiClient.get("user/workshops").then((response) => {
-            workshops.value = response.data.rows;
+            workshops.value = response.data.rows.map((r) => {
+                return { ...r, fleets: [] };
+            });
         });
 
         isLoadingWorkshops.value = false;
@@ -57,18 +59,18 @@ const useBuilderStore = defineStore("builder", () => {
         try {
             const res = await apiClient.post("user/ships", data);
 
-            const ss = [...ships.value].map((s) => toRaw(s));
+            const us = [...userShips.value].map((s) => toRaw(s));
 
             if (data.id_user_ship) {
-                const index = ss.findIndex(
+                const index = us.findIndex(
                     (s) => s.id_user_ship === data.id_user_ship
                 );
-                ss[index] = res.data.row;
+                us[index] = res.data.row;
             } else {
-                ss.push(res.data.row);
+                us.push(res.data.row);
             }
 
-            ships.value = ss;
+            userShips.value = us;
 
             return true;
         } catch (err) {
@@ -138,6 +140,45 @@ const useBuilderStore = defineStore("builder", () => {
         }
     };
 
+    const loadWorkshopFleets = async (id_workshop) => {
+        const fleets = await apiClient
+            .get(`user/workshops/${id_workshop}/fleets`)
+            .then((response) => {
+                return response.data.rows;
+            });
+
+        const ws = [...workshops.value].map((w) => toRaw(w));
+        const wsIndex = ws.findIndex(
+            (w) => w.id_workshop === parseInt(id_workshop)
+        );
+        ws[wsIndex].fleets = fleets;
+
+        workshops.value = ws;
+    };
+
+    const createOrUpdateFleet = async (id_workshop, location, data) => {
+        return apiClient
+            .post(`user/workshops/${id_workshop}/fleets`, { ...data, location })
+            .then((response) => response.data.row)
+            .then((fleet) => {
+                const ws = [...workshops.value].map((w) => toRaw(w));
+                const wsIndex = ws.findIndex(
+                    (w) => w.id_workshop === parseInt(id_workshop)
+                );
+
+                if (data.id_workshop_fleet) {
+                    const fleetIndex = ws[wsIndex].fleets.findIndex(
+                        (f) => f.id_workshop_fleet === data.id_workshop_fleet
+                    );
+                    ws[wsIndex].fleets[fleetIndex] = fleet;
+                } else {
+                    ws[wsIndex].fleets.push(fleet);
+                }
+
+                workshops.value = ws;
+            });
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -154,6 +195,8 @@ const useBuilderStore = defineStore("builder", () => {
         deleteUserShip,
         createOrUpdateUserShip,
         deleteWorkshop,
+        loadWorkshopFleets,
+        createOrUpdateFleet,
     };
 });
 

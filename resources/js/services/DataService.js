@@ -112,6 +112,44 @@ export default class DataService {
         DIVIDE: "/",
     };
 
+    static FLEET_LOCATIONS = {
+        FLEET_1: "fleet_1",
+        FLEET_2: "fleet_2",
+        FLEET_3: "fleet_3",
+        FLEET_4: "fleet_4",
+        FLEET_5: "fleet_5",
+        FLEET_6: "fleet_6",
+    };
+
+    static getFleetLocations() {
+        return [
+            {
+                name: "Fleet 1",
+                slug: DataService.FLEET_LOCATIONS.FLEET_1,
+            },
+            {
+                name: "Fleet 2",
+                slug: DataService.FLEET_LOCATIONS.FLEET_2,
+            },
+            {
+                name: "Fleet 3",
+                slug: DataService.FLEET_LOCATIONS.FLEET_3,
+            },
+            {
+                name: "Fleet 4",
+                slug: DataService.FLEET_LOCATIONS.FLEET_4,
+            },
+            {
+                name: "Fleet 5",
+                slug: DataService.FLEET_LOCATIONS.FLEET_5,
+            },
+            {
+                name: "Fleet 6",
+                slug: DataService.FLEET_LOCATIONS.FLEET_6,
+            },
+        ];
+    }
+
     static getFormulaOperators() {
         return [
             {

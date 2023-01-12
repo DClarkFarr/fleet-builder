@@ -41,7 +41,7 @@ const onClickSelect = () => {
                 <div class="flex w-100">
                     <div class="mr-4">
                         <div class="text-sm text-dark-text">
-                            {{ workshop.arcade ? "Arcade" : "Home" }}
+                            {{ workshop.arcade ? "Arcade" : "Simulation" }}
                         </div>
                         <div
                             class="text-2xl font-medium text-dark-text leading-none text-white"
