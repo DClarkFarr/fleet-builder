@@ -11,6 +11,8 @@ import { useRoute } from "vue-router";
 import FleetItem from "../../components/Themed/workshop/FleetItem.vue";
 import FleetFormModal from "../../components/Themed/workshop/FleetFormModal.vue";
 
+import IconArrowLeft from "~icons/fa-solid/arrow-left";
+
 const route = useRoute();
 
 const fleetLocations = DataService.getFleetLocations();
@@ -87,9 +89,10 @@ onBeforeMount(() => {
             <div class="workshop__heading mb-8">
                 <div class="mb-2">
                     <router-link
-                        class="text-grow-green-text-alt"
+                        class="text-grow-green-text-alt flex gap-x-2 items-center"
                         :to="{ name: 'builder.fleets' }"
                     >
+                        <IconArrowLeft />
                         Back to Fleets
                     </router-link>
                 </div>
