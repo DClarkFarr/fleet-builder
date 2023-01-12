@@ -446,23 +446,16 @@ class ShipService
 
     public function createOrUpdateWorkshopFleet(User $user, $id_workshop, $data)
     {
-        $id_workshop_fleet = $data['id_workshop_fleet'] ?? null;
-        unset($data['id_workshop_fleet']);
 
-        $workshop = $user->workshops()
-            ->where('id_workshop', $id_workshop)->where('location', $data['location'])
-            ->first();
+        $workshop = $user->workshops()->find($id_workshop);
 
         if (!$workshop) {
             throw new \Exception('Workshop not found', 404);
         }
 
-        if ($id_workshop_fleet) {
-            $fleet = $workshop->fleets()->find($id_workshop_fleet);
-            if (!$fleet) {
-                throw new \Exception('Fleet not found', 404);
-            }
-        } else {
+        $fleet = $workshop->fleets()->where('location', $data['location'])->first();
+
+        if (!$fleet) {
             $fleet = new WorkshopFleet();
             $fleet->id_workshop = $workshop->id_workshop;
             $fleet->id_user = $user->id;

@@ -36,6 +36,7 @@ class WorkshopFleet extends Model
      */
     protected $casts = [
         'arcade' => 'boolean',
+        'leadership' => 'integer',
     ];
 
 

@@ -94,6 +94,9 @@ watch(
             form.name = fleet.name;
             form.leadership = fleet.leadership;
         }
+    },
+    {
+        immediate: true,
     }
 );
 </script>

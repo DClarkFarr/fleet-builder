@@ -206,7 +206,6 @@ class UserAuthController extends Controller
     public function createOrUpdateWorkshopFleet(Request $request, $id_workshop)
     {
         $validator = Validator::make($request->all(), [
-            'id_workshop_fleet' => 'integer|min:0',
             'leadership' => 'required|integer|min:0',
             'location' => 'required|string',
             'name' => 'required|string',
