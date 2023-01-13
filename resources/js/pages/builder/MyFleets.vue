@@ -195,14 +195,23 @@ onBeforeMount(() => {
                                 </button>
                             </div>
                         </div>
-                        <div class="bordered p-6 grid gap-y-2">
-                            <WorkshopListItem
-                                v-for="workshop in builderStore.workshops"
-                                :key="workshop.id_workshop"
-                                :workshop="workshop"
-                                :onDelete="onClickDeleteWorkshop"
-                                @select="onSelectWorkshop"
-                            />
+                        <div class="bordered p-4 grid gap-y-2">
+                            <template v-if="allLoaded">
+                                <WorkshopListItem
+                                    v-for="workshop in builderStore.workshops"
+                                    :key="workshop.id_workshop"
+                                    :workshop="workshop"
+                                    :onDelete="onClickDeleteWorkshop"
+                                    @select="onSelectWorkshop"
+                                />
+                            </template>
+                            <template v-else>
+                                <div
+                                    class="p-10 flex justify-center items-center text-3xl"
+                                >
+                                    <CircleNotchIcon class="animate-spin" />
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>

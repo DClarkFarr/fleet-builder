@@ -58,10 +58,14 @@ const chipCount = computed(() => {
                                     }"
                                 ></div>
                             </div>
-                            <div class="">
-                                <button class="btn btn-sm btn-green ml-auto">
-                                    Edit
-                                </button>
+                            <div class="ship__actions">
+                                <slot name="actions">
+                                    <button
+                                        class="btn btn-sm btn-green ml-auto"
+                                    >
+                                        Edit
+                                    </button>
+                                </slot>
                             </div>
                         </div>
                     </div>

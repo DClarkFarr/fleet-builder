@@ -27,6 +27,7 @@ const onSelectFleet = (location, fleet) => {
         bind: {
             location,
             fleet,
+            excludeSelected: workshop.value.arcade,
             onSave: async (locationSlug, data) => {
                 await builderStore.createOrUpdateFleet(
                     workshop.value?.id_workshop,
@@ -41,6 +42,20 @@ const onSelectFleet = (location, fleet) => {
                     id_workshop_fleet
                 );
                 $vfm.hideAll();
+            },
+            onSelectShip: (id_workshop_fleet, id_user_ship) => {
+                return builderStore.addUserShipToFleet(
+                    workshop.value?.id_workshop,
+                    id_workshop_fleet,
+                    id_user_ship
+                );
+            },
+            onUnselectShip: (id_workshop_fleet, id_user_ship) => {
+                return builderStore.removeUserShipFromFleet(
+                    workshop.value?.id_workshop,
+                    id_workshop_fleet,
+                    id_user_ship
+                );
             },
         },
     });

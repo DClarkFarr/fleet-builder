@@ -1,8 +1,5 @@
 <script setup>
 import ContentBox from "./ContentBox.vue";
-
-import { ref, reactive, computed } from "vue";
-import ShipSelectCard from "../Ship/ShipSelectCard.vue";
 import UserShipForm from "../Ship/UserShipForm.vue";
 
 const props = defineProps({

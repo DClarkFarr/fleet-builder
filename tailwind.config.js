@@ -48,6 +48,8 @@ module.exports = {
                 "btn-blue-bg": "#1e2840",
                 "btn-blue-text": "#afc8ff",
 
+                "btn-bright-blue": "#8ec2f9",
+
                 "btn-yellow-border": "#aa9571",
                 "btn-yellow-bg": "#2a364a",
                 "btn-yellow-text": "#f9e4ad",

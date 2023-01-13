@@ -497,4 +497,49 @@ class ShipService
 
         $fleet->delete();
     }
+
+    public function addShipToWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet, $id_user_ship)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $fleet = $workshop->fleets()->find($id_workshop_fleet);
+        if (!$fleet) {
+            throw new \Exception('Fleet not found', 404);
+        }
+
+        $ship = $user->ships()->find($id_user_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        $fleet->userShips()->attach($ship->id_user_ship);
+
+        return $this->populateFleetForResponse($fleet);
+    }
+
+    // removeShipFromWorkshopFleet
+    public function removeShipFromWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet, $id_user_ship)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $fleet = $workshop->fleets()->find($id_workshop_fleet);
+        if (!$fleet) {
+            throw new \Exception('Fleet not found', 404);
+        }
+
+        $ship = $user->ships()->find($id_user_ship);
+        if (!$ship) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        $fleet->userShips()->detach($ship->id_user_ship);
+
+        return $this->populateFleetForResponse($fleet);
+    }
 }

@@ -1,7 +1,12 @@
 <script setup>
-import { reactive, toRaw, ref, watch } from "vue";
+import { reactive, toRaw, ref, watch, computed } from "vue";
+import { $vfm } from "vue-final-modal";
+import { useToast } from "vue-toastification";
+import useBuilderStore from "../../../stores/builderStore";
+
 import InputError from "../../controls/InputError.vue";
 import ContentBox from "../ContentBox.vue";
+import SelectUserShipModal from "../ship/SelectUserShipModal.vue";
 
 const props = defineProps({
     location: {
@@ -20,7 +25,22 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    excludeSelected: {
+        type: Boolean,
+        default: false,
+    },
+    onSelectShip: {
+        type: Function,
+        required: true,
+    },
+    onUnselectShip: {
+        type: Function,
+        required: true,
+    },
 });
+
+const toast = useToast();
+const builderStore = useBuilderStore();
 
 const form = reactive({
     name: "",
@@ -40,6 +60,7 @@ const dirty = reactive({
 const isValid = ref(false);
 const errorMessage = ref("");
 const isSaving = ref(false);
+const isChangingShip = ref(false);
 
 const validate = () => {
     if (!form.name) {
@@ -67,7 +88,7 @@ const onSaveFleet = async () => {
     try {
         await props.onSave(props.location.slug, toRaw(form));
     } catch (error) {
-        errorMessage.value = error.message;
+        toast.error(error.response?.data?.message || error.message);
     }
 
     isSaving.value = false;
@@ -85,10 +106,88 @@ const onClickDelete = async (id_workshop_fleet) => {
     isSaving.value = false;
 };
 
+const onShowShipSelectModal = () => {
+    $vfm.show({
+        component: SelectUserShipModal,
+        bind: {
+            userShips: computedUserShips,
+            shipClasses: shipClasses.value,
+            busy: isChangingShip,
+            onSelect: async (userShip) => {
+                isChangingShip.value = true;
+
+                try {
+                    await props.onSelectShip(
+                        props.fleet.id_workshop_fleet,
+                        userShip.id_user_ship
+                    );
+                } catch (err) {
+                    toast.error(err.response?.data?.message || err.message);
+                }
+
+                isChangingShip.value = false;
+            },
+            onUnselect: async (userShip) => {
+                isChangingShip.value = true;
+
+                try {
+                    await props.onUnselectShip(
+                        props.fleet.id_workshop_fleet,
+                        userShip.id_user_ship
+                    );
+                } catch (err) {
+                    toast.error(err.response?.data?.message || err.message);
+                }
+
+                isChangingShip.value = false;
+            },
+        },
+    });
+};
+
+const workshop = computed(() => {
+    return builderStore.workshops.find(
+        (w) => w.id_workshop === props.fleet.id_workshop
+    );
+});
+const selectedFleet = computed(() =>
+    workshop.value?.fleets?.find(
+        (f) => f.id_workshop_fleet === props.fleet.id_workshop_fleet
+    )
+);
+const shipClasses = computed(() => builderStore.shipClasses);
+
+const selectedUserShipIds = computed(() => {
+    return workshop.value.fleets?.reduce((acc, fleet) => {
+        return [...acc, ...fleet.user_ships.map((us) => us.id_user_ship)];
+    }, []);
+});
+
+const computedUserShips = computed(() => {
+    let userShips = builderStore.userShips
+        .map((us) => toRaw(us))
+        .filter((us) => us.visible);
+
+    if (props.excludeSelected) {
+        userShips = userShips.filter((us) => {
+            return !selectedUserShipIds.value.includes(us.id_user_ship);
+        });
+    }
+
+    const mapped = userShips.map((us) => {
+        return {
+            ...us,
+            selected: selectedUserShipIds.value.includes(us.id_user_ship),
+        };
+    });
+
+    return mapped;
+});
+
 watch(form, validate, { immediate: true });
 
 watch(
-    () => props.fleet,
+    selectedFleet,
     (fleet) => {
         if (fleet) {
             form.name = fleet.name;
@@ -104,7 +203,7 @@ watch(
 <template>
     <vue-final-modal
         classes="modal-container"
-        content-class="w-full modal-content--lg"
+        content-class="w-full modal-content--xl"
     >
         <ContentBox class="w-full" bg-class="custom-bg">
             <form action="" class="fleet-form" @submit.prevent="onSaveFleet">
@@ -136,7 +235,7 @@ watch(
 
                     <InputError :error="errors.name" :dirty="dirty.name" />
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-10">
                     <label>Leadership Capacity</label>
                     <input
                         type="text"
@@ -149,6 +248,17 @@ watch(
                         :dirty="dirty.leadership"
                     />
                 </div>
+
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn-bright-blue btn-sm"
+                        @click="onShowShipSelectModal"
+                    >
+                        Add Ship
+                    </button>
+                </div>
+                <div class="select-list p-4 mb-8" v-if="fleet"></div>
 
                 <div class="form-group pt-4">
                     <button
@@ -165,4 +275,15 @@ watch(
     </vue-final-modal>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.select-list {
+    @apply border-2 rounded border-dark-border-start;
+    background: linear-gradient(
+        180deg,
+        rgba(47, 73, 125, 0.5),
+        rgba(24, 43, 84, 0.5)
+    );
+
+    box-shadow: 0 0 3px 0 #517090;
+}
+</style>

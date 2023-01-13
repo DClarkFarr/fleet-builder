@@ -151,6 +151,14 @@ const useBuilderStore = defineStore("builder", () => {
         const wsIndex = ws.findIndex(
             (w) => w.id_workshop === parseInt(id_workshop)
         );
+
+        console.log(
+            "got index",
+            wsIndex,
+            ws[wsIndex],
+            "from id_workshop",
+            id_workshop
+        );
         ws[wsIndex].fleets = fleets;
 
         workshops.value = ws;
@@ -198,6 +206,57 @@ const useBuilderStore = defineStore("builder", () => {
             });
     };
 
+    const addUserShipToFleet = (
+        id_workshop,
+        id_workshop_fleet,
+        id_user_ship
+    ) => {
+        return apiClient
+            .post(
+                `user/workshops/${id_workshop}/fleets/${id_workshop_fleet}/ships`,
+                { id_user_ship }
+            )
+            .then((response) => response.data.row)
+            .then((fleet) => {
+                const ws = [...workshops.value].map((w) => toRaw(w));
+                const wsIndex = ws.findIndex(
+                    (w) => w.id_workshop === parseInt(id_workshop)
+                );
+
+                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                    (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
+                );
+                ws[wsIndex].fleets[fleetIndex] = fleet;
+
+                workshops.value = ws;
+            });
+    };
+
+    const removeUserShipFromFleet = (
+        id_workshop,
+        id_workshop_fleet,
+        id_user_ship
+    ) => {
+        return apiClient
+            .delete(
+                `user/workshops/${id_workshop}/fleets/${id_workshop_fleet}/ships/${id_user_ship}`
+            )
+            .then((response) => response.data.row)
+            .then((fleet) => {
+                const ws = [...workshops.value].map((w) => toRaw(w));
+                const wsIndex = ws.findIndex(
+                    (w) => w.id_workshop === parseInt(id_workshop)
+                );
+
+                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                    (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
+                );
+                ws[wsIndex].fleets[fleetIndex] = fleet;
+
+                workshops.value = ws;
+            });
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -217,6 +276,8 @@ const useBuilderStore = defineStore("builder", () => {
         loadWorkshopFleets,
         createOrUpdateFleet,
         deleteFleet,
+        addUserShipToFleet,
+        removeUserShipFromFleet,
     };
 });
 

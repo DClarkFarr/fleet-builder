@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ShipClassController;
 use App\Http\Controllers\Admin\ShipController;
 use App\Http\Controllers\Admin\ShipLevelController;
+use App\Http\Controllers\User\BuilderController;
 use App\Http\Controllers\User\DataController;
 use App\Http\Controllers\User\UserAuthController;
 use Illuminate\Support\Facades\Route;
@@ -21,28 +22,37 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/user')->group(function () {
     Route::post('/login', [UserAuthController::class, 'login']);
     Route::post('/register', [UserAuthController::class, 'register']);
+    Route::post('/logout', [UserAuthController::class, 'logout']);
+    Route::get('/', [UserAuthController::class, 'auth']);
 
     Route::middleware(['auth'])->group(function () {
         /** UserShips */
-        Route::get('/ships', [UserAuthController::class, 'getShips']);
-        Route::post('/ships', [UserAuthController::class, 'createOrUpdateShip']);
-        Route::delete('/ships/{id_user_ship}', [UserAuthController::class, 'deleteShip']);
+        Route::get('/ships', [BuilderController::class, 'getShips']);
+        Route::post('/ships', [BuilderController::class, 'createOrUpdateShip']);
+        Route::delete('/ships/{id_user_ship}', [BuilderController::class, 'deleteShip']);
 
         Route::prefix('/workshops')->group(function () {
-            Route::get('/', [UserAuthController::class, 'listWorkshops']);
-            Route::post('/', [UserAuthController::class, 'createOrUpdateWorkshop']);
+
+            Route::get('/', [BuilderController::class, 'listWorkshops']);
+            Route::post('/', [BuilderController::class, 'createOrUpdateWorkshop']);
 
             Route::prefix('/{id_workshop}')->group(function () {
-                Route::delete('/', [UserAuthController::class, 'deleteWorkshop']);
-                Route::get('/fleets', [UserAuthController::class, 'getWorkshopFleets']);
-                Route::post('/fleets', [UserAuthController::class, 'createOrUpdateWorkshopFleet']);
 
-                Route::delete('/fleets/{id_workshop_fleet}', [UserAuthController::class, 'deleteWorkshopFleet']);
+                Route::delete('/', [BuilderController::class, 'deleteWorkshop']);
+
+                Route::prefix('/fleets')->group(function () {
+
+                    Route::get('/', [BuilderController::class, 'getWorkshopFleets']);
+                    Route::post('/', [BuilderController::class, 'createOrUpdateWorkshopFleet']);
+
+                    Route::prefix('/{id_workshop_fleet}')->group(function () {
+                        Route::delete('/', [BuilderController::class, 'deleteWorkshopFleet']);
+                        Route::post('/ships', [BuilderController::class, 'addShipToWorkshopFleet']);
+                        Route::delete('/ships/{id_user_fleet}', [BuilderController::class, 'removeShipFromWorkshopFleet']);
+                    });
+                });
             });
         });
-
-        Route::post('/logout', [UserAuthController::class, 'logout']);
-        Route::get('/', [UserAuthController::class, 'auth']);
     });
 });
 
