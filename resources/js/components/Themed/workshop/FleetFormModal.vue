@@ -5,6 +5,7 @@ import { useToast } from "vue-toastification";
 import useBuilderStore from "../../../stores/builderStore";
 
 import InputError from "../../controls/InputError.vue";
+import UserShipCard from "../../Ship/UserShipCard.vue";
 import ContentBox from "../ContentBox.vue";
 import SelectUserShipModal from "../ship/SelectUserShipModal.vue";
 
@@ -249,7 +250,7 @@ watch(
                     />
                 </div>
 
-                <div>
+                <div class="mb-2">
                     <button
                         type="button"
                         class="btn btn-bright-blue btn-sm"
@@ -258,7 +259,33 @@ watch(
                         Add Ship
                     </button>
                 </div>
-                <div class="select-list p-4 mb-8" v-if="fleet"></div>
+                <div
+                    class="select-list p-4 mb-8 flex flex-col gap-y-2"
+                    v-if="fleet"
+                >
+                    <UserShipCard
+                        v-for="userShip in selectedFleet.user_ships"
+                        :key="userShip.id_user_ship"
+                        :userShip="userShip"
+                        :shipClasses="shipClasses"
+                        :onUnselect="onUnselectShip"
+                    >
+                        <template #actions>
+                            <button
+                                class="btn btn-sm btn-red"
+                                type="button"
+                                @click="
+                                    onUnselectShip(
+                                        fleet.id_workshop_fleet,
+                                        userShip.id_user_ship
+                                    )
+                                "
+                            >
+                                Unselect
+                            </button>
+                        </template>
+                    </UserShipCard>
+                </div>
 
                 <div class="form-group pt-4">
                     <button

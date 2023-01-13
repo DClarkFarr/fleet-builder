@@ -1,9 +1,8 @@
 <script setup>
 import { onBeforeMount, ref, computed } from "vue";
 import { $vfm } from "vue-final-modal";
-import DataService from "../../services/DataService";
-
 import { useToast } from "vue-toastification";
+import DataService from "../../services/DataService";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
 import useBuilderStore from "../../stores/builderStore";
@@ -20,6 +19,8 @@ const fleetLocations = DataService.getFleetLocations();
 const builderStore = useBuilderStore();
 
 const allLoaded = ref(false);
+
+const toast = useToast();
 
 const onSelectFleet = (location, fleet) => {
     $vfm.show({

@@ -144,7 +144,12 @@ const useBuilderStore = defineStore("builder", () => {
         const fleets = await apiClient
             .get(`user/workshops/${id_workshop}/fleets`)
             .then((response) => {
-                return response.data.rows;
+                return response.data.rows.map((fleet) => {
+                    fleet.user_ships = fleet.user_ships.filter((us) => {
+                        return us.visible;
+                    });
+                    return fleet;
+                });
             });
 
         const ws = [...workshops.value].map((w) => toRaw(w));
@@ -244,6 +249,7 @@ const useBuilderStore = defineStore("builder", () => {
             .then((response) => response.data.row)
             .then((fleet) => {
                 const ws = [...workshops.value].map((w) => toRaw(w));
+
                 const wsIndex = ws.findIndex(
                     (w) => w.id_workshop === parseInt(id_workshop)
                 );
@@ -251,7 +257,8 @@ const useBuilderStore = defineStore("builder", () => {
                 const fleetIndex = ws[wsIndex].fleets.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
-                ws[wsIndex].fleets[fleetIndex] = fleet;
+
+                ws[wsIndex].fleets.splice(fleetIndex, 1, fleet);
 
                 workshops.value = ws;
             });
