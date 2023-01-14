@@ -7,6 +7,7 @@ import useBuilderStore from "../../../stores/builderStore";
 import InputError from "../../controls/InputError.vue";
 import UserShipCard from "../../Ship/UserShipCard.vue";
 import ContentBox from "../ContentBox.vue";
+import FleetShipStats from "../fleet/FleetShipStats.vue";
 import SelectUserShipModal from "../ship/SelectUserShipModal.vue";
 
 const props = defineProps({
@@ -144,6 +145,7 @@ const onShowShipSelectModal = () => {
     $vfm.show({
         component: SelectUserShipModal,
         bind: {
+            fleet: selectedFleet,
             userShips: computedUserShips,
             shipClasses: shipClasses.value,
             busy: isChangingShip,
@@ -217,9 +219,9 @@ watch(
             <form action="" class="fleet-form" @submit.prevent="onSaveFleet">
                 <div class="flex gap-x-3 justify-between">
                     <div>
-                        <h1 class="text-2xl modal__title font-medium mb-6">
+                        <h2 class="text-xl modal__title font-medium mb-6">
                             {{ location.name }}
-                        </h1>
+                        </h2>
                     </div>
                     <div v-if="fleet">
                         <button
@@ -233,6 +235,7 @@ watch(
                         </button>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Fleet Name</label>
                     <input
@@ -270,6 +273,8 @@ watch(
                     class="select-list p-4 mb-8 flex flex-col gap-y-2"
                     v-if="fleet"
                 >
+                    <FleetShipStats :fleet="fleet" class="mb-4" />
+
                     <UserShipCard
                         v-for="userShip in selectedFleet.user_ships"
                         :key="userShip.id_user_ship"

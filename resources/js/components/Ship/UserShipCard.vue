@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { getShipChipsCount, parseShipSlotStrengths } from "../../methods/ship";
 
+import IconBattery from "~icons/fa-solid/battery-three-quarters";
 import Chips from "../Themed/ship/Chips.vue";
 
 const props = defineProps({
@@ -26,7 +27,7 @@ const chipCount = computed(() => {
 <template>
     <div
         v-tooltip="computedUserShip.visible ? false : 'Hidden from workshops'"
-        class="ship ship-box relative"
+        class="ship ship-box relative leading-none"
         :class="[
             'ship-box--' + computedUserShip.ship.ship_level.name.toLowerCase(),
             { 'ship--hidden': !computedUserShip.visible },
@@ -36,21 +37,27 @@ const chipCount = computed(() => {
             <div class="ship-box__content-bg p-2 flex w-full gap-x-3">
                 <div class="grow">
                     <div class="flex w-full justify-between">
-                        <div>
-                            <div>Power {{ computedUserShip.ship.energy }}</div>
+                        <div class="flex gap-x-2 items-center">
                             <div>
-                                {{ computedUserShip.ship.abilities.length }}
-                                Abilities
+                                {{ computedUserShip.ship.ship_class.name }}
+                            </div>
+                            <div class="flex gap-x-[2px] items-center">
+                                <div>
+                                    <IconBattery />
+                                </div>
+                                <div>
+                                    {{ computedUserShip.ship.energy }}
+                                </div>
+                            </div>
+                            <div>
+                                <Chips
+                                    :total="chipCount"
+                                    :chipLevel="computedUserShip.chip_level"
+                                    height="8px"
+                                />
                             </div>
                         </div>
                         <div>
-                            <div class="ship__chips mb-4 flex">
-                                <Chips
-                                    class="ml-auto"
-                                    :total="chipCount"
-                                    :chipLevel="computedUserShip.chip_level"
-                                />
-                            </div>
                             <div class="ship__actions">
                                 <slot name="actions">
                                     <button
@@ -64,7 +71,6 @@ const chipCount = computed(() => {
                     </div>
 
                     <div class="ship-box__strengths flex gap-x-2 items-center">
-                        <div class="mr-4 font-medium">Total Strength</div>
                         <div
                             class="ship-box__strengths-total text-center text-xs"
                         >

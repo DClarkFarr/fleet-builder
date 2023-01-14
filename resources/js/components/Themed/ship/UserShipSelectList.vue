@@ -17,6 +17,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    energyLimit: {
+        type: Number,
+        default: null,
+    },
 });
 
 const emit = defineEmits(["select", "unselect"]);
@@ -41,6 +45,18 @@ const hasFilters = computed(() => {
 const onClearFilters = () => {
     filters.search = "";
     filters.id_class = null;
+};
+
+const hasEnergyLimit = computed(() => {
+    return props.energyLimit !== null;
+});
+
+const checkEnergyLimit = (energy) => {
+    if (!hasEnergyLimit.value) {
+        return true;
+    }
+
+    return energy <= props.energyLimit;
 };
 
 const computedUserShips = computed(() => {
@@ -113,12 +129,19 @@ const computedUserShips = computed(() => {
                     </button>
                 </template>
                 <template v-else>
-                    <button
-                        class="btn btn-sm btn-green"
-                        @click="onClickSelect(userShip)"
-                    >
-                        Select
-                    </button>
+                    <template v-if="checkEnergyLimit(userShip.ship.energy)">
+                        <button
+                            class="btn btn-sm btn-green"
+                            @click="onClickSelect(userShip)"
+                        >
+                            Select
+                        </button>
+                    </template>
+                    <template v-else>
+                        <button class="btn btn-sm btn-gray" disabled>
+                            Not enough energy
+                        </button>
+                    </template>
                 </template>
             </template>
         </UserShipCard>
