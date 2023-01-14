@@ -11,6 +11,10 @@ import FleetShipStats from "../fleet/FleetShipStats.vue";
 import SelectUserShipModal from "../ship/SelectUserShipModal.vue";
 
 const props = defineProps({
+    idWorkshop: {
+        type: Number,
+        required: true,
+    },
     location: {
         type: Object,
         required: true,
@@ -157,12 +161,12 @@ const onShowShipSelectModal = () => {
 
 const workshop = computed(() => {
     return builderStore.workshops.find(
-        (w) => w.id_workshop === props.fleet.id_workshop
+        (w) => w.id_workshop === props.idWorkshop
     );
 });
 const selectedFleet = computed(() => {
     const found = workshop.value?.fleets?.find(
-        (f) => f.id_workshop_fleet === props.fleet.id_workshop_fleet
+        (f) => f.id_workshop_fleet === props.fleet?.id_workshop_fleet
     );
 
     return found;

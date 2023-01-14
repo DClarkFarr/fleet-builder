@@ -132,10 +132,10 @@ onBeforeMount(() => {
     <BuilderLayout>
         <div class="my-fleets flex w-full justify-center items-center">
             <div
-                class="my-fleets__content w-full max-w-4xl p-6 text-modal-text"
+                class="my-fleets__content w-full max-w-6xl p-6 text-modal-text"
             >
                 <div class="lg:flex w-full items-stretch gap-x-6">
-                    <div class="my-fleets__fleets h-full lg:w-1/2">
+                    <div class="my-fleets__fleets h-full grow">
                         <div class="flex items-end w-full mb-2">
                             <div>
                                 <div
@@ -157,7 +157,7 @@ onBeforeMount(() => {
                         <div class="bordered p-4">
                             <template v-if="allLoaded">
                                 <div
-                                    class="user-ships flex flex-col w-full gap-y-2"
+                                    class="user-ships grid grid-cols-2 gap-3 w-full"
                                 >
                                     <UserShipCard
                                         v-for="userShip in builderStore.userShips"
@@ -165,6 +165,13 @@ onBeforeMount(() => {
                                         :userShip="userShip"
                                         @click="showEditShipModal(userShip)"
                                     />
+                                </div>
+                                <div
+                                    class="placeholder p-10 flex justify-center items-center text-center text-xl h-full"
+                                    v-if="!builderStore.userShips.length"
+                                >
+                                    There are no ships in your fleet. Create
+                                    one.
                                 </div>
                             </template>
                             <template v-else>
@@ -176,7 +183,9 @@ onBeforeMount(() => {
                             </template>
                         </div>
                     </div>
-                    <div class="my-fleets__workshops h-full lg:w-1/2">
+                    <div
+                        class="my-fleets__workshops h-full shrink lg:max-w-[410px]"
+                    >
                         <div class="flex w-full items-end mb-2">
                             <div>
                                 <div
@@ -204,6 +213,13 @@ onBeforeMount(() => {
                                     :onDelete="onClickDeleteWorkshop"
                                     @select="onSelectWorkshop"
                                 />
+
+                                <div
+                                    class="flex placeholder p-10 justify-center items-center text-center text-xl h-full"
+                                    v-if="!builderStore.workshops.length"
+                                >
+                                    No workshops yet. Create one!
+                                </div>
                             </template>
                             <template v-else>
                                 <div
@@ -231,6 +247,11 @@ onBeforeMount(() => {
 </style>
 
 <style lang="less" scoped>
+.placeholder {
+    @apply text-white;
+
+    mix-blend-mode: overlay;
+}
 .bordered {
     border: solid 1px #4578a5;
     border-radius: 4px;

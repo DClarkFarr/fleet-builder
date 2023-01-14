@@ -17,7 +17,7 @@ const props = defineProps({
 
 <template>
     <div
-        class="chips flex gap-x-1 cursor-pointer"
+        class="chips flex gap-x-[2px] cursor-pointer"
         v-tooltip="'Chip level: ' + chipLevel"
         :style="{ '--height': height }"
     >
@@ -38,7 +38,7 @@ const props = defineProps({
 
     background: #272940;
 
-    width: 4px;
+    width: 3px;
 
     height: var(--height);
 

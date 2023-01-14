@@ -26,6 +26,7 @@ const onSelectFleet = (location, fleet) => {
     $vfm.show({
         component: FleetFormModal,
         bind: {
+            idWorkshop: workshop.value?.id_workshop,
             location,
             fleet,
             excludeSelected: !workshop.value.arcade,

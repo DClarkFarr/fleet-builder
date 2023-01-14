@@ -49,7 +49,7 @@ const onClickSelect = () => {
                             {{ workshop.name }}
                         </div>
                     </div>
-                    <div class="self-end">
+                    <div class="self-end ml-auto">
                         <div class="text-sm">
                             Ships: <b>{{ shipCount }}</b>
                         </div>

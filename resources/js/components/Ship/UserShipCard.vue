@@ -35,9 +35,9 @@ const chipCount = computed(() => {
     >
         <div class="ship-box__content">
             <div class="ship-box__content-bg p-2 flex w-full gap-x-3">
-                <div class="grow">
+                <div>
                     <div class="flex w-full justify-between">
-                        <div class="flex gap-x-2 items-center">
+                        <div class="flex gap-x-2 items-center text-sm">
                             <div>
                                 {{ computedUserShip.ship.ship_class.name }}
                             </div>
@@ -55,17 +55,6 @@ const chipCount = computed(() => {
                                     :chipLevel="computedUserShip.chip_level"
                                     height="8px"
                                 />
-                            </div>
-                        </div>
-                        <div>
-                            <div class="ship__actions">
-                                <slot name="actions">
-                                    <button
-                                        class="btn btn-sm btn-green ml-auto"
-                                    >
-                                        Edit
-                                    </button>
-                                </slot>
                             </div>
                         </div>
                     </div>
@@ -110,6 +99,18 @@ const chipCount = computed(() => {
                                 }}
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="ship__tags ml-auto">
+                    <slot name="tags"></slot>
+                </div>
+                <div>
+                    <div class="ship__actions">
+                        <slot name="actions">
+                            <button class="btn btn-sm btn-green ml-auto">
+                                Edit
+                            </button>
+                        </slot>
                     </div>
                 </div>
             </div>
