@@ -107,6 +107,36 @@ const onClickDelete = async (id_workshop_fleet) => {
     isSaving.value = false;
 };
 
+const handleUnselect = async (userShip) => {
+    isChangingShip.value = true;
+
+    try {
+        await props.onUnselectShip(
+            props.fleet.id_workshop_fleet,
+            userShip.id_user_ship
+        );
+    } catch (err) {
+        toast.error(err.response?.data?.message || err.message);
+    }
+
+    isChangingShip.value = false;
+};
+
+const handleSelect = async (userShip) => {
+    isChangingShip.value = true;
+
+    try {
+        await props.onSelectShip(
+            props.fleet.id_workshop_fleet,
+            userShip.id_user_ship
+        );
+    } catch (err) {
+        toast.error(err.response?.data?.message || err.message);
+    }
+
+    isChangingShip.value = false;
+};
+
 const onShowShipSelectModal = () => {
     $vfm.show({
         component: SelectUserShipModal,
@@ -114,34 +144,8 @@ const onShowShipSelectModal = () => {
             userShips: computedUserShips,
             shipClasses: shipClasses.value,
             busy: isChangingShip,
-            onSelect: async (userShip) => {
-                isChangingShip.value = true;
-
-                try {
-                    await props.onSelectShip(
-                        props.fleet.id_workshop_fleet,
-                        userShip.id_user_ship
-                    );
-                } catch (err) {
-                    toast.error(err.response?.data?.message || err.message);
-                }
-
-                isChangingShip.value = false;
-            },
-            onUnselect: async (userShip) => {
-                isChangingShip.value = true;
-
-                try {
-                    await props.onUnselectShip(
-                        props.fleet.id_workshop_fleet,
-                        userShip.id_user_ship
-                    );
-                } catch (err) {
-                    toast.error(err.response?.data?.message || err.message);
-                }
-
-                isChangingShip.value = false;
-            },
+            onSelect: handleSelect,
+            onUnselect: handleUnselect,
         },
     });
 };
@@ -268,18 +272,12 @@ watch(
                         :key="userShip.id_user_ship"
                         :userShip="userShip"
                         :shipClasses="shipClasses"
-                        :onUnselect="onUnselectShip"
                     >
                         <template #actions>
                             <button
                                 class="btn btn-sm btn-red"
                                 type="button"
-                                @click="
-                                    onUnselectShip(
-                                        fleet.id_workshop_fleet,
-                                        userShip.id_user_ship
-                                    )
-                                "
+                                @click="handleUnselect"
                             >
                                 Unselect
                             </button>

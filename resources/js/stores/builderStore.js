@@ -152,18 +152,15 @@ const useBuilderStore = defineStore("builder", () => {
                 });
             });
 
+        setWorkshopFleets(id_workshop, fleets);
+    };
+
+    const setWorkshopFleets = (id_workshop, fleets) => {
         const ws = [...workshops.value].map((w) => toRaw(w));
         const wsIndex = ws.findIndex(
             (w) => w.id_workshop === parseInt(id_workshop)
         );
 
-        console.log(
-            "got index",
-            wsIndex,
-            ws[wsIndex],
-            "from id_workshop",
-            id_workshop
-        );
         ws[wsIndex].fleets = fleets;
 
         workshops.value = ws;
@@ -179,16 +176,18 @@ const useBuilderStore = defineStore("builder", () => {
                     (w) => w.id_workshop === parseInt(id_workshop)
                 );
 
+                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+
                 if (data.id_workshop_fleet) {
                     const fleetIndex = ws[wsIndex].fleets.findIndex(
                         (f) => f.id_workshop_fleet === data.id_workshop_fleet
                     );
-                    ws[wsIndex].fleets[fleetIndex] = fleet;
+                    fleets[fleetIndex] = fleet;
                 } else {
-                    ws[wsIndex].fleets.push(fleet);
+                    fleets.push(fleet);
                 }
 
-                workshops.value = ws;
+                setWorkshopFleets(id_workshop, fleets);
             });
     };
 
@@ -205,9 +204,12 @@ const useBuilderStore = defineStore("builder", () => {
                 const fleetIndex = ws[wsIndex].fleets.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
-                ws[wsIndex].fleets.splice(fleetIndex, 1);
 
-                workshops.value = ws;
+                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+
+                fleets.splice(fleetIndex, 1);
+
+                setWorkshopFleets(id_workshop, fleets);
             });
     };
 
@@ -231,9 +233,12 @@ const useBuilderStore = defineStore("builder", () => {
                 const fleetIndex = ws[wsIndex].fleets.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
-                ws[wsIndex].fleets[fleetIndex] = fleet;
 
-                workshops.value = ws;
+                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+
+                fleets[fleetIndex] = fleet;
+
+                setWorkshopFleets(id_workshop, fleets);
             });
     };
 
@@ -258,9 +263,11 @@ const useBuilderStore = defineStore("builder", () => {
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
 
-                ws[wsIndex].fleets.splice(fleetIndex, 1, fleet);
+                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
 
-                workshops.value = ws;
+                fleets.splice(fleetIndex, 1, fleet);
+
+                setWorkshopFleets(id_workshop, fleets);
             });
     };
 
