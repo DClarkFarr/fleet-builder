@@ -87,7 +87,10 @@ const onSaveFleet = async () => {
     isSaving.value = true;
 
     try {
-        await props.onSave(props.location.slug, toRaw(form));
+        await props.onSave(props.location.slug, {
+            ...toRaw(form),
+            id_workshop_fleet: props.fleet?.id_workshop_fleet,
+        });
     } catch (error) {
         toast.error(error.response?.data?.message || error.message);
     }
@@ -277,7 +280,7 @@ watch(
                             <button
                                 class="btn btn-sm btn-red"
                                 type="button"
-                                @click="handleUnselect"
+                                @click="handleUnselect(userShip)"
                             >
                                 Unselect
                             </button>

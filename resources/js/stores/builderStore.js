@@ -185,6 +185,7 @@ const useBuilderStore = defineStore("builder", () => {
 
                 const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
 
+                console.log("got data", data);
                 if (data.id_workshop_fleet) {
                     const fleetIndex = ws[wsIndex].fleets.findIndex(
                         (f) => f.id_workshop_fleet === data.id_workshop_fleet

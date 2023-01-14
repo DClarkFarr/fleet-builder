@@ -81,7 +81,7 @@ const computedFleetLocations = computed(() => {
     });
 });
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     const def1 = builderStore.ships.length
         ? Promise.resolve()
         : builderStore.loadShips();
@@ -95,11 +95,11 @@ onBeforeMount(() => {
         ? Promise.resolve()
         : builderStore.loadWorkshops();
 
-    const def5 = builderStore.loadWorkshopFleets(route.params.id_workshop);
-
-    Promise.all([def1, def2, def3, def4, def5]).then(() => {
+    await Promise.all([def1, def2, def3, def4]).then(() => {
         allLoaded.value = true;
     });
+
+    builderStore.loadWorkshopFleets(route.params.id_workshop);
 });
 </script>
 <template>

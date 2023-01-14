@@ -1,7 +1,8 @@
 <script setup>
 import LockIcon from "~icons/fa-solid/unlock-alt";
 
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import ShipFleetLine from "../ship/ShipFleetLine.vue";
 
 const props = defineProps({
     location: {
@@ -29,28 +30,84 @@ const onSelectFleet = () => {
 };
 
 const isEmpty = computed(() => {
-    return !props.fleet;
+    return !props.fleet || !props.fleet.stats;
 });
 </script>
 
 <template>
     <div
-        class="fleet-slot"
+        class="fleet"
         :class="{
-            'fleet-slot--busy': !isEmpty,
-            'fleet-slot--empty': isEmpty,
+            'fleet--busy': !isEmpty,
+            'fleet--empty': isEmpty,
         }"
     >
         <div
-            class="fleet-slot__info p-4 rounded min-h-[350px] mb-4 border border-dark-border-start"
+            class="fleet__info p-4 rounded min-h-[350px] mb-4 border border-dark-border-start"
         >
-            next text
+            <div class="fleet__used leading-none" v-if="!isEmpty">
+                <div
+                    class="fleet__top-stats flex gap-x-2 justify-between items-center mb-4"
+                >
+                    <div class="fleet__leadership">
+                        <div class="text-xs text-text-blue">Leadership</div>
+                        <div class="text-center">
+                            <span>
+                                <b>{{ fleet.stats.leadershipUsed }}</b>
+                            </span>
+                            /
+                            <span>
+                                <b>{{ fleet.leadership }}</b>
+                            </span>
+
+                            <span
+                                v-if="fleet.stats.leadershipRemaining !== 0"
+                                class="font-bold cursor-pointer"
+                                v-tooltip="
+                                    fleet.stats.leadershipRemaining
+                                        ? 'Leader remaining'
+                                        : 'Leadership exceeded'
+                                "
+                                :class="{
+                                    'text-grow-green-text-alt':
+                                        fleet.stats.leadershipRemaining > 0,
+                                    'text-btn-red-border':
+                                        fleet.stats.leadershipRemaining < 0,
+                                }"
+                            >
+                                ({{
+                                    fleet.stats.leadershipRemaining > 0
+                                        ? "+"
+                                        : "-"
+                                }}{{ fleet.stats.leadershipRemaining }})
+                            </span>
+                        </div>
+                    </div>
+                    <div class="fleet__ship-count">
+                        <div class="text-center text-xs text-text-blue">
+                            Ships
+                        </div>
+                        <div class="text-center">
+                            <b> {{ fleet.stats.shipCount }} / 9 </b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fleet__ships flex flex-col gap-y-2">
+                    <ShipFleetLine
+                        v-for="userShip in fleet.user_ships"
+                        :key="userShip.id"
+                        :userShip="userShip"
+                    />
+                </div>
+            </div>
+            <div class="fleet__placeholder" v-else>No Fleet Assigned</div>
         </div>
         <div
-            class="fleet-slot__bottom flex flex-col items-center"
+            class="fleet__bottom flex flex-col items-center"
             @click="onSelectFleet"
         >
-            <div class="fleet-slot__button">
+            <div class="fleet__button">
                 <template v-if="!isEmpty">
                     <img src="/images/fleet-icon.png" />
                 </template>
@@ -66,7 +123,7 @@ const isEmpty = computed(() => {
 </template>
 
 <style lang="less" scoped>
-.fleet-slot {
+.fleet {
     &__info {
         background: linear-gradient(
             180deg,
@@ -88,7 +145,7 @@ const isEmpty = computed(() => {
         height: 50px;
         width: 50px;
 
-        .fleet-slot--empty & {
+        .fleet--empty & {
             color: #485562;
 
             &:hover {
@@ -96,9 +153,22 @@ const isEmpty = computed(() => {
             }
         }
 
-        .fleet-slot--busy & {
+        .fleet--busy & {
             img {
                 width: 25px;
+            }
+        }
+    }
+
+    &--empty {
+        .fleet {
+            &__info {
+                @apply flex items-center justify-center;
+            }
+            &__placeholder {
+                @apply text-white font-bold text-2xl;
+
+                mix-blend-mode: soft-light;
             }
         }
     }

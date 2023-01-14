@@ -2,6 +2,8 @@
 import { computed } from "vue";
 import { getShipChipsCount, parseShipSlotStrengths } from "../../methods/ship";
 
+import Chips from "../Themed/ship/Chips.vue";
+
 const props = defineProps({
     userShip: {
         type: Object,
@@ -42,21 +44,12 @@ const chipCount = computed(() => {
                             </div>
                         </div>
                         <div>
-                            <div
-                                class="ship__chips flex gap-x-1 mb-4 cursor-pointer"
-                                v-tooltip="
-                                    'Chip level: ' + computedUserShip.chip_level
-                                "
-                            >
-                                <div
-                                    class="chip"
-                                    v-for="i of chipCount"
-                                    :key="i"
-                                    :class="{
-                                        'chip--unlocked':
-                                            i <= computedUserShip.chip_level,
-                                    }"
-                                ></div>
+                            <div class="ship__chips mb-4 flex">
+                                <Chips
+                                    class="ml-auto"
+                                    :total="chipCount"
+                                    :chipLevel="computedUserShip.chip_level"
+                                />
                             </div>
                             <div class="ship__actions">
                                 <slot name="actions">
@@ -137,16 +130,6 @@ const chipCount = computed(() => {
         div {
             text-shadow: 0px 0px 5px #05774e;
         }
-    }
-}
-
-.chip {
-    @apply leading-none bg-box-gray text-box-gray-text;
-
-    padding: 5px 2px;
-
-    &--unlocked {
-        @apply bg-weapon-btn-border-2-hover text-btn-yellow-bg;
     }
 }
 </style>
