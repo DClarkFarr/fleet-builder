@@ -349,7 +349,7 @@ const parseWeaponsDescription = (ability) => {
         });
     }
 };
-class AbilityParser {
+class AbilityTextParser {
     // data = {
     //     affectType: null,
     // }
@@ -431,8 +431,8 @@ class AbilityParser {
         return `${parsedText.replace(/\s{2,}/gm, " ").trim()}.`;
     }
 }
-export const getAbilityParser = (ability, data) => {
-    const ap = new AbilityParser(ability, data);
+export const getAbilityTextParser = (ability, data) => {
+    const ap = new AbilityTextParser(ability, data);
 
     return ap;
 };

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, toRaw } from "vue";
 import { $vfm } from "vue-final-modal";
 
-import { getAbilityParser } from "../../methods/ability";
+import { getAbilityTextParser } from "../../methods/abilityTextParser";
 import DataService from "../../services/DataService";
 
 import EditIcon from "~icons/fa-solid/pencil-alt";
@@ -127,7 +127,7 @@ const defaultAbility = computed(() => {
 
 const computedAbilities = computed(() => {
     return props.abilities.map((ability) => {
-        const parser = getAbilityParser(ability, {
+        const parser = getAbilityTextParser(ability, {
             shipClasses: toRaw(shipClasses.value),
         });
 

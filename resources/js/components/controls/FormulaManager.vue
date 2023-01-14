@@ -12,7 +12,7 @@ import ItemBlock from "./FormultaManager/ItemBlock.vue";
 import OpenBlock from "./FormultaManager/OpenBlock.vue";
 import OperatorBlock from "./FormultaManager/OperatorBlock.vue";
 
-import { buildItemBlocks } from "../../methods/ability";
+import { buildItemBlocks } from "../../methods/abilityTextParser";
 
 /*
 items: {

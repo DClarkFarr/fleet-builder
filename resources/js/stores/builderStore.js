@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import apiClient from "../services/ApiClient";
 import { useToast } from "vue-toastification";
 import { toRaw } from "vue";
+import { parseFleetShipsAbilities, parseFleetStats } from "../methods/fleet";
 
 const useBuilderStore = defineStore("builder", () => {
     const toast = useToast();
@@ -161,7 +162,13 @@ const useBuilderStore = defineStore("builder", () => {
             (w) => w.id_workshop === parseInt(id_workshop)
         );
 
-        ws[wsIndex].fleets = fleets;
+        ws[wsIndex].fleets = fleets.map((f) => {
+            const stats = parseFleetStats(f);
+            f.stats = stats;
+            f.parsedAbilities = parseFleetShipsAbilities(f);
+
+            return f;
+        });
 
         workshops.value = ws;
     };
