@@ -180,13 +180,56 @@ export const parseFleetShipsAbilities = (fleet) => {
             } else if (ability.location.includes("chip_")) {
                 const chipNum = parseInt(ability.location.split("_")[1]);
                 if (
-                    chipNum >= userShip.chip_level &&
+                    chipNum <= userShip.chip_level &&
                     !isDuplicateAbility(parsedAbility, parsedAbilities.chip)
                 ) {
                     parsedAbilities.chip.push(parsedAbility);
                 }
             }
         });
+    });
+
+    return parsedAbilities;
+};
+
+export const parseUserShipAbility = (userShip, ability) => {
+    const fullSlug = getFullAbilitySlug(ability);
+    const shortSlug = getShortAbilitySlug(ability);
+
+    const hasConditions = ability.conditions.length > 0;
+
+    return {
+        ability,
+        userShip,
+        fullSlug,
+        shortSlug,
+        hasConditions,
+    };
+};
+
+export const parseUserShipAbilities = (userShip) => {
+    const ship = userShip.ship;
+    const abilities = ship.abilities;
+
+    const parsedAbilities = {
+        flagship: [],
+        core: [],
+        chip: [],
+    };
+
+    abilities.forEach((ability) => {
+        const parsedAbility = parseUserShipAbility(userShip, ability);
+
+        if (ability.location.includes("flagship_")) {
+            parsedAbilities.flagship.push(parsedAbility);
+        } else if (ability.location.includes("ability_")) {
+            parsedAbilities.core.push(parsedAbility);
+        } else if (ability.location.includes("chip_")) {
+            const chipNum = parseInt(ability.location.split("_")[1]);
+            if (chipNum <= userShip.chip_level) {
+                parsedAbilities.chip.push(parsedAbility);
+            }
+        }
     });
 
     return parsedAbilities;

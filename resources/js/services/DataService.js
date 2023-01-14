@@ -412,62 +412,75 @@ export default class DataService {
             {
                 name: "Reduce Damage",
                 slug: DataService.ABILITY_TYPES.REDUCE_DAMAGE,
+                category: "Damage",
             },
             {
                 name: "Increase Resistence",
                 slug: DataService.ABILITY_TYPES.INCREASE_RESISTENCE,
+                category: "Resistance",
             },
             {
                 name: "Increase Weapon Damage",
                 slug: DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE,
                 weapons: true,
+                category: "Damage",
             },
             {
                 name: "Increase Penetration",
                 slug: DataService.ABILITY_TYPES.INCREASE_PENETRATION,
                 weapons: true,
+                category: "Penetration",
             },
             {
                 name: "Increase HP",
                 slug: DataService.ABILITY_TYPES.INCREASE_HP,
+                category: "HP",
             },
             {
                 name: "Increase Armor",
                 slug: DataService.ABILITY_TYPES.INCREASE_ARMOR,
                 weapons: true,
+                category: "Armor",
             },
             {
                 name: "Increase Accuracy",
                 slug: DataService.ABILITY_TYPES.INCREASE_ACCURACY,
                 weapons: true,
+                category: "Accuracy",
             },
             {
                 name: "Increase Evade",
                 slug: DataService.ABILITY_TYPES.INCREASE_EVADE,
+                category: "Evade",
             },
             {
                 name: "Increase Shield",
                 slug: DataService.ABILITY_TYPES.INCREASE_SHIELD,
                 weapons: true,
+                category: "Shield",
             },
             {
                 name: "Increase Movement Speed",
                 slug: DataService.ABILITY_TYPES.INCREASE_MOVEMENT_SPEED,
+                category: "Movement",
             },
             {
                 name: "Increase FTL Speed",
                 slug: DataService.ABILITY_TYPES.INCREASE_FTL_SPEED,
+                category: "FTL",
             },
             {
                 name: "Extra Attack",
                 slug: DataService.ABILITY_TYPES.EXTRA_ATTACK,
                 weapons: true,
                 repeats: true,
+                category: "Extra Attack",
             },
             {
                 name: "Increase Attack Speed",
                 slug: DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED,
                 weapons: true,
+                category: "Attack Speed",
             },
         ];
     }

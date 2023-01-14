@@ -52,8 +52,8 @@ export const parseShipSlotStrengths = (ship) => {
     Object.entries(slotCounts).forEach(([slotType, counts]) => {
         slotStrengths[slotType] = {
             [sizes.S]: counts[sizes.S] * 1,
-            [sizes.M]: counts[sizes.M] * 1.5,
-            [sizes.L]: counts[sizes.L] * 2,
+            [sizes.M]: counts[sizes.M] * 2,
+            [sizes.L]: counts[sizes.L] * 4,
         };
 
         slotStrengths[slotType].total = sum(

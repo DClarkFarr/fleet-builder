@@ -1,6 +1,7 @@
 import { watch, toRaw } from "vue";
 import DataService from "../services/DataService";
 import pluralize from "pluralize";
+import { upperFirst } from "lodash";
 
 const typesByAffect = Object.entries(
     DataService.getAbilityTypesByAffect()
@@ -156,7 +157,8 @@ const parseAmountLine = (ability, amount) => {
         value,
     });
 };
-const parseAmountDescription = (ability) => {
+
+const parseAmount = (ability) => {
     if (!ability.amounts?.length) {
         return "";
     }
@@ -184,6 +186,11 @@ const parseAmountDescription = (ability) => {
             amount: amounts.join(" + "),
         }
     );
+
+    return parsedAmounts;
+};
+const parseAmountDescription = (ability) => {
+    const parsedAmounts = parseAmount(ability);
 
     const formatLines = {
         default: "by {parsedAmounts}",
@@ -349,21 +356,107 @@ const parseWeaponsDescription = (ability) => {
         });
     }
 };
+
+export const abilityHasQualifiers = (ability) => {
+    return (
+        ability.target_class_ids.length > 0 ||
+        ability.target_class_ids.length > 0 ||
+        ability.weapon_classes.length > 0 ||
+        ability.weapon_sizes.length > 0
+    );
+};
+
+export const parseAbilityQualifiiers = (ability, { shipClasses }) => {
+    const qualifiers = [];
+
+    if (ability.target_class_ids.length) {
+        const classes = ability.target_class_ids
+            .map((id) => {
+                const name = shipClasses.find((c) => c.id_class === id)?.name;
+                return name ? pluralize.plural(name) : false;
+            })
+            .filter((c) => !!c);
+
+        qualifiers.push(`Targets ${joinAnd(classes)})`);
+    }
+
+    if (ability.for_class_ids.length) {
+        const classes = ability.for_class_ids
+            .map((id) => {
+                const name = shipClasses.find((c) => c.id_class === id)?.name;
+                return name ? pluralize.plural(name) : false;
+            })
+            .filter((c) => !!c);
+
+        qualifiers.push(`Boosts ${joinAnd(classes)}`);
+    }
+
+    if (ability.weapon_classes.length || ability.weapon_sizes.length) {
+        const arr = [
+            ...ability.weapon_classes,
+            ...ability.weapon_sizes.map((s) => s.toUpperCase()),
+        ];
+        qualifiers.push(`Weapons ${joinAnd(arr)}`);
+    }
+
+    return qualifiers.join(" ");
+};
+
+const parseAbilityCategory = (ability) => {
+    const categoryName = abilityTypes.find(
+        (at) => at.slug === ability.type
+    )?.category;
+
+    if (
+        ability.type === DataService.ABILITY_TYPES.REDUCE_DAMAGE &&
+        ability.variants.length
+    ) {
+        return `${upperFirst(
+            pluralize.singular(ability.variants[0])
+        )} ${categoryName}`;
+    } else if (
+        ability.type === DataService.ABILITY_TYPES.INCREASE_PENETRATION &&
+        ability.variants.length
+    ) {
+        return `${upperFirst(
+            pluralize.singular(ability.variants[0])
+        )} ${categoryName}`;
+    } else if (
+        ability.type === DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE &&
+        ability.weapon_classes.length
+    ) {
+        return `${upperFirst(
+            pluralize.singular(ability.weapon_classes[0])
+        )} ${categoryName}`;
+    } else if (
+        ability.type === DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE &&
+        ability.weapon_sizes.length
+    ) {
+        return `${upperFirst(
+            pluralize.singular(ability.weapon_sizes[0])
+        )} ${categoryName}`;
+    }
+
+    return categoryName;
+};
+
 class AbilityTextParser {
-    // data = {
-    //     affectType: null,
-    // }
-    constructor(ability, { shipClasses }) {
+    constructor(ability, { shipClasses }, watchForUpdates = true) {
         this.shipClasses = shipClasses;
-        watch(
-            ability,
-            () => {
-                this.ability = toRaw(ability);
-            },
-            {
-                immediate: true,
-            }
-        );
+
+        if (watchForUpdates) {
+            watch(
+                ability,
+                () => {
+                    this.ability = toRaw(ability);
+                },
+                {
+                    immediate: true,
+                }
+            );
+        } else {
+            this.ability = toRaw(ability);
+        }
     }
 
     get affectType() {
@@ -374,8 +467,16 @@ class AbilityTextParser {
         return abilityTypes.find((at) => at.slug === this.ability.type)?.name;
     }
 
+    get abilityTypeCategory() {
+        return parseAbilityCategory(this.ability);
+    }
+
     get amountDescription() {
         return parseAmountDescription(this.ability);
+    }
+
+    get amount() {
+        return parseAmount(this.ability);
     }
 
     get forClasses() {
@@ -412,6 +513,12 @@ class AbilityTextParser {
         return parseWeaponsDescription(this.ability);
     }
 
+    get abilityQualifiiers() {
+        return parseAbilityQualifiiers(this.ability, {
+            shipClasses: this.shipClasses,
+        });
+    }
+
     get fullDescription() {
         const template =
             "{abilityTypeName} {weaponsDescription} {toVariantDescription} {forClasses} {amountDescription} {durationDescription} {repeatDescription} {againstClasses} {conditionsDescription}";
@@ -431,8 +538,8 @@ class AbilityTextParser {
         return `${parsedText.replace(/\s{2,}/gm, " ").trim()}.`;
     }
 }
-export const getAbilityTextParser = (ability, data) => {
-    const ap = new AbilityTextParser(ability, data);
+export const getAbilityTextParser = (ability, data, watchForUpdates = true) => {
+    const ap = new AbilityTextParser(ability, data, watchForUpdates);
 
     return ap;
 };

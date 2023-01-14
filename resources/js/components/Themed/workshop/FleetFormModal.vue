@@ -3,6 +3,7 @@ import { reactive, toRaw, ref, watch, computed } from "vue";
 import { $vfm } from "vue-final-modal";
 import { useToast } from "vue-toastification";
 import useBuilderStore from "../../../stores/builderStore";
+import { parseUserShipAbilities } from "../../../methods/fleet";
 
 import InputError from "../../controls/InputError.vue";
 import UserShipCard from "../../Ship/UserShipCard.vue";
@@ -194,6 +195,7 @@ const computedUserShips = computed(() => {
         return {
             ...us,
             selected: selectedUserShipIds.value.includes(us.id_user_ship),
+            parsedAbilities: parseUserShipAbilities(us),
         };
     });
 

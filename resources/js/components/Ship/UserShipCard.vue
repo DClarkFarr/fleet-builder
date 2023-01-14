@@ -4,6 +4,7 @@ import { getShipChipsCount, parseShipSlotStrengths } from "../../methods/ship";
 
 import IconBattery from "~icons/fa-solid/battery-three-quarters";
 import Chips from "../Themed/ship/Chips.vue";
+import AbilityTag from "../Themed/ability/AbilityTag.vue";
 
 const props = defineProps({
     userShip: {
@@ -35,9 +36,9 @@ const chipCount = computed(() => {
     >
         <div class="ship-box__content">
             <div class="ship-box__content-bg p-2 flex w-full gap-x-3">
-                <div>
+                <div class="shrink">
                     <div class="flex w-full justify-between">
-                        <div class="flex gap-x-2 items-center text-sm">
+                        <div class="flex gap-x-2 items-center text-sm mb-1">
                             <div>
                                 {{ computedUserShip.ship.ship_class.name }}
                             </div>
@@ -101,17 +102,39 @@ const chipCount = computed(() => {
                         </div>
                     </div>
                 </div>
-                <div class="ship__tags ml-auto">
-                    <slot name="tags"></slot>
+                <div class="ship__tags grow">
+                    <slot name="tags">
+                        <div
+                            class="flex flex-wrap gap-[2px]"
+                            v-if="userShip.parsedAbilities"
+                        >
+                            <AbilityTag
+                                v-for="parsedAbility in userShip.parsedAbilities
+                                    .core"
+                                :key="parsedAbility.ability.id_ability"
+                                :parsedAbility="parsedAbility"
+                            />
+                            <AbilityTag
+                                v-for="parsedAbility in userShip.parsedAbilities
+                                    .flagship"
+                                :key="parsedAbility.ability.id_ability"
+                                :parsedAbility="parsedAbility"
+                            />
+                            <AbilityTag
+                                v-for="parsedAbility in userShip.parsedAbilities
+                                    .chip"
+                                :key="parsedAbility.ability.id_ability"
+                                :parsedAbility="parsedAbility"
+                            />
+                        </div>
+                    </slot>
                 </div>
-                <div>
-                    <div class="ship__actions">
-                        <slot name="actions">
-                            <button class="btn btn-sm btn-green ml-auto">
-                                Edit
-                            </button>
-                        </slot>
-                    </div>
+                <div class="ship__actions">
+                    <slot name="actions">
+                        <button class="btn btn-sm btn-green ml-auto">
+                            Edit
+                        </button>
+                    </slot>
                 </div>
             </div>
         </div>
