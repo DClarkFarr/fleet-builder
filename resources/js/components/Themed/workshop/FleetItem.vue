@@ -37,14 +37,14 @@ const isEmpty = computed(() => {
 
 <template>
     <div
-        class="fleet"
+        class="fleet flex flex-col h-full"
         :class="{
             'fleet--busy': !isEmpty,
             'fleet--empty': isEmpty,
         }"
     >
         <div
-            class="fleet__info p-4 rounded min-h-[350px] mb-4 border border-dark-border-start"
+            class="fleet__info grow p-4 rounded min-h-[350px] mb-4 border border-dark-border-start"
         >
             <div class="fleet__used leading-none" v-if="!isEmpty">
                 <FleetShipStats :fleet="fleet" />
@@ -60,7 +60,7 @@ const isEmpty = computed(() => {
             <div class="fleet__placeholder" v-else>No Fleet Assigned</div>
         </div>
         <div
-            class="fleet__bottom flex flex-col items-center"
+            class="fleet__bottom shrink flex flex-col items-center"
             @click="onSelectFleet"
         >
             <div class="fleet__button">

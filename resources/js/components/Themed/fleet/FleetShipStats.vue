@@ -37,7 +37,7 @@ const props = defineProps({
                             fleet.stats.leadershipRemaining < 0,
                     }"
                 >
-                    ({{ fleet.stats.leadershipRemaining > 0 ? "+" : "-"
+                    ({{ fleet.stats.leadershipRemaining > 0 ? "+" : ""
                     }}{{ fleet.stats.leadershipRemaining }})
                 </span>
             </div>

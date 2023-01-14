@@ -160,11 +160,19 @@ const workshop = computed(() => {
         (w) => w.id_workshop === props.fleet.id_workshop
     );
 });
-const selectedFleet = computed(() =>
-    workshop.value?.fleets?.find(
+const selectedFleet = computed(() => {
+    const found = workshop.value?.fleets?.find(
         (f) => f.id_workshop_fleet === props.fleet.id_workshop_fleet
-    )
-);
+    );
+    console.log(
+        "computing selected props fleet",
+        props.fleet.leadership,
+        "vs",
+        found.leadership
+    );
+
+    return found;
+});
 const shipClasses = computed(() => builderStore.shipClasses);
 
 const selectedUserShipIds = computed(() => {
@@ -273,7 +281,7 @@ watch(
                     class="select-list p-4 mb-8 flex flex-col gap-y-2"
                     v-if="fleet"
                 >
-                    <FleetShipStats :fleet="fleet" class="mb-4" />
+                    <FleetShipStats :fleet="selectedFleet" class="mb-4" />
 
                     <UserShipCard
                         v-for="userShip in selectedFleet.user_ships"

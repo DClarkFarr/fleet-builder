@@ -28,7 +28,7 @@ const onSelectFleet = (location, fleet) => {
         bind: {
             location,
             fleet,
-            excludeSelected: workshop.value.arcade,
+            excludeSelected: !workshop.value.arcade,
             onSave: async (locationSlug, data) => {
                 await builderStore.createOrUpdateFleet(
                     workshop.value?.id_workshop,
