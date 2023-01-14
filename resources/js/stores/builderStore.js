@@ -87,12 +87,12 @@ const useBuilderStore = defineStore("builder", () => {
         try {
             await apiClient.delete("user/ships/" + id_user_ship);
 
-            const ss = [...ships.value].map((s) => toRaw(s));
+            const us = [...userShips.value].map((s) => toRaw(s));
 
-            const index = ss.findIndex((s) => s.id_user_ship === id_user_ship);
-            ss.splice(index, 1);
+            const index = us.findIndex((s) => s.id_user_ship === id_user_ship);
+            us.splice(index, 1);
 
-            ships.value = ss;
+            userShips.value = us;
 
             return true;
         } catch (err) {

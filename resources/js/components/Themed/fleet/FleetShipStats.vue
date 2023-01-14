@@ -26,7 +26,7 @@ const props = defineProps({
                     v-if="fleet.stats.leadershipRemaining !== 0"
                     class="font-bold cursor-pointer"
                     v-tooltip="
-                        fleet.stats.leadershipRemaining
+                        fleet.stats.leadershipRemaining > 0
                             ? 'Leader remaining'
                             : 'Leadership exceeded'
                     "
