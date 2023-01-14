@@ -164,12 +164,6 @@ const selectedFleet = computed(() => {
     const found = workshop.value?.fleets?.find(
         (f) => f.id_workshop_fleet === props.fleet.id_workshop_fleet
     );
-    console.log(
-        "computing selected props fleet",
-        props.fleet.leadership,
-        "vs",
-        found.leadership
-    );
 
     return found;
 });
