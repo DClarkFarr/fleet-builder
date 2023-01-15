@@ -48,6 +48,7 @@ Route::prefix('/user')->group(function () {
                     Route::prefix('/{id_workshop_fleet}')->group(function () {
                         Route::delete('/', [BuilderController::class, 'deleteWorkshopFleet']);
                         Route::post('/ships', [BuilderController::class, 'addShipToWorkshopFleet']);
+                        Route::post('/flagship', [BuilderController::class, 'setWorkshopFleetFlagship']);
                         Route::delete('/ships/{id_user_fleet}', [BuilderController::class, 'removeShipFromWorkshopFleet']);
                     });
                 });

@@ -1,9 +1,10 @@
 <script setup>
 import LockIcon from "~icons/fa-solid/unlock-alt";
 
-import { computed, watch } from "vue";
+import { computed, watch, toRaw } from "vue";
 import ShipFleetLine from "../ship/ShipFleetLine.vue";
 import FleetShipStats from "../fleet/FleetShipStats.vue";
+import IconFlag from "~icons/fa-solid/flag";
 
 const props = defineProps({
     location: {
@@ -20,7 +21,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["select"]);
+const emit = defineEmits(["select", "flagship"]);
 
 const onSelectFleet = () => {
     emit(
@@ -28,6 +29,10 @@ const onSelectFleet = () => {
         { slug: props.location, name: props.locationName },
         props.fleet
     );
+};
+
+const onClickSetFlagship = (userShip) => {
+    emit("flagship", toRaw(props.fleet), toRaw(userShip));
 };
 
 const isEmpty = computed(() => {
@@ -52,9 +57,27 @@ const isEmpty = computed(() => {
                 <div class="fleet__ships flex flex-col gap-y-2">
                     <ShipFleetLine
                         v-for="userShip in fleet.user_ships"
-                        :key="userShip.id"
+                        :key="`${userShip.id_user_ship}-${userShip.pivot.flagship}`"
                         :userShip="userShip"
-                    />
+                    >
+                        <template #actions>
+                            <template v-if="userShip.pivot.flagship">
+                                <IconFlag
+                                    class="text-box-green"
+                                    v-tooltip="'Fleet Flagship'"
+                                />
+                            </template>
+                            <template v-else>
+                                <button
+                                    class="btn btn-blue btn-sm"
+                                    @click="() => onClickSetFlagship(userShip)"
+                                >
+                                    Set
+                                    <IconFlag />
+                                </button>
+                            </template>
+                        </template>
+                    </ShipFleetLine>
                 </div>
             </div>
             <div class="fleet__placeholder" v-else>No Fleet Assigned</div>

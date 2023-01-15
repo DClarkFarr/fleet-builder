@@ -62,7 +62,9 @@ const chipCount = computed(() => {
                         </div>
                     </div>
                     <div></div>
-                    <div></div>
+                    <div class="item__actions ml-auto">
+                        <slot name="actions"></slot>
+                    </div>
                 </div>
             </div>
         </div>

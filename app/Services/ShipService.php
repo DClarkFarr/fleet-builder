@@ -13,6 +13,38 @@ use Exception;
 
 class ShipService
 {
+
+    protected function getUserWorkshop(User $user, $id_workshop)
+    {
+        $workshop = $user->workshops()->find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        return $workshop;
+    }
+
+    protected function getWorkshopFleet(Workshop $workshop, $id_workshop_fleet)
+    {
+        $fleet = $workshop->fleets()->find($id_workshop_fleet);
+        if (!$fleet) {
+            throw new \Exception('Fleet not found', 404);
+        }
+
+        return $fleet;
+    }
+
+    protected function getFleetShip(WorkshopFleet $fleet, $id_user_ship)
+    {
+        $userShip = $fleet->userShips()->find($id_user_ship);
+        if (!$userShip) {
+            throw new \Exception('Ship not found', 404);
+        }
+
+        return $userShip;
+    }
+
+
     public function createShipLevel(string $name, int $sort)
     {
         $shipLevel = new ShipLevel;
@@ -435,10 +467,7 @@ class ShipService
 
     public function deleteWorkshop(User $user, $id_workshop)
     {
-        $workshop = $user->workshops()->find($id_workshop);
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
         $workshop->fleets()->delete();
         $workshop->delete();
@@ -447,11 +476,7 @@ class ShipService
     public function createOrUpdateWorkshopFleet(User $user, $id_workshop, $data)
     {
 
-        $workshop = $user->workshops()->find($id_workshop);
-
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
         $fleet = $workshop->fleets()->where('location', $data['location'])->first();
 
@@ -471,10 +496,7 @@ class ShipService
 
     public function getWorkshopFleets(User $user, $id_workshop)
     {
-        $workshop = $user->workshops()->find($id_workshop);
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
         $fleets = $workshop->fleets->map(function ($fleet) {
             return $this->populateFleetForResponse($fleet);
@@ -485,35 +507,20 @@ class ShipService
 
     public function deleteWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet)
     {
-        $workshop = $user->workshops()->find($id_workshop);
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
-        $fleet = $workshop->fleets()->find($id_workshop_fleet);
-        if (!$fleet) {
-            throw new \Exception('Fleet not found', 404);
-        }
+        $fleet = $this->getWorkshopFleet($workshop, $id_workshop_fleet);
 
         $fleet->delete();
     }
 
     public function addShipToWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet, $id_user_ship)
     {
-        $workshop = $user->workshops()->find($id_workshop);
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
-        $fleet = $workshop->fleets()->find($id_workshop_fleet);
-        if (!$fleet) {
-            throw new \Exception('Fleet not found', 404);
-        }
+        $fleet = $this->getWorkshopFleet($workshop, $id_workshop_fleet);
 
-        $ship = $user->ships()->find($id_user_ship);
-        if (!$ship) {
-            throw new \Exception('Ship not found', 404);
-        }
+        $ship = $this->getFleetShip($fleet, $id_user_ship);
 
         $fleet->userShips()->attach($ship->id_user_ship);
 
@@ -523,23 +530,33 @@ class ShipService
     // removeShipFromWorkshopFleet
     public function removeShipFromWorkshopFleet(User $user, $id_workshop, $id_workshop_fleet, $id_user_ship)
     {
-        $workshop = $user->workshops()->find($id_workshop);
-        if (!$workshop) {
-            throw new \Exception('Workshop not found', 404);
-        }
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
 
-        $fleet = $workshop->fleets()->find($id_workshop_fleet);
-        if (!$fleet) {
-            throw new \Exception('Fleet not found', 404);
-        }
+        $fleet = $this->getWorkshopFleet($workshop, $id_workshop_fleet);
 
-        $ship = $user->ships()->find($id_user_ship);
-        if (!$ship) {
-            throw new \Exception('Ship not found', 404);
-        }
+        $ship = $this->getFleetShip($fleet, $id_user_ship);
 
         $fleet->userShips()->detach($ship->id_user_ship);
 
         return $this->populateFleetForResponse($fleet);
+    }
+
+    public function setWorkshopFleetFlagship(User $user, $id_workshop, $id_workshop_fleet, $id_user_ship)
+    {
+        $workshop = $this->getUserWorkshop($user, $id_workshop);
+
+        $fleet = $this->getWorkshopFleet($workshop, $id_workshop_fleet);
+
+        $this->getFleetShip($fleet, $id_user_ship);
+
+        $fleet->userShips()
+            ->newPivotStatement()
+            ->where('id_workshop_fleet', $fleet->id_workshop_fleet)
+            ->update(['flagship' => false]);
+
+        $fleet->userShips()->updateExistingPivot($id_user_ship, ['flagship' => true]);
+
+
+        return ['flagship' => $id_user_ship];
     }
 }

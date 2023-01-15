@@ -297,6 +297,40 @@ const useBuilderStore = defineStore("builder", () => {
             });
     };
 
+    const setFleetFlagship = (id_workshop, id_workshop_fleet, id_user_ship) => {
+        return apiClient
+            .post(
+                `user/workshops/${id_workshop}/fleets/${id_workshop_fleet}/flagship`,
+                { id_user_ship }
+            )
+            .then((response) => response.data.row)
+            .then(() => {
+                const ws = workshops.value;
+
+                const wsIndex = ws.findIndex(
+                    (w) => w.id_workshop === parseInt(id_workshop)
+                );
+
+                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                    (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
+                );
+
+                const fleet = ws[wsIndex].fleets[fleetIndex];
+
+                const uss = [...fleet.user_ships]
+                    .map((us) => toRaw(us))
+                    .map((us) => ({
+                        ...us,
+                        pivot: {
+                            ...us.pivot,
+                            flagship: us.id_user_ship === id_user_ship,
+                        },
+                    }));
+
+                ws[wsIndex].fleets[fleetIndex].user_ships = uss;
+            });
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -319,6 +353,7 @@ const useBuilderStore = defineStore("builder", () => {
         addUserShipToFleet,
         removeUserShipFromFleet,
         populateUserShipsAbilityData,
+        setFleetFlagship,
     };
 });
 

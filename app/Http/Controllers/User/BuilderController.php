@@ -195,4 +195,25 @@ class BuilderController extends Controller
             ['row' => $fleet->toArray()]
         );
     }
+
+    public function setWorkshopFleetFlagship(Request $request, $id_workshop, $id_workshop_fleet)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user_ship' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+        $data = $shipService->setWorkshopFleetFlagship($user, $id_workshop, $id_workshop_fleet, $request->id_user_ship);
+
+        return response()->json(
+            $data
+        );
+    }
 }

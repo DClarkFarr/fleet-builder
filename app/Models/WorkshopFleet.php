@@ -37,6 +37,7 @@ class WorkshopFleet extends Model
     protected $casts = [
         'arcade' => 'boolean',
         'leadership' => 'integer',
+        'userShips.pivot.flagship' => 'boolean',
     ];
 
 
@@ -46,7 +47,7 @@ class WorkshopFleet extends Model
 
     public function userShips()
     {
-        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_workshop_fleet', 'id_user_ship', 'userShips');
+        return $this->belongsToMany(UserShip::class, 'workshop_fleet_rel', 'id_workshop_fleet', 'id_user_ship', 'id_workshop_fleet', 'id_user_ship', 'userShips')->withPivot('flagship');
     }
 
 

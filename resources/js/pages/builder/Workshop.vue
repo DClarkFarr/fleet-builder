@@ -63,6 +63,19 @@ const onSelectFleet = (location, fleet) => {
     });
 };
 
+const onSetFlagship = (fleet, userShip) => {
+    return builderStore
+        .setFleetFlagship(
+            workshop.value?.id_workshop,
+            fleet.id_workshop_fleet,
+            userShip.id_user_ship
+        )
+        .catch((err) => {
+            console.warn("Error setting flagship", err);
+            toast.error(err.response?.data?.message || err.message);
+        });
+};
+
 const workshop = computed(() => {
     return builderStore.workshops.find(
         (w) => w.id_workshop === parseInt(route.params.id_workshop)
@@ -135,6 +148,7 @@ onBeforeMount(async () => {
                         :locationName="fleetLocation.name"
                         :fleet="fleetLocation.fleet"
                         @select="onSelectFleet"
+                        @flagship="onSetFlagship"
                     />
                 </div>
             </div>
