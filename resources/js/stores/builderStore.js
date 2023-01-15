@@ -169,7 +169,7 @@ const useBuilderStore = defineStore("builder", () => {
     };
 
     const setWorkshopFleets = (id_workshop, fleets) => {
-        const ws = [...workshops.value].map((w) => toRaw(w));
+        const ws = workshops.value;
         const wsIndex = ws.findIndex(
             (w) => w.id_workshop === parseInt(id_workshop)
         );
@@ -188,8 +188,6 @@ const useBuilderStore = defineStore("builder", () => {
 
             return f;
         });
-
-        workshops.value = ws;
     };
 
     const createOrUpdateFleet = async (id_workshop, location, data) => {
@@ -197,7 +195,8 @@ const useBuilderStore = defineStore("builder", () => {
             .post(`user/workshops/${id_workshop}/fleets`, { ...data, location })
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = [...workshops.value].map((w) => toRaw(w));
+                const ws = workshops.value;
+
                 const wsIndex = ws.findIndex(
                     (w) => w.id_workshop === parseInt(id_workshop)
                 );
@@ -221,7 +220,7 @@ const useBuilderStore = defineStore("builder", () => {
         return apiClient
             .delete(`user/workshops/${id_workshop}/fleets/${id_workshop_fleet}`)
             .then(() => {
-                const ws = [...workshops.value].map((w) => toRaw(w));
+                const ws = workshops.value;
 
                 const wsIndex = ws.findIndex(
                     (w) => w.id_workshop === parseInt(id_workshop)
@@ -251,7 +250,8 @@ const useBuilderStore = defineStore("builder", () => {
             )
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = [...workshops.value].map((w) => toRaw(w));
+                const ws = workshops.value;
+
                 const wsIndex = ws.findIndex(
                     (w) => w.id_workshop === parseInt(id_workshop)
                 );
@@ -279,7 +279,7 @@ const useBuilderStore = defineStore("builder", () => {
             )
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = [...workshops.value].map((w) => toRaw(w));
+                const ws = workshops.value;
 
                 const wsIndex = ws.findIndex(
                     (w) => w.id_workshop === parseInt(id_workshop)

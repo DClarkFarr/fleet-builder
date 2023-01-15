@@ -520,9 +520,7 @@ class ShipService
 
         $fleet = $this->getWorkshopFleet($workshop, $id_workshop_fleet);
 
-        $ship = $this->getFleetShip($fleet, $id_user_ship);
-
-        $fleet->userShips()->attach($ship->id_user_ship);
+        $fleet->userShips()->attach($id_user_ship);
 
         return $this->populateFleetForResponse($fleet);
     }
