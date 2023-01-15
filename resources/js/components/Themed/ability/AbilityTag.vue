@@ -8,45 +8,11 @@ import IconExclamationTriangle from "~icons/fa-solid/exclamation-triangle";
 import IconChevronCircleDown from "~icons/fa-solid/chevron-circle-down";
 import IconShareAlt from "~icons/fa-solid/share-alt";
 
-import {
-    getAbilityTextParser,
-    abilityHasQualifiers,
-    parseAbilityQualifiiers,
-} from "../../../methods/abilityTextParser";
-import useBuilderStore from "../../../stores/builderStore";
-import DataService from "../../../services/DataService";
-
 const props = defineProps({
     parsedAbility: {
         type: Object,
         required: true,
     },
-});
-
-const builderStore = useBuilderStore();
-
-const abilityInfo = computed(() => {
-    const parser = getAbilityTextParser(
-        props.parsedAbility.ability,
-        {
-            shipClasses: toRaw(builderStore.shipClasses),
-        },
-        false
-    );
-
-    return {
-        affectType: parser.affectType,
-        abilityTypeName: parser.abilityTypeName,
-        amountDescription: parser.amountDescription,
-        fullDescription: parser.fullDescription,
-        abilityTypeCategory: parser.abilityTypeCategory,
-        conditionsDescription: parser.conditionsDescription,
-        abilityQualifiiers: parser.abilityQualifiiers,
-        amount: parser.amount,
-        amountIsFormula: props.parsedAbility.ability.amounts.some(
-            (a) => a.type === DataService.FORMULA_ITEM_TYPES.FORMULA
-        ),
-    };
 });
 
 const Icon = computed(() => {
@@ -58,55 +24,52 @@ const Icon = computed(() => {
         return IconChevronCircleDown;
     }
 });
-
-const hasConditions = computed(() => {
-    return props.parsedAbility.ability.conditions.length > 0;
-});
-
-const hasQualifiers = computed(() => {
-    return abilityHasQualifiers(props.parsedAbility.ability);
-});
 </script>
 
 <template>
     <div
         class="ability-tag flex gap-x-[3px] items-center text-xs leading-none"
-        :class="[`ability-tag--${abilityInfo.affectType}`]"
+        :class="[`ability-tag--${parsedAbility.extra.affectType}`]"
     >
         <div
             class="ability-tag__icon cursor-pointer"
-            v-tooltip="abilityInfo.fullDescription"
+            v-tooltip="parsedAbility.extra.fullDescription"
         >
             <component :is="Icon" />
         </div>
         <div class="ability-tag__text">
             <div class="ability-tag__text__name">
-                {{ abilityInfo.abilityTypeCategory }}
-                <template v-if="abilityInfo.amountIsFormula">
+                {{ parsedAbility.extra.abilityTypeCategory }}
+                <template v-if="parsedAbility.extra.amountIsFormula">
                     calc(x)
                 </template>
                 <template v-else>
-                    {{ abilityInfo.amount }}
+                    {{ parsedAbility.extra.amount }}
                 </template>
             </div>
         </div>
         <div class="ability-tag__badges flex gap-x-[2px] text-xs">
             <div
-                v-if="hasConditions"
+                v-if="parsedAbility.extra.hasConditions"
                 class="cursor-pointer"
-                v-tooltip="`Condition: ${abilityInfo.conditionsDescription}`"
+                v-tooltip="
+                    `Condition: ${parsedAbility.extra.conditionsDescription}`
+                "
             >
                 <IconExclamationCircle />
             </div>
             <div
-                v-if="hasQualifiers"
+                v-if="parsedAbility.extra.hasQualifiers"
                 class="cursor-pointer"
-                v-tooltip="abilityInfo.abilityQualifiiers"
+                v-tooltip="parsedAbility.extra.abilityQualifiiers"
             >
                 <IconExclamationTriangle />
             </div>
             <div
-                v-if="parsedAbility.ability.applies_to_fleet"
+                v-if="
+                    parsedAbility.ability.applies_to_fleet &&
+                    !parsedAbility.ability.location.includes('flagship_')
+                "
                 class="ability-tag__boost cursor-pointer"
                 v-tooltip="'Boosts Fleet'"
             >

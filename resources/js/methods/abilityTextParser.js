@@ -359,7 +359,7 @@ const parseWeaponsDescription = (ability) => {
 
 export const abilityHasQualifiers = (ability) => {
     return (
-        ability.target_class_ids.length > 0 ||
+        ability.for_class_ids.length > 0 ||
         ability.target_class_ids.length > 0 ||
         ability.weapon_classes.length > 0 ||
         ability.weapon_sizes.length > 0
@@ -377,7 +377,7 @@ export const parseAbilityQualifiiers = (ability, { shipClasses }) => {
             })
             .filter((c) => !!c);
 
-        qualifiers.push(`Targets ${joinAnd(classes)})`);
+        qualifiers.push(`Targets ${joinAnd(classes)}`);
     }
 
     if (ability.for_class_ids.length) {

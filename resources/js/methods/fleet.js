@@ -1,3 +1,4 @@
+import { toRaw } from "vue";
 import DataService from "../services/DataService";
 
 export const parseFleetStats = (fleet) => {
@@ -158,14 +159,14 @@ export const parseFleetShipsAbilities = (fleet) => {
     };
 
     fleet.user_ships.forEach((userShip) => {
-        const ship = userShip.ship;
-        const abilities = ship.abilities;
-        abilities.forEach((ability) => {
-            const parsedAbility = parseFleetShipAbility(
-                fleet,
-                userShip,
-                ability
-            );
+        const parsedShipAbilities = [
+            ...userShip.parsedAbilities.flagship,
+            ...userShip.parsedAbilities.core,
+            ...userShip.parsedAbilities.chip,
+        ].map((pa) => toRaw(pa));
+
+        parsedShipAbilities.forEach((parsedAbility) => {
+            const ability = parsedAbility.ability;
 
             if (ability.location.includes("flagship_")) {
                 if (
@@ -207,7 +208,7 @@ export const parseUserShipAbility = (userShip, ability) => {
     };
 };
 
-export const parseUserShipAbilities = (userShip) => {
+export const parseUserShipAbilities = (userShip, callback = null) => {
     const ship = userShip.ship;
     const abilities = ship.abilities;
 
@@ -219,6 +220,10 @@ export const parseUserShipAbilities = (userShip) => {
 
     abilities.forEach((ability) => {
         const parsedAbility = parseUserShipAbility(userShip, ability);
+
+        if (typeof callback === "function") {
+            parsedAbility.extra = callback(parsedAbility);
+        }
 
         if (ability.location.includes("flagship_")) {
             parsedAbilities.flagship.push(parsedAbility);

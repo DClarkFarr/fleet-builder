@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, toRaw } from "vue";
 import apiClient from "../services/ApiClient";
 import { useToast } from "vue-toastification";
-import { toRaw } from "vue";
 import { parseFleetShipsAbilities, parseFleetStats } from "../methods/fleet";
+import { populateUserShipAbilityData } from "../methods/ship";
 
 const useBuilderStore = defineStore("builder", () => {
     const toast = useToast();
@@ -42,6 +42,18 @@ const useBuilderStore = defineStore("builder", () => {
         });
 
         isLoadingUserShips.value = false;
+    };
+
+    const populateUserShipsAbilityData = () => {
+        const us = [...userShips.value].map((us) => toRaw(us));
+
+        us.forEach((s) => {
+            populateUserShipAbilityData(s, {
+                shipClasses: toRaw(shipClasses.value),
+            });
+        });
+
+        userShips.value = us;
     };
 
     const loadWorkshops = async () => {
@@ -165,6 +177,13 @@ const useBuilderStore = defineStore("builder", () => {
         ws[wsIndex].fleets = fleets.map((f) => {
             const stats = parseFleetStats(f);
             f.stats = stats;
+
+            f.user_ships.forEach((s) => {
+                populateUserShipAbilityData(s, {
+                    shipClasses: toRaw(shipClasses.value),
+                });
+            });
+
             f.parsedAbilities = parseFleetShipsAbilities(f);
 
             return f;
@@ -299,6 +318,7 @@ const useBuilderStore = defineStore("builder", () => {
         deleteFleet,
         addUserShipToFleet,
         removeUserShipFromFleet,
+        populateUserShipsAbilityData,
     };
 });
 

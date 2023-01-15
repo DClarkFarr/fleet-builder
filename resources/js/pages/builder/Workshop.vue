@@ -101,6 +101,8 @@ onBeforeMount(async () => {
     });
 
     builderStore.loadWorkshopFleets(route.params.id_workshop);
+
+    builderStore.populateUserShipsAbilityData();
 });
 </script>
 <template>

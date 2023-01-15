@@ -1,5 +1,11 @@
 import { sum } from "lodash";
+import { toRaw } from "vue";
 import DataService from "../services/DataService";
+import {
+    abilityHasQualifiers,
+    getAbilityTextParser,
+} from "./abilityTextParser";
+import { parseUserShipAbilities } from "./fleet";
 
 export const parseShipSlotCounts = (ship) => {
     if (ship.slotCounts) {
@@ -79,4 +85,39 @@ export const getShipChipsCount = (ship) => {
 
         return total;
     }, 0);
+};
+
+export const populateUserShipAbilityData = (userShip, { shipClasses }) => {
+    const parsedAbilities = parseUserShipAbilities(
+        userShip,
+        (parsedAbility) => {
+            const parser = getAbilityTextParser(
+                parsedAbility.ability,
+                {
+                    shipClasses,
+                },
+                false
+            );
+
+            return {
+                affectType: parser.affectType,
+                abilityTypeName: parser.abilityTypeName,
+                amountDescription: parser.amountDescription,
+                fullDescription: parser.fullDescription,
+                abilityTypeCategory: parser.abilityTypeCategory,
+                conditionsDescription: parser.conditionsDescription,
+                abilityQualifiiers: parser.abilityQualifiiers,
+                amount: parser.amount,
+                amountIsFormula: parsedAbility.ability.amounts.some(
+                    (a) => a.type === DataService.FORMULA_ITEM_TYPES.FORMULA
+                ),
+                hasConditions: parsedAbility.ability.conditions.length > 0,
+                hasQualifiers: abilityHasQualifiers(parsedAbility.ability),
+            };
+        }
+    );
+
+    userShip.parsedAbilities = parsedAbilities;
+
+    return parsedAbilities;
 };
