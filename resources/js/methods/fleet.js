@@ -1,5 +1,6 @@
 import { toRaw } from "vue";
 import DataService from "../services/DataService";
+import { abilityHasQualifiers } from "./abilityTextParser";
 
 export const parseFleetStats = (fleet) => {
     const stats = {
@@ -43,22 +44,22 @@ export const getFullAbilitySlug = (ability) => {
         parts.push(`variant:` + ability.variants.join("|"));
     }
 
-    if (ability.conditions.length) {
-        parts.push(
-            `condition:` +
-                ability.conditions
-                    .map((c) => {
-                        if (c.type === "id_class") {
-                            return `id_class:(${c.select.join("|")}${
-                                c.operator
-                            }${c.value})`;
-                        }
+    // if (ability.conditions.length) {
+    //     parts.push(
+    //         `condition:` +
+    //             ability.conditions
+    //                 .map((c) => {
+    //                     if (c.type === "id_class") {
+    //                         return `id_class:(${c.select.join("|")}${
+    //                             c.operator
+    //                         }${c.value})`;
+    //                     }
 
-                        return "bad_type--" + c.type;
-                    })
-                    .join("|")
-        );
-    }
+    //                     return "bad_type--" + c.type;
+    //                 })
+    //                 .join("|")
+    //     );
+    // }
 
     if (ability.repeat_type) {
         parts.push(`repeat:${ability.repeat_type}:${ability.repeat}`);
@@ -134,6 +135,7 @@ export const parseFleetShipAbility = (fleet, userShip, ability) => {
 
     const hasConditions = ability.conditions.length > 0;
     const meetsConditions = doesFleetMeetAbilityConditions(fleet, ability);
+    const hasQualifiers = abilityHasQualifiers(parsedAbility.ability);
 
     return {
         ability,
@@ -142,6 +144,7 @@ export const parseFleetShipAbility = (fleet, userShip, ability) => {
         shortSlug,
         hasConditions,
         meetsConditions,
+        hasQualifiers,
     };
 };
 
@@ -224,6 +227,7 @@ export const parseUserShipAbility = (userShip, ability) => {
     const shortSlug = getShortAbilitySlug(ability);
 
     const hasConditions = ability.conditions.length > 0;
+    const hasQualifiers = abilityHasQualifiers(ability);
 
     return {
         ability,
@@ -231,6 +235,7 @@ export const parseUserShipAbility = (userShip, ability) => {
         fullSlug,
         shortSlug,
         hasConditions,
+        hasQualifiers,
     };
 };
 

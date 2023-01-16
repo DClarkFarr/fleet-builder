@@ -5,6 +5,7 @@ import { computed, watch, toRaw } from "vue";
 import ShipFleetLine from "../ship/ShipFleetLine.vue";
 import FleetShipStats from "../fleet/FleetShipStats.vue";
 import IconFlag from "~icons/fa-solid/flag";
+import FleetParsedAbilityStats from "../fleet/FleetParsedAbilityStats.vue";
 
 const props = defineProps({
     location: {
@@ -54,7 +55,7 @@ const isEmpty = computed(() => {
             <div class="fleet__used leading-none" v-if="!isEmpty">
                 <FleetShipStats :fleet="fleet" />
 
-                <div class="fleet__ships flex flex-col gap-y-2">
+                <div class="fleet__ships flex flex-col gap-y-2 mb-8">
                     <ShipFleetLine
                         v-for="userShip in fleet.user_ships"
                         :key="`${userShip.id_user_ship}-${userShip.pivot.flagship}`"
@@ -78,6 +79,12 @@ const isEmpty = computed(() => {
                             </template>
                         </template>
                     </ShipFleetLine>
+                </div>
+
+                <div class="fleet__stats">
+                    <FleetParsedAbilityStats
+                        :parsedAbilities="fleet.parsedAbilities"
+                    />
                 </div>
             </div>
             <div class="fleet__placeholder" v-else>No Fleet Assigned</div>

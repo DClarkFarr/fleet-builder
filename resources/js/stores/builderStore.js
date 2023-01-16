@@ -328,6 +328,8 @@ const useBuilderStore = defineStore("builder", () => {
                     }));
 
                 ws[wsIndex].fleets[fleetIndex].user_ships = uss;
+                ws[wsIndex].fleets[fleetIndex].parsedAbilities =
+                    parseFleetShipsAbilities(fleet);
             });
     };
 
