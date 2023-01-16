@@ -163,25 +163,51 @@ export const parseFleetShipsAbilities = (fleet) => {
             ...userShip.parsedAbilities.flagship,
             ...userShip.parsedAbilities.core,
             ...userShip.parsedAbilities.chip,
-        ].map((pa) => toRaw(pa));
+        ]
+            .map((pa) => toRaw(pa))
+            .map((pa) => {
+                return {
+                    ...pa,
+                    source: {
+                        id_user_ship: userShip.id_user_ship,
+                        id_ship: userShip.ship.id_ship,
+                        ship_class: userShip.ship.ship_class,
+                        ship_level: userShip.ship.ship_level,
+                        nickname: userShip.name,
+                        name: userShip.ship.name,
+                    },
+                };
+            });
+
+        const isFlagship = !!userShip.pivot.flagship;
 
         parsedShipAbilities.forEach((parsedAbility) => {
             const ability = parsedAbility.ability;
 
+            const appliesToFleet = ability.applies_to_fleet;
+            const flagshipRequired = ability.flagship_required;
+
+            const canAddAbility =
+                (appliesToFleet && !flagshipRequired) ||
+                (appliesToFleet && flagshipRequired && isFlagship);
+
             if (ability.location.includes("flagship_")) {
                 if (
+                    isFlagship &&
                     !isDuplicateAbility(parsedAbility, parsedAbilities.flagship)
                 ) {
                     parsedAbilities.flagship.push(parsedAbility);
                 }
             } else if (ability.location.includes("ability_")) {
-                if (!isDuplicateAbility(parsedAbility, parsedAbilities.core)) {
+                if (
+                    canAddAbility &&
+                    !isDuplicateAbility(parsedAbility, parsedAbilities.core)
+                ) {
                     parsedAbilities.core.push(parsedAbility);
                 }
             } else if (ability.location.includes("chip_")) {
-                const chipNum = parseInt(ability.location.split("_")[1]);
                 if (
-                    chipNum <= userShip.chip_level &&
+                    canAddAbility &&
                     !isDuplicateAbility(parsedAbility, parsedAbilities.chip)
                 ) {
                     parsedAbilities.chip.push(parsedAbility);
