@@ -83,6 +83,7 @@ const isEmpty = computed(() => {
 
                 <div class="fleet__stats">
                     <FleetParsedAbilityStats
+                        :fleet="fleet"
                         :parsedAbilities="fleet.parsedAbilities"
                     />
                 </div>

@@ -123,31 +123,6 @@ export const doesFleetMeetAbilityConditions = (fleet, ability) => {
     return meetsConditions;
 };
 
-export const parseFleetShipAbility = (fleet, userShip, ability) => {
-    if (!fleet.stats) {
-        throw new Error(
-            "Fleet must have parsed stats before parsing abilities"
-        );
-    }
-
-    const fullSlug = getFullAbilitySlug(ability);
-    const shortSlug = getShortAbilitySlug(ability);
-
-    const hasConditions = ability.conditions.length > 0;
-    const meetsConditions = doesFleetMeetAbilityConditions(fleet, ability);
-    const hasQualifiers = abilityHasQualifiers(parsedAbility.ability);
-
-    return {
-        ability,
-        userShip,
-        fullSlug,
-        shortSlug,
-        hasConditions,
-        meetsConditions,
-        hasQualifiers,
-    };
-};
-
 export const isDuplicateAbility = (parsedAbility, parsedAbilities) => {
     return parsedAbilities.some(
         (pa) => pa.ability.id_ability === parsedAbility.ability.id_ability
@@ -169,6 +144,13 @@ export const parseFleetShipsAbilities = (fleet) => {
         ]
             .map((pa) => toRaw(pa))
             .map((pa) => {
+                pa.meetsConditions = true;
+                if (pa.hasConditions) {
+                    pa.meetsConditions = doesFleetMeetAbilityConditions(
+                        fleet,
+                        pa.ability
+                    );
+                }
                 return {
                     ...pa,
                     source: {
