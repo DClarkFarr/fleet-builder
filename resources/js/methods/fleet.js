@@ -239,3 +239,31 @@ export const parseUserShipAbilities = (userShip, callback = null) => {
 
     return parsedAbilities;
 };
+
+export const sortUserShipsBySelectedIds = (userShips, selectedIds = []) => {
+    userShips.sort((a, b) => {
+        const aInFleet = selectedIds.includes(a.id_user_ship);
+        const bInFleet = selectedIds.includes(b.id_user_ship);
+        if (aInFleet && !bInFleet) {
+            return -1;
+        } else if (!aInFleet && bInFleet) {
+            return 1;
+        }
+
+        shortUserShipsCallback(a, b);
+    });
+
+    return userShips;
+};
+
+export const shortUserShipsCallback = (a, b) => {
+    if (a.ship.ship_level.sort != b.ship.ship_level.sort) {
+        return b.ship.ship_level.sort - a.ship.ship_level.sort;
+    }
+
+    if (a.ship.ship_class.sort != b.ship.ship_class.sort) {
+        return b.ship.ship_class.sort - a.ship.ship_class.sort;
+    }
+
+    return b.energy - a.energy;
+};

@@ -10,6 +10,8 @@ import ContentBox from "../ContentBox.vue";
 import FleetShipStats from "../fleet/FleetShipStats.vue";
 import SelectUserShipModal from "../ship/SelectUserShipModal.vue";
 
+import { sortUserShipsBySelectedIds } from "../../../methods/fleet";
+
 const props = defineProps({
     idWorkshop: {
         type: Number,
@@ -180,12 +182,19 @@ const selectedUserShipIds = computed(() => {
 });
 
 const computedUserShips = computed(() => {
+    const fleetUserShipIds = selectedFleet.value?.user_ships?.map(
+        (us) => us.id_user_ship
+    );
+
     let userShips = builderStore.userShips
         .map((us) => toRaw(us))
         .filter((us) => us.visible);
 
     if (props.excludeSelected) {
         userShips = userShips.filter((us) => {
+            if (fleetUserShipIds.includes(us.id_user_ship)) {
+                return true;
+            }
             return !selectedUserShipIds.value.includes(us.id_user_ship);
         });
     }
@@ -196,6 +205,8 @@ const computedUserShips = computed(() => {
             selected: selectedUserShipIds.value.includes(us.id_user_ship),
         };
     });
+
+    sortUserShipsBySelectedIds(mapped, fleetUserShipIds);
 
     return mapped;
 });

@@ -184,7 +184,7 @@ onBeforeMount(() => {
                         </div>
                     </div>
                     <div
-                        class="my-fleets__workshops h-full shrink lg:max-w-[410px]"
+                        class="my-fleets__workshops h-full shrink-0 lg:max-w-[410px]"
                     >
                         <div class="flex w-full items-end mb-2">
                             <div>

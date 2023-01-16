@@ -6,7 +6,13 @@ import Icons from "unplugin-icons/vite";
 
 export default defineConfig({
     plugins: [
-        vue(),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    includeAbsolute: false,
+                },
+            },
+        }),
         Icons({
             compiler: "vue3",
         }),
