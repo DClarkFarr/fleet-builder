@@ -23,7 +23,7 @@ const parsedAbilitiesList = computed(() => {
 </script>
 
 <template>
-    <div class="fleet-ability-stats flex flex-col gap-y-3">
+    <div class="fleet-ability-lines flex flex-col gap-y-3">
         <FleetParsedAbilityLine
             v-for="parsedFleetAbility in parsedAbilitiesList"
             :parsedFleetAbility="parsedFleetAbility"

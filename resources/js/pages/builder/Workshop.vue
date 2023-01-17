@@ -84,7 +84,7 @@ const workshop = computed(() => {
 
 const computedFleetLocations = computed(() => {
     return fleetLocations.map((location) => {
-        const fleet = workshop.value?.fleets?.find(
+        const fleet = builderStore.selectedFleets?.find(
             (f) => f.location === location.slug
         );
 
@@ -113,9 +113,9 @@ onBeforeMount(async () => {
         allLoaded.value = true;
     });
 
-    builderStore.loadWorkshopFleets(route.params.id_workshop);
-
     builderStore.populateUserShipsAbilityData();
+
+    builderStore.setSelectedWorkshopId(route.params.id_workshop);
 });
 </script>
 <template>

@@ -522,12 +522,12 @@ export default class DataService {
                 DataService.RESISTANCE_TYPES.HULL,
                 DataService.RESISTANCE_TYPES.ARMOR,
             ],
-            increase_resistence: [
+            [DataService.ABILITY_TYPES.INCREASE_RESISTENCE]: [
                 DataService.WEAPON_CLASSES.BEAM,
                 DataService.WEAPON_CLASSES.MISSILE,
                 DataService.WEAPON_CLASSES.KINETIC,
             ],
-            increase_penetration: [
+            [DataService.ABILITY_TYPES.INCREASE_PENETRATION]: [
                 DataService.RESISTANCE_TYPES.SHIELDS,
                 DataService.RESISTANCE_TYPES.HULL,
                 DataService.RESISTANCE_TYPES.ARMOR,

@@ -2,8 +2,14 @@ import { defineStore } from "pinia";
 import { computed, ref, toRaw } from "vue";
 import apiClient from "../services/ApiClient";
 import { useToast } from "vue-toastification";
-import { parseFleetShipsAbilities, parseFleetStats } from "../methods/fleet";
-import { populateUserShipAbilityData } from "../methods/ship";
+import {
+    parseFleetShipsAbilities,
+    parseFleetBasicStats,
+} from "../methods/fleet";
+import {
+    parseShipSlotStrengths,
+    populateUserShipAbilityData,
+} from "../methods/ship";
 
 const useBuilderStore = defineStore("builder", () => {
     const toast = useToast();
@@ -11,6 +17,24 @@ const useBuilderStore = defineStore("builder", () => {
     const isLoadingShips = ref(false);
 
     const shipClasses = ref([]);
+
+    const userShips = ref([]);
+    const isLoadingUserShips = ref(false);
+
+    const workshops = ref([]);
+    const isLoadingWorkshops = ref(false);
+
+    const selectedWorkshopId = ref(null);
+
+    const selectedFleets = ref([]);
+
+    const setSelectedWorkshopId = (id_workshop) => {
+        selectedWorkshopId.value = id_workshop;
+
+        selectedFleets.value = [];
+
+        loadWorkshopFleets(id_workshop);
+    };
 
     const loadShips = async () => {
         isLoadingShips.value = true;
@@ -27,12 +51,6 @@ const useBuilderStore = defineStore("builder", () => {
             shipClasses.value = response.data.rows;
         });
     };
-
-    const userShips = ref([]);
-    const isLoadingUserShips = ref(false);
-
-    const workshops = ref([]);
-    const isLoadingWorkshops = ref(false);
 
     const loadUserShips = async () => {
         isLoadingUserShips.value = true;
@@ -165,25 +183,19 @@ const useBuilderStore = defineStore("builder", () => {
                 });
             });
 
-        setWorkshopFleets(id_workshop, fleets);
+        setSelectedFleets(fleets);
     };
 
-    const setWorkshopFleets = (id_workshop, fleets) => {
-        const ws = workshops.value;
-        const wsIndex = ws.findIndex(
-            (w) => w.id_workshop === parseInt(id_workshop)
-        );
-
-        ws[wsIndex].fleets = fleets.map((f) => {
-            const stats = parseFleetStats(f);
-            f.stats = stats;
-
+    const setSelectedFleets = (fleets) => {
+        selectedFleets.value = fleets.map((f) => {
             f.user_ships.forEach((s) => {
                 populateUserShipAbilityData(s, {
                     shipClasses: toRaw(shipClasses.value),
                 });
+                parseShipSlotStrengths(s.ship);
             });
 
+            f.stats = parseFleetBasicStats(f); // parse first
             f.parsedAbilities = parseFleetShipsAbilities(f);
 
             return f;
@@ -195,24 +207,18 @@ const useBuilderStore = defineStore("builder", () => {
             .post(`user/workshops/${id_workshop}/fleets`, { ...data, location })
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = workshops.value;
-
-                const wsIndex = ws.findIndex(
-                    (w) => w.id_workshop === parseInt(id_workshop)
-                );
-
-                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+                const fleets = selectedFleets.value;
 
                 if (data.id_workshop_fleet) {
-                    const fleetIndex = ws[wsIndex].fleets.findIndex(
+                    const fleetIndex = fleets.findIndex(
                         (f) => f.id_workshop_fleet === data.id_workshop_fleet
                     );
-                    fleets[fleetIndex] = fleet;
+                    fleets.splice(fleetIndex, 1, fleet);
                 } else {
                     fleets.push(fleet);
                 }
 
-                setWorkshopFleets(id_workshop, fleets);
+                setSelectedFleets(id_workshop, fleets);
             });
     };
 
@@ -220,21 +226,15 @@ const useBuilderStore = defineStore("builder", () => {
         return apiClient
             .delete(`user/workshops/${id_workshop}/fleets/${id_workshop_fleet}`)
             .then(() => {
-                const ws = workshops.value;
-
-                const wsIndex = ws.findIndex(
-                    (w) => w.id_workshop === parseInt(id_workshop)
-                );
-
-                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                const fleetIndex = selectedFleets.value.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
 
-                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+                const fleets = selectedFleets.value;
 
                 fleets.splice(fleetIndex, 1);
 
-                setWorkshopFleets(id_workshop, fleets);
+                setSelectedFleets(id_workshop, fleets);
             });
     };
 
@@ -250,21 +250,15 @@ const useBuilderStore = defineStore("builder", () => {
             )
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = workshops.value;
-
-                const wsIndex = ws.findIndex(
-                    (w) => w.id_workshop === parseInt(id_workshop)
-                );
-
-                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                const fleetIndex = selectedFleets.value.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
 
-                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+                const fleets = selectedFleets.value;
 
-                fleets[fleetIndex] = fleet;
+                fleets.splice(fleetIndex, 1, fleet);
 
-                setWorkshopFleets(id_workshop, fleets);
+                setSelectedFleets(id_workshop, fleets);
             });
     };
 
@@ -279,21 +273,15 @@ const useBuilderStore = defineStore("builder", () => {
             )
             .then((response) => response.data.row)
             .then((fleet) => {
-                const ws = workshops.value;
-
-                const wsIndex = ws.findIndex(
-                    (w) => w.id_workshop === parseInt(id_workshop)
-                );
-
-                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                const fleetIndex = selectedFleets.value.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
 
-                const fleets = [...ws[wsIndex].fleets].map((f) => toRaw(f));
+                const fleets = selectedFleets.value;
 
                 fleets.splice(fleetIndex, 1, fleet);
 
-                setWorkshopFleets(id_workshop, fleets);
+                setSelectedFleets(id_workshop, fleets);
             });
     };
 
@@ -305,17 +293,11 @@ const useBuilderStore = defineStore("builder", () => {
             )
             .then((response) => response.data.row)
             .then(() => {
-                const ws = workshops.value;
-
-                const wsIndex = ws.findIndex(
-                    (w) => w.id_workshop === parseInt(id_workshop)
-                );
-
-                const fleetIndex = ws[wsIndex].fleets.findIndex(
+                const fleetIndex = selectedFleets.value.findIndex(
                     (f) => f.id_workshop_fleet === parseInt(id_workshop_fleet)
                 );
 
-                const fleet = ws[wsIndex].fleets[fleetIndex];
+                const fleet = selectedFleets.value[fleetIndex];
 
                 const uss = [...fleet.user_ships]
                     .map((us) => toRaw(us))
@@ -325,10 +307,17 @@ const useBuilderStore = defineStore("builder", () => {
                             ...us.pivot,
                             flagship: us.id_user_ship === id_user_ship,
                         },
-                    }));
+                    }))
+                    .map((us) => {
+                        parseShipSlotStrengths(us.ship);
+                        return us;
+                    });
 
-                ws[wsIndex].fleets[fleetIndex].user_ships = uss;
-                ws[wsIndex].fleets[fleetIndex].parsedAbilities =
+                selectedFleets.value[fleetIndex].user_ships = uss; // set ships before getting stats
+
+                selectedFleets.value[fleetIndex].stats =
+                    parseFleetBasicStats(fleet); // parse first
+                selectedFleets.value[fleetIndex].parsedAbilities =
                     parseFleetShipsAbilities(fleet);
             });
     };
@@ -341,6 +330,7 @@ const useBuilderStore = defineStore("builder", () => {
         shipClasses,
         workshops,
         isLoadingWorkshops,
+        selectedFleets,
         loadShips,
         loadShipClasses,
         loadUserShips,
@@ -356,6 +346,7 @@ const useBuilderStore = defineStore("builder", () => {
         removeUserShipFromFleet,
         populateUserShipsAbilityData,
         setFleetFlagship,
+        setSelectedWorkshopId,
     };
 });
 

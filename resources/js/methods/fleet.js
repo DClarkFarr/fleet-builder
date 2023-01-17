@@ -2,7 +2,7 @@ import { toRaw } from "vue";
 import DataService from "../services/DataService";
 import { abilityHasQualifiers } from "./abilityTextParser";
 
-export const parseFleetStats = (fleet) => {
+export const parseFleetBasicStats = (fleet) => {
     const stats = {
         leadershipUsed: 0,
         leadershipRemaining: 0,
