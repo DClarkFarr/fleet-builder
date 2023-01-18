@@ -12,20 +12,12 @@ const props = defineProps({
         required: true,
     },
 });
-
-const parsedAbilitiesList = computed(() => {
-    return [
-        ...props.parsedAbilities.flagship,
-        ...props.parsedAbilities.core,
-        ...props.parsedAbilities.chip,
-    ];
-});
 </script>
 
 <template>
     <div class="fleet-ability-lines flex flex-col gap-y-3">
         <FleetParsedAbilityLine
-            v-for="parsedFleetAbility in parsedAbilitiesList"
+            v-for="parsedFleetAbility in parsedAbilities"
             :parsedFleetAbility="parsedFleetAbility"
             :fleetUserShips="fleet.user_ships"
             :key="parsedFleetAbility.ability.id_ability"

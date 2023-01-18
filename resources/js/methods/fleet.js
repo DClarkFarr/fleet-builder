@@ -130,18 +130,10 @@ export const isDuplicateAbility = (parsedAbility, parsedAbilities) => {
 };
 
 export const parseFleetShipsAbilities = (fleet) => {
-    const parsedAbilities = {
-        flagship: [],
-        core: [],
-        chip: [],
-    };
+    const parsedAbilities = [];
 
     fleet.user_ships.forEach((userShip) => {
-        const parsedShipAbilities = [
-            ...userShip.parsedAbilities.flagship,
-            ...userShip.parsedAbilities.core,
-            ...userShip.parsedAbilities.chip,
-        ]
+        const parsedShipAbilities = userShip.parsedAbilities
             .map((pa) => toRaw(pa))
             .map((pa) => {
                 pa.meetsConditions = true;
@@ -176,27 +168,11 @@ export const parseFleetShipsAbilities = (fleet) => {
                 (appliesToFleet && !flagshipRequired) ||
                 (appliesToFleet && flagshipRequired && isFlagship);
 
-            if (ability.location.includes("flagship_")) {
-                if (
-                    isFlagship &&
-                    !isDuplicateAbility(parsedAbility, parsedAbilities.flagship)
-                ) {
-                    parsedAbilities.flagship.push(parsedAbility);
-                }
-            } else if (ability.location.includes("ability_")) {
-                if (
-                    canAddAbility &&
-                    !isDuplicateAbility(parsedAbility, parsedAbilities.core)
-                ) {
-                    parsedAbilities.core.push(parsedAbility);
-                }
-            } else if (ability.location.includes("chip_")) {
-                if (
-                    canAddAbility &&
-                    !isDuplicateAbility(parsedAbility, parsedAbilities.chip)
-                ) {
-                    parsedAbilities.chip.push(parsedAbility);
-                }
+            if (
+                canAddAbility &&
+                !isDuplicateAbility(parsedAbility, parsedAbilities)
+            ) {
+                parsedAbilities.push(parsedAbility);
             }
         });
     });
@@ -225,11 +201,7 @@ export const parseUserShipAbilities = (userShip, callback = null) => {
     const ship = userShip.ship;
     const abilities = ship.abilities;
 
-    const parsedAbilities = {
-        flagship: [],
-        core: [],
-        chip: [],
-    };
+    const parsedAbilities = [];
 
     abilities.forEach((ability) => {
         const parsedAbility = parseUserShipAbility(userShip, ability);
@@ -238,15 +210,12 @@ export const parseUserShipAbilities = (userShip, callback = null) => {
             parsedAbility.extra = callback(parsedAbility);
         }
 
-        if (ability.location.includes("flagship_")) {
-            parsedAbilities.flagship.push(parsedAbility);
-        } else if (ability.location.includes("ability_")) {
-            parsedAbilities.core.push(parsedAbility);
-        } else if (ability.location.includes("chip_")) {
-            const chipNum = parseInt(ability.location.split("_")[1]);
-            if (chipNum <= userShip.chip_level) {
-                parsedAbilities.chip.push(parsedAbility);
-            }
+        const canAddAbility = ability.location.includes("chip_")
+            ? parseInt(ability.location.split("_")[1]) <= userShip.chip_level
+            : true;
+
+        if (canAddAbility) {
+            parsedAbilities.push(parsedAbility);
         }
     });
 

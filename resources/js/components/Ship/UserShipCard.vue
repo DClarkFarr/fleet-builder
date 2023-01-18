@@ -106,23 +106,10 @@ const chipCount = computed(() => {
                     <slot name="tags">
                         <div
                             class="flex flex-wrap gap-[2px]"
-                            v-if="userShip.parsedAbilities"
+                            v-if="userShip.parsedAbilities?.length"
                         >
                             <AbilityTag
-                                v-for="parsedAbility in userShip.parsedAbilities
-                                    .core"
-                                :key="parsedAbility.ability.id_ability"
-                                :parsedAbility="parsedAbility"
-                            />
-                            <AbilityTag
-                                v-for="parsedAbility in userShip.parsedAbilities
-                                    .flagship"
-                                :key="parsedAbility.ability.id_ability"
-                                :parsedAbility="parsedAbility"
-                            />
-                            <AbilityTag
-                                v-for="parsedAbility in userShip.parsedAbilities
-                                    .chip"
+                                v-for="parsedAbility in userShip.parsedAbilities"
                                 :key="parsedAbility.ability.id_ability"
                                 :parsedAbility="parsedAbility"
                             />
