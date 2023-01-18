@@ -1,10 +1,22 @@
 <script setup>
+import { watch } from "vue";
 const props = defineProps({
     fleet: {
         type: Object,
         required: true,
     },
 });
+
+watch(
+    () => props.fleet,
+    () => {
+        console.log("fleet changed", props.fleet);
+    },
+    {
+        watch: true,
+        deep: true,
+    }
+);
 </script>
 
 <template>

@@ -161,25 +161,21 @@ const onShowShipSelectModal = () => {
     });
 };
 
-const workshop = computed(() => {
-    return builderStore.workshops.find(
-        (w) => w.id_workshop === props.idWorkshop
-    );
-});
 const selectedFleet = computed(() => {
-    const found = workshop.value?.fleets?.find(
+    const found = builderStore.selectedFleets?.find(
         (f) => f.id_workshop_fleet === props.fleet?.id_workshop_fleet
     );
 
     return found;
 });
-const shipClasses = computed(() => builderStore.shipClasses);
 
 const selectedUserShipIds = computed(() => {
-    return workshop.value.fleets?.reduce((acc, fleet) => {
+    return builderStore.selectedFleets?.reduce((acc, fleet) => {
         return [...acc, ...fleet.user_ships.map((us) => us.id_user_ship)];
     }, []);
 });
+
+const shipClasses = computed(() => builderStore.shipClasses);
 
 const computedUserShips = computed(() => {
     const fleetUserShipIds = selectedFleet.value?.user_ships?.map(
