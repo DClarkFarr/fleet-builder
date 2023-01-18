@@ -11,6 +11,7 @@ import {
     populateUserShipAbilityData,
 } from "../methods/ship";
 import DataService from "../services/DataService";
+import { getFleetsParsedAbilityStats } from "../methods/abilityStatParser";
 
 const useBuilderStore = defineStore("builder", () => {
     const toast = useToast();
@@ -39,186 +40,13 @@ const useBuilderStore = defineStore("builder", () => {
 
     const selectedFleetsAbilityLists = computed(() => {
         return selectedFleets.value.reduce((obj, fleet) => {
-            obj[fleet.id_workshop_fleet] = [...fleet.parsedAbilities];
+            obj[fleet.id_workshop_fleet] = fleet.parsedAbilities;
             return obj;
         }, {});
     });
 
     const selectedFleetsStats = computed(() => {
-        const fleetIds = selectedFleets.value.map((f) => f.id_workshop_fleet);
-
-        return fleetIds.reduce((obj, fleetId) => {
-            const fleet = selectedFleets.value.find(
-                (f) => f.id_workshop_fleet === fleetId
-            );
-
-            const totalStats = {};
-            const shipStats = {};
-
-            selectedFleetsAbilityLists.value[fleetId].forEach(
-                (parsedAbility) => {
-                    const ability = parsedAbility.ability;
-                    if (!parsedAbility.meetsConditions) {
-                        return obj;
-                    }
-
-                    if (!totalStats[ability.type]) {
-                        totalStats[ability.type] = {
-                            percent: [],
-                            number: [],
-                        };
-                    }
-
-                    fleet.user_ships.forEach((userShip) => {
-                        let applyToShip = true;
-                        if (ability.for_class_ids.length) {
-                            applyToShip = ability.for_class_ids.includes(
-                                userShip.ship.ship_class.id_class
-                            );
-                        }
-
-                        if (!applyToShip) {
-                            return false;
-                        }
-
-                        if (!shipStats[userShip.id_user_ship]) {
-                            shipStats[userShip.id_user_ship] = {};
-                        }
-
-                        if (!shipStats[userShip.id_user_ship][ability.type]) {
-                            shipStats[userShip.id_user_ship][ability.type] = {
-                                percent: [],
-                                number: [],
-                            };
-                        }
-
-                        if (
-                            ability.type ===
-                            DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE
-                        ) {
-                            const weapon_sizes = ability.weapon_sizes;
-                            const weapon_classes = ability.weapon_classes;
-
-                            let shipWeaponStrength =
-                                userShip.ship.slotStrengths.weapon.total;
-
-                            if (weapon_sizes.length) {
-                                shipWeaponStrength = weapon_sizes.reduce(
-                                    (total, weapon_size) => {
-                                        return (
-                                            total +
-                                            userShip.ship.slotStrengths.weapon[
-                                                weapon_size
-                                            ]
-                                        );
-                                    },
-                                    0
-                                );
-                            }
-
-                            ability.amounts.forEach((amount) => {
-                                const stat = {
-                                    source: {
-                                        ability: ability,
-                                        amount,
-                                        id_user_ship:
-                                            parsedAbility.userShip.id_user_ship,
-                                    },
-                                    target: {
-                                        id_user_ship: userShip.id_user_ship,
-                                        strength: shipWeaponStrength,
-                                    },
-                                    variants: weapon_classes,
-                                    duration: ability.duration_type
-                                        ? ability.duration
-                                        : null,
-                                };
-
-                                if (
-                                    amount.type ===
-                                    DataService.AMOUNT_TYPES.NUMBER
-                                ) {
-                                    stat.value = parseFloat(amount.value);
-                                    stat.valueAdjusted =
-                                        stat.value * shipWeaponStrength;
-
-                                    totalStats[ability.type].number.push(stat);
-                                    shipStats[userShip.id_user_ship][
-                                        ability.type
-                                    ].number.push(stat);
-                                } else if (
-                                    amount.type ===
-                                    DataService.AMOUNT_TYPES.PERCENT
-                                ) {
-                                    stat.value = parseFloat(amount.value);
-                                    stat.valueAdjusted =
-                                        stat.value * shipWeaponStrength;
-
-                                    totalStats[ability.type].percent.push(stat);
-                                    shipStats[userShip.id_user_ship][
-                                        ability.type
-                                    ].percent.push(stat);
-                                }
-                            });
-                        } else if (
-                            ability.type ===
-                            DataService.ABILITY_TYPES.REDUCE_DAMAGE
-                        ) {
-                            const variants = ability.variants;
-
-                            ability.amounts.forEach((amount) => {
-                                const stat = {
-                                    source: {
-                                        ability,
-                                        amount,
-                                        id_user_ship:
-                                            parsedAbility.userShip.id_user_ship,
-                                    },
-                                    target: {
-                                        id_user_ship: userShip.id_user_ship,
-                                        strength: 1,
-                                    },
-                                    variants,
-                                    duration: ability.duration_type
-                                        ? ability.duration
-                                        : null,
-                                };
-
-                                if (
-                                    amount.type ===
-                                    DataService.AMOUNT_TYPES.NUMBER
-                                ) {
-                                    stat.value = parseFloat(amount.value);
-                                    stat.valueAdjusted = stat.value;
-
-                                    totalStats[ability.type].number.push(stat);
-                                    shipStats[userShip.id_user_ship][
-                                        ability.type
-                                    ].number.push(stat);
-                                } else if (
-                                    amount.type ===
-                                    DataService.AMOUNT_TYPES.PERCENT
-                                ) {
-                                    stat.value = parseFloat(amount.value);
-                                    stat.valueAdjusted = stat.value * 1;
-
-                                    totalStats[ability.type].percent.push(stat);
-                                    shipStats[userShip.id_user_ship][
-                                        ability.type
-                                    ].percent.push(stat);
-                                }
-                            });
-                        }
-                    });
-                }
-            );
-
-            obj[fleetId] = {
-                totalStats,
-                shipStats,
-            };
-            return obj;
-        }, {});
+        return getFleetsParsedAbilityStats(selectedFleets.value);
     });
 
     const loadShips = async () => {

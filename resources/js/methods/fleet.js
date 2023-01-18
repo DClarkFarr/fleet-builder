@@ -181,17 +181,12 @@ export const parseFleetShipsAbilities = (fleet) => {
 };
 
 export const parseUserShipAbility = (userShip, ability) => {
-    const fullSlug = getFullAbilitySlug(ability);
-    const shortSlug = getShortAbilitySlug(ability);
-
     const hasConditions = ability.conditions.length > 0;
     const hasQualifiers = abilityHasQualifiers(ability);
 
     return {
         ability,
         userShip,
-        fullSlug,
-        shortSlug,
         hasConditions,
         hasQualifiers,
     };
