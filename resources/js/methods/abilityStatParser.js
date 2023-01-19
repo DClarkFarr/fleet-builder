@@ -79,7 +79,7 @@ export const getParsedAbilitySlugPermutations = (parsedAbility) => {
         return slugsToPermutations(permutations, slugs);
     };
 
-    return slugsToPermutations([], slugs);
+    return slugsToPermutations([], slugs.length ? slugs : ["all"]);
 };
 
 export const getShipShipStrengthByType = (parsedAbility, userShip) => {
@@ -121,87 +121,87 @@ const getBaseStatObj = (parsedAbility, userShip, amount, slug) => {
     };
 };
 
+export const setObjValueWhenEmpty = (obj, path, value) => {
+    const pathArr = path.split(".");
+    const lastPath = pathArr.pop();
+
+    let currentObj = obj;
+    pathArr.forEach((path) => {
+        if (!currentObj[path]) {
+            currentObj[path] = {};
+        }
+
+        currentObj = currentObj[path];
+    });
+
+    if (!currentObj[lastPath]) {
+        currentObj[lastPath] = value;
+    }
+};
+
 export const calcParsedAbilityBySlug = (
     parsedAbility,
     userShip,
     slug,
     totalStats,
-    shipStats
+    shipStats,
+    abilityStats
 ) => {
     const ability = parsedAbility.ability;
 
-    if (!totalStats[ability.type]) {
-        totalStats[ability.type] = {};
-    }
+    const intAmountTypes = [
+        DataService.AMOUNT_TYPES.NUMBER,
+        DataService.AMOUNT_TYPES.PERCENT,
+        DataService.AMOUNT_TYPES.SECONDS,
+        DataService.AMOUNT_TYPES.ATTACKS,
+    ];
 
-    if (!totalStats[ability.type][slug]) {
-        totalStats[ability.type][slug] = {
-            percent: [],
-            number: [],
-        };
-    }
+    ability.amounts.forEach((amount) => {
+        setObjValueWhenEmpty(
+            totalStats,
+            `${ability.type}.${slug}.${amount.type}`,
+            []
+        );
 
-    if (!shipStats[userShip.id_user_ship]) {
-        shipStats[userShip.id_user_ship] = {};
-    }
+        setObjValueWhenEmpty(
+            shipStats,
+            `${userShip.id_user_ship}.${ability.type}.${slug}.${amount.type}`,
+            []
+        );
 
-    if (!shipStats[userShip.id_user_ship][ability.type]) {
-        shipStats[userShip.id_user_ship][ability.type] = {};
-    }
+        setObjValueWhenEmpty(
+            abilityStats,
+            `${ability.id_ability}.${slug}.${amount.type}`
+        );
 
-    if (!shipStats[userShip.id_user_ship][ability.type][slug]) {
-        shipStats[userShip.id_user_ship][ability.type][slug] = {
-            percent: [],
-            number: [],
-        };
-    }
+        const stat = getBaseStatObj(parsedAbility, userShip, amount, slug);
 
-    if (ability.type === DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE) {
-        ability.amounts.forEach((amount) => {
-            const stat = getBaseStatObj(parsedAbility, userShip, amount, slug);
+        if (intAmountTypes.includes(amount.type)) {
+            stat.value = parseFloat(amount.value);
 
-            if (amount.type === DataService.AMOUNT_TYPES.NUMBER) {
-                stat.value = parseFloat(amount.value);
+            totalStats[ability.type][slug][amount.type].push(stat);
+            shipStats[userShip.id_user_ship][ability.type][slug][
+                amount.type
+            ].push(stat);
+            abilityStats[ability.id_ability][slug][amount.type] = stat;
+        } else if (amount.type === DataService.AMOUNT_TYPES.FORMULA) {
+            stat.value = amount;
 
-                totalStats[ability.type][slug].number.push(stat);
-                shipStats[userShip.id_user_ship][ability.type][
-                    slug
-                ].number.push(stat);
-            } else if (amount.type === DataService.AMOUNT_TYPES.PERCENT) {
-                stat.value = parseFloat(amount.value);
-
-                totalStats[ability.type][slug].percent.push(stat);
-                shipStats[userShip.id_user_ship][ability.type][
-                    slug
-                ].percent.push(stat);
-            }
-        });
-    } else if (ability.type === DataService.ABILITY_TYPES.REDUCE_DAMAGE) {
-        ability.amounts.forEach((amount) => {
-            const stat = getBaseStatObj(parsedAbility, userShip, amount, slug);
-
-            if (amount.type === DataService.AMOUNT_TYPES.NUMBER) {
-                stat.value = parseFloat(amount.value);
-
-                totalStats[ability.type][slug].number.push(stat);
-                shipStats[userShip.id_user_ship][ability.type][
-                    slug
-                ].number.push(stat);
-            } else if (amount.type === DataService.AMOUNT_TYPES.PERCENT) {
-                stat.value = parseFloat(amount.value);
-
-                totalStats[ability.type][slug].percent.push(stat);
-                shipStats[userShip.id_user_ship][ability.type][
-                    slug
-                ].percent.push(stat);
-            }
-        });
-    }
+            totalStats[ability.type][slug][amount.type].push(stat);
+            shipStats[userShip.id_user_ship][ability.type][slug][
+                amount.type
+            ].push(stat);
+            abilityStats[ability.id_ability][slug][amount.type] = stat;
+        } else {
+            console.warn("Unknown amount type", amount.type, amount);
+        }
+    });
 };
 
 export const getFleetParsedAbilityStats = (fleet) => {
     const totalStats = {};
     const shipStats = {};
+    const abilityStats = {};
 
     fleet.parsedAbilities.forEach((parsedAbility) => {
         fleet.user_ships.forEach((userShip) => {
@@ -223,22 +223,25 @@ export const getFleetParsedAbilityStats = (fleet) => {
                     userShip,
                     slug,
                     totalStats,
-                    shipStats
+                    shipStats,
+                    abilityStats
                 );
             });
         });
     });
 
-    return { shipStats, totalStats };
+    return { shipStats, totalStats, abilityStats };
 };
 
 export const getFleetsParsedAbilityStats = (fleets) => {
     return fleets.reduce((obj, fleet) => {
-        const { totalStats, shipStats } = getFleetParsedAbilityStats(fleet);
+        const { totalStats, shipStats, abilityStats } =
+            getFleetParsedAbilityStats(fleet);
 
         obj[fleet.id_workshop_fleet] = {
             totalStats,
             shipStats,
+            abilityStats,
         };
         return obj;
     }, {});
