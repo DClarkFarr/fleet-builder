@@ -6,22 +6,12 @@ const props = defineProps({
         required: true,
     },
 });
-
-watch(
-    () => props.fleet,
-    () => {
-        console.log("fleet changed", props.fleet);
-    },
-    {
-        watch: true,
-        deep: true,
-    }
-);
 </script>
 
 <template>
     <div
         class="fleet__top-stats flex gap-x-2 justify-between items-center mb-4 leading-none"
+        v-if="fleet.stats"
     >
         <div class="fleet__leadership">
             <div class="text-xs text-text-blue">Leadership</div>

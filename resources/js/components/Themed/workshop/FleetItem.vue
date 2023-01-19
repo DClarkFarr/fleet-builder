@@ -1,11 +1,12 @@
 <script setup>
 import LockIcon from "~icons/fa-solid/unlock-alt";
 
-import { computed, watch, toRaw } from "vue";
+import { computed, watch, toRaw, ref } from "vue";
 import ShipFleetLine from "../ship/ShipFleetLine.vue";
 import FleetShipStats from "../fleet/FleetShipStats.vue";
 import IconFlag from "~icons/fa-solid/flag";
 import FleetParsedAbilityStats from "../fleet/FleetParsedAbilityStats.vue";
+import Accordion from "../controls/Accordion.vue";
 
 const props = defineProps({
     location: {
@@ -23,6 +24,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["select", "flagship"]);
+
+const openAccordion = ref("");
 
 const onSelectFleet = () => {
     emit(
@@ -81,11 +84,20 @@ const isEmpty = computed(() => {
                     </ShipFleetLine>
                 </div>
 
-                <div class="fleet__stats">
-                    <FleetParsedAbilityStats
-                        :fleet="fleet"
-                        :parsedAbilities="fleet.parsedAbilities"
-                    />
+                <div class="fleet__stats" v-if="fleet.user_ships?.length">
+                    <Accordion
+                        name="fleet-ability-stats"
+                        v-model="openAccordion"
+                    >
+                        <template #title> Basic Fleet Abilities </template>
+
+                        <template #body>
+                            <FleetParsedAbilityStats
+                                :fleet="fleet"
+                                :parsedAbilities="fleet.parsedAbilities"
+                            />
+                        </template>
+                    </Accordion>
                 </div>
             </div>
             <div class="fleet__placeholder" v-else>No Fleet Assigned</div>

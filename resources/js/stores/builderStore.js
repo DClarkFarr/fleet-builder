@@ -10,7 +10,7 @@ import {
     parseShipSlotStrengths,
     populateUserShipAbilityData,
 } from "../methods/ship";
-import DataService from "../services/DataService";
+
 import { getFleetsParsedAbilityStats } from "../methods/abilityStatParser";
 
 const useBuilderStore = defineStore("builder", () => {
@@ -231,7 +231,7 @@ const useBuilderStore = defineStore("builder", () => {
                     fleets.push(fleet);
                 }
 
-                setSelectedFleets(id_workshop, fleets);
+                setSelectedFleets(fleets);
             });
     };
 
@@ -247,7 +247,7 @@ const useBuilderStore = defineStore("builder", () => {
 
                 fleets.splice(fleetIndex, 1);
 
-                setSelectedFleets(id_workshop, fleets);
+                setSelectedFleets(fleets);
             });
     };
 
@@ -271,7 +271,7 @@ const useBuilderStore = defineStore("builder", () => {
 
                 fleets.splice(fleetIndex, 1, fleet);
 
-                setSelectedFleets(id_workshop, fleets);
+                setSelectedFleets(fleets);
             });
     };
 
@@ -294,7 +294,7 @@ const useBuilderStore = defineStore("builder", () => {
 
                 fleets.splice(fleetIndex, 1, fleet);
 
-                setSelectedFleets(id_workshop, fleets);
+                setSelectedFleets(fleets);
             });
     };
 
