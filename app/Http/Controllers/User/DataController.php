@@ -52,4 +52,13 @@ class DataController extends Controller
             ['rows' => $shipClasses->values()->toArray()]
         );
     }
+
+    public function getWorkshop($id_workshop)
+    {
+        $workshop = $this->shipService->getPopulatedWorkshop($id_workshop);
+
+        return response()->json(
+            ['row' => $workshop->toArray()]
+        );
+    }
 }

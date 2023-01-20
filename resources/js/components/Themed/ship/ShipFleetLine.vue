@@ -20,44 +20,48 @@ const props = defineProps({
             ]"
         >
             <div class="ship-box__content">
-                <div class="ship-box__content-bg p-2 flex w-full gap-x-3">
-                    <div>
-                        <div class="flex gap-x-2 text-xs items-center">
-                            <div>
-                                {{ userShip.ship.ship_class.name }}
-                            </div>
-                            <div class="flex gap-x-[2px] items-center">
+                <div class="ship-box__content-bg p-2">
+                    <div class="flex w-full gap-x-3">
+                        <div>
+                            <div class="flex gap-x-2 text-xs items-center">
                                 <div>
-                                    <IconBattery />
+                                    {{ userShip.ship.ship_class.name }}
+                                </div>
+                                <div class="flex gap-x-[2px] items-center">
+                                    <div>
+                                        <IconBattery />
+                                    </div>
+                                    <div>
+                                        {{ userShip.ship.energy }}
+                                    </div>
                                 </div>
                                 <div>
-                                    {{ userShip.ship.energy }}
+                                    <Chips
+                                        :total="userShip.ship.chipCount"
+                                        :chipLevel="userShip.chip_level"
+                                        height="8px"
+                                    />
                                 </div>
                             </div>
-                            <div>
-                                <Chips
-                                    :total="userShip.ship.chipCount"
-                                    :chipLevel="userShip.chip_level"
-                                    height="8px"
-                                />
-                            </div>
-                        </div>
 
-                        <div
-                            class="flex gap-x-2 items-center font-medium leading-none"
-                        >
-                            <div>
-                                {{ userShip.ship.name }}
-                            </div>
-                            <div class="italic text-xs">
-                                {{ userShip.name }}
+                            <div
+                                class="flex gap-x-2 items-center font-medium leading-none"
+                            >
+                                <div>
+                                    {{ userShip.ship.name }}
+                                </div>
+                                <div class="italic text-xs">
+                                    {{ userShip.name }}
+                                </div>
                             </div>
                         </div>
+                        <div></div>
+                        <div class="item__actions ml-auto">
+                            <slot name="actions"></slot>
+                        </div>
                     </div>
-                    <div></div>
-                    <div class="item__actions ml-auto">
-                        <slot name="actions"></slot>
-                    </div>
+
+                    <slot name="footer"></slot>
                 </div>
             </div>
         </div>

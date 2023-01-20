@@ -8,6 +8,7 @@ import IconFlag from "~icons/fa-solid/flag";
 import FleetParsedAbilityStats from "../fleet/FleetParsedAbilityStats.vue";
 import Accordion from "../controls/Accordion.vue";
 import FleetAbilityTotals from "../fleet/FleetAbilityTotals.vue";
+import AbilityTag from "../ability/AbilityTag.vue";
 
 const props = defineProps({
     statTotals: {
@@ -25,6 +26,14 @@ const props = defineProps({
     fleet: {
         type: Object,
         default: null,
+    },
+    isPublic: {
+        type: Boolean,
+        default: false,
+    },
+    withTags: {
+        type: Boolean,
+        default: false,
     },
 });
 
@@ -70,21 +79,83 @@ const isEmpty = computed(() => {
                         :userShip="userShip"
                     >
                         <template #actions>
-                            <template v-if="userShip.pivot.flagship">
-                                <IconFlag
-                                    class="text-box-green"
-                                    v-tooltip="'Fleet Flagship'"
-                                />
+                            <template v-if="!isPublic">
+                                <template v-if="userShip.pivot.flagship">
+                                    <IconFlag
+                                        class="text-box-green"
+                                        v-tooltip="'Fleet Flagship'"
+                                    />
+                                </template>
+                                <template v-else>
+                                    <button
+                                        class="btn btn-blue btn-sm"
+                                        @click="
+                                            () => onClickSetFlagship(userShip)
+                                        "
+                                    >
+                                        Set
+                                        <IconFlag />
+                                    </button>
+                                </template>
                             </template>
                             <template v-else>
-                                <button
-                                    class="btn btn-blue btn-sm"
-                                    @click="() => onClickSetFlagship(userShip)"
+                                <div
+                                    class="ship-box__strengths flex gap-x-2 items-center"
                                 >
-                                    Set
-                                    <IconFlag />
-                                </button>
+                                    <div
+                                        class="ship-box__strengths-total text-center text-xs"
+                                    >
+                                        Weapons
+                                        <div
+                                            class="text-base font-medium text-grow-green-text-alt"
+                                        >
+                                            {{
+                                                userShip.ship.slotStrengths
+                                                    .weapon.total
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="ship-box__strengths-total text-center text-xs"
+                                    >
+                                        Armor
+                                        <div
+                                            class="text-base font-medium text-grow-green-text-alt"
+                                        >
+                                            {{
+                                                userShip.ship.slotStrengths
+                                                    .armor.total
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="ship-box__strengths-total text-center text-xs"
+                                    >
+                                        Units
+                                        <div
+                                            class="text-base font-medium text-grow-green-text-alt"
+                                        >
+                                            {{
+                                                userShip.ship.slotStrengths.unit
+                                                    .total
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
+                        </template>
+
+                        <template #footer>
+                            <div
+                                class="pt-2 flex flex-wrap gap-1"
+                                v-if="withTags"
+                            >
+                                <AbilityTag
+                                    v-for="parsedAbility in userShip.parsedAbilities"
+                                    :key="parsedAbility.ability.id_ability"
+                                    :parsedAbility="parsedAbility"
+                                />
+                            </div>
                         </template>
                     </ShipFleetLine>
                 </div>

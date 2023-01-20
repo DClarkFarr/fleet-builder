@@ -357,6 +357,31 @@ const useBuilderStore = defineStore("builder", () => {
             });
     };
 
+    const loadSharedWorkshop = async (id_workshop) => {
+        const def1 = apiClient
+            .get("data/workshop/" + id_workshop)
+            .then((response) => response.data.row);
+
+        const def2 = loadShipClasses();
+
+        await Promise.all([def1, def2]);
+
+        const workshop = await def1;
+
+        workshops.value = [workshop];
+
+        selectedFleets.value = workshop.fleets.map((f) => {
+            f.user_ships.map(populateUserShip);
+
+            f.stats = parseFleetBasicStats(f); // parse first
+            f.parsedAbilities = parseFleetShipsAbilities(f);
+
+            return f;
+        });
+
+        selectedWorkshopId.value = workshop.id_workshop;
+    };
+
     return {
         userShips,
         isLoadingUserShips,
@@ -383,6 +408,7 @@ const useBuilderStore = defineStore("builder", () => {
         removeUserShipFromFleet,
         setFleetFlagship,
         setSelectedWorkshopId,
+        loadSharedWorkshop,
     };
 });
 

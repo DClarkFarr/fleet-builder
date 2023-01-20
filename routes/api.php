@@ -57,14 +57,17 @@ Route::prefix('/user')->group(function () {
     });
 });
 
-Route::prefix('/data')->middleware(['auth'])->group(function () {
 
-    /**
-     * Public Ships only
-     */
+/**
+ * Share public routes 
+ */
+
+Route::prefix('/data')->group(function () {
     Route::get('/ships', [DataController::class, 'list']);
     Route::get('/ships/classes', [DataController::class, 'getClasses']);
+    Route::get('/workshop/{id_workshop}', [DataController::class, 'getWorkshop']);
 });
+
 
 Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
 

@@ -557,4 +557,18 @@ class ShipService
 
         return ['flagship' => $id_user_ship];
     }
+
+    public function getPopulatedWorkshop($id_workshop)
+    {
+        $workshop = Workshop::find($id_workshop);
+        if (!$workshop) {
+            throw new \Exception('Workshop not found', 404);
+        }
+
+        $workshop->load(['user']);
+
+        unset($workshop->user->email, $workshop->user->email_verified_at, $workshop->user->created_at, $workshop->user->updated_at);
+
+        return $this->populateWOrkshopForResponse($workshop);
+    }
 }

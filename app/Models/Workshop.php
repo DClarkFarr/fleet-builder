@@ -39,6 +39,11 @@ class Workshop extends Model
     /**
      * Relations
      */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id');
+    }
+
     public function fleets()
     {
         return $this->hasMany(WorkshopFleet::class, 'id_workshop', 'id_workshop', 'fleets');
