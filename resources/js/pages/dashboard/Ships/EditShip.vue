@@ -114,6 +114,17 @@ const shipAbilitiesByLocation = computed(() => {
     }, {});
 });
 
+const shipSlotsByType = computed(() => {
+    return ship.value?.ship_slots.reduce((obj, slot) => {
+        if (!obj[slot.type]) {
+            obj[slot.type] = [];
+        }
+
+        obj[slot.type].push(slot);
+
+        return obj;
+    }, {});
+});
 onMounted(() => {
     loadShip();
 });
@@ -163,7 +174,7 @@ onMounted(() => {
                     <SlotsForm
                         v-for="slotType in slotTypes"
                         :key="slotType.slug"
-                        :slots="ship[`ship_${slotType.slug}_slots`]"
+                        :slots="shipSlotsByType[slotType.slug]"
                         :sizes="sizes"
                         :type="slotType.slug"
                         :onSave="onSaveSlots"

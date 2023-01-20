@@ -39,9 +39,14 @@ const useUserStore = defineStore("user", () => {
         return (user.value && user.value.roles?.includes("admin")) || false;
     });
 
+    const isTester = computed(() => {
+        return (user.value && user.value.roles?.includes("tester")) || false;
+    });
+
     return {
         user,
         isAdmin,
+        isTester,
         isLoading,
         setUser,
         refresh,

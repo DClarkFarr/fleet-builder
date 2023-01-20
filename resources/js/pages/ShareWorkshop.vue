@@ -6,6 +6,7 @@ import FleetItem from "../components/Themed/workshop/FleetItem.vue";
 import DataService from "../services/DataService";
 import useBuilderStore from "../stores/builderStore";
 import IconCircleNotch from "~icons/fa-solid/circle-notch";
+import HelpBar from "../components/Themed/HelpBar.vue";
 
 const fleetLocations = DataService.getFleetLocations();
 
@@ -22,7 +23,6 @@ const workshop = computed(() => {
 });
 
 const computedFleetLocations = computed(() => {
-    console.log("computing fleet locations");
     return fleetLocations.map((location) => {
         const fleet = builderStore.selectedFleets?.find(
             (f) => f.location === location.slug
@@ -74,6 +74,8 @@ onBeforeMount(async () => {
                     </div>
                 </div>
             </div>
+
+            <HelpBar />
 
             <div class="workshop__content w-full text-modal-text">
                 <template v-if="!isLoaded">
