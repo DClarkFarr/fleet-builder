@@ -18,10 +18,12 @@ const shipColumns = DataService.getShipColumns();
 
 const numberFormatter = new Intl.NumberFormat();
 
-const parseNumber = (n) => {
+const abilityAffects = DataService.getAbilityAffects();
+
+export const parseNumber = (n) => {
     return numberFormatter.format(n);
 };
-const parseAgainstClasses = (ability, { shipClasses }) => {
+export const parseAgainstClasses = (ability, { shipClasses }) => {
     if (!ability.target_class_ids.length) {
         return "";
     }
@@ -43,6 +45,15 @@ const parseAgainstClasses = (ability, { shipClasses }) => {
     return `${prep} enemy ${joinAnd(classNames)}`;
 };
 
+export const classIdsToNames = (classIds, { shipClasses }) => {
+    return classIds
+        .map((id) => {
+            const name = shipClasses.find((c) => c.id_class === id)?.name;
+            return name ? pluralize.plural(name) : false;
+        })
+        .filter((c) => !!c);
+};
+
 const parseForClasses = (ability, { shipClasses }) => {
     if (!ability.applies_to_fleet) {
         return "";
@@ -62,7 +73,7 @@ const parseForClasses = (ability, { shipClasses }) => {
     return `of ${joinAnd(classNames)} in fleet`;
 };
 
-const parseFormulaAmountLine = (ability, amount) => {
+export const parseFormulaAmountLine = (ability, amount) => {
     const blocks = [];
     buildItemBlocks(amount.children, blocks);
 
@@ -129,7 +140,7 @@ export const buildItemBlocks = (items, bs, depth = []) => {
     });
 };
 
-const parseAmountLine = (ability, amount) => {
+export const parseAmountLine = (ability, amount) => {
     if (!amount?.type) {
         return "";
     }
@@ -158,7 +169,7 @@ const parseAmountLine = (ability, amount) => {
     });
 };
 
-const parseAmount = (ability) => {
+export const parseAmount = (ability) => {
     if (!ability.amounts?.length) {
         return "";
     }
@@ -205,7 +216,7 @@ const parseAmountDescription = (ability) => {
     });
 };
 
-const joinAnd = (original) => {
+export const joinAnd = (original) => {
     const arr = [...original];
 
     if (arr.length > 1) {
@@ -230,7 +241,7 @@ const parseVariantDescription = (ability, location = "to") => {
     });
 };
 
-const parseText = (str, pairs, fallback = "") => {
+export const parseText = (str, pairs, fallback = "") => {
     const pattern = /\{\s*(\w+)\s*\}/gm;
     const r = str.matchAll(pattern);
     const values = [];
@@ -252,7 +263,7 @@ const parseText = (str, pairs, fallback = "") => {
     return parsed;
 };
 
-const parseDurationDescription = (ability) => {
+export const parseDurationDescription = (ability) => {
     if (!ability.duration_type) {
         return "";
     }
@@ -269,7 +280,7 @@ const parseDurationDescription = (ability) => {
     });
 };
 
-const parseRepeatDescription = (ability) => {
+export const parseRepeatDescription = (ability) => {
     if (!ability.repeat_type) {
         return "";
     }
@@ -402,7 +413,21 @@ export const parseAbilityQualifiiers = (ability, { shipClasses }) => {
     return qualifiers.join(" ");
 };
 
-const parseAbilityCategory = (ability) => {
+export const getAbilityAffectType = (ability) => {
+    return typesByAffect[ability.type];
+};
+
+export const getAbilityAffectTypeName = (ability) => {
+    return abilityAffects.find(
+        (aa) => aa.slug === getAbilityAffectType(ability)
+    )?.name;
+};
+
+export const getAbilityTypeName = (ability) => {
+    return abilityTypes.find((at) => at.slug === ability.type)?.name;
+};
+
+export const parseAbilityCategory = (ability) => {
     const categoryName = abilityTypes.find(
         (at) => at.slug === ability.type
     )?.category;
@@ -460,11 +485,11 @@ class AbilityTextParser {
     }
 
     get affectType() {
-        return typesByAffect[this.ability.type];
+        return getAbilityAffectType(this.ability);
     }
 
     get abilityTypeName() {
-        return abilityTypes.find((at) => at.slug === this.ability.type)?.name;
+        return getAbilityAffectTypeName(this.ability);
     }
 
     get abilityTypeCategory() {

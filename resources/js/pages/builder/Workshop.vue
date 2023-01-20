@@ -83,6 +83,7 @@ const workshop = computed(() => {
 });
 
 const computedFleetLocations = computed(() => {
+    console.log("computing fleet locations");
     return fleetLocations.map((location) => {
         const fleet = builderStore.selectedFleets?.find(
             (f) => f.location === location.slug
@@ -90,6 +91,10 @@ const computedFleetLocations = computed(() => {
 
         return {
             ...location,
+            statTotals: fleet
+                ? builderStore.selectedFleetsStats?.[fleet.id_workshop_fleet] ||
+                  null
+                : null,
             fleet,
         };
     });
@@ -147,6 +152,7 @@ onBeforeMount(async () => {
                         :location="fleetLocation.slug"
                         :locationName="fleetLocation.name"
                         :fleet="fleetLocation.fleet"
+                        :statTotals="fleetLocation.statTotals"
                         @select="onSelectFleet"
                         @flagship="onSetFlagship"
                     />

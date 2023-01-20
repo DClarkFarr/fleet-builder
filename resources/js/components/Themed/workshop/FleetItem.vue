@@ -7,8 +7,13 @@ import FleetShipStats from "../fleet/FleetShipStats.vue";
 import IconFlag from "~icons/fa-solid/flag";
 import FleetParsedAbilityStats from "../fleet/FleetParsedAbilityStats.vue";
 import Accordion from "../controls/Accordion.vue";
+import FleetAbilityTotals from "../fleet/FleetAbilityTotals.vue";
 
 const props = defineProps({
+    statTotals: {
+        type: [Object, null],
+        required: true,
+    },
     location: {
         type: String,
         required: true,
@@ -84,17 +89,39 @@ const isEmpty = computed(() => {
                     </ShipFleetLine>
                 </div>
 
-                <div class="fleet__stats" v-if="fleet.user_ships?.length">
+                <div
+                    class="fleet__basic-stats mb-4"
+                    v-if="fleet.user_ships?.length"
+                >
                     <Accordion
                         name="fleet-ability-stats"
                         v-model="openAccordion"
                     >
-                        <template #title> Basic Fleet Abilities </template>
+                        <template #title> Stacked Fleet Abilities </template>
 
                         <template #body>
                             <FleetParsedAbilityStats
                                 :fleet="fleet"
                                 :parsedAbilities="fleet.parsedAbilities"
+                            />
+                        </template>
+                    </Accordion>
+                </div>
+
+                <div
+                    class="fleet__total-stats mb-4"
+                    v-if="statTotals.totalStats"
+                >
+                    <Accordion
+                        name="fleet-ability-totals"
+                        v-model="openAccordion"
+                    >
+                        <template #title> Fleet Ability Totals </template>
+
+                        <template #body>
+                            <FleetAbilityTotals
+                                :fleet="fleet"
+                                :totals="statTotals.totalStats"
                             />
                         </template>
                     </Accordion>
