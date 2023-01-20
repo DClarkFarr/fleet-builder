@@ -101,6 +101,19 @@
             border-bottom-width: 1.5px;
         }
 
+        .input-clean {
+            @apply border-none placeholder:text-input-placeholder bg-input-bg text-white py-2 px-3 w-full;
+
+            border-top-width: 0.75px;
+            border-bottom-width: 1.5px;
+
+            &:focus,
+            &:hover {
+                outline: 0;
+                border: none;
+            }
+        }
+
         .v-select {
             @apply bg-input-bg border border-input-border;
 

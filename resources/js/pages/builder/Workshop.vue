@@ -11,6 +11,7 @@ import FleetItem from "../../components/Themed/workshop/FleetItem.vue";
 import FleetFormModal from "../../components/Themed/workshop/FleetFormModal.vue";
 
 import IconArrowLeft from "~icons/fa-solid/arrow-left";
+import ShareWorkshop from "../../components/Themed/controls/ShareWorkshop.vue";
 
 const route = useRoute();
 
@@ -123,7 +124,9 @@ onBeforeMount(async () => {
 </script>
 <template>
     <BuilderLayout>
-        <div class="workshop max-w-6xl flex flex-col justify-center mx-auto">
+        <div
+            class="workshop max-w-6xl flex flex-col justify-center mx-auto pt-6"
+        >
             <div class="workshop__heading mb-8">
                 <div class="mb-2">
                     <router-link
@@ -134,12 +137,21 @@ onBeforeMount(async () => {
                         Back to Fleets
                     </router-link>
                 </div>
-                <h1 class="text-2xl font-medium mb-2 modal__title">
-                    {{ workshop?.name || "Workshop" }}
-                </h1>
-                <p class="font-xl text-white">
-                    {{ workshop?.arcade ? "Arcade" : "Simulation" }}
-                </p>
+                <div class="flex items-center">
+                    <div>
+                        <h1 class="text-2xl font-medium mb-2 modal__title">
+                            {{ workshop?.name || "Workshop" }}
+                        </h1>
+                        <p class="font-xl text-white">
+                            {{ workshop?.arcade ? "Arcade" : "Simulation" }}
+                        </p>
+                    </div>
+                    <div class="ml-auto">
+                        <ShareWorkshop
+                            :id_workshop="route.params.id_workshop"
+                        />
+                    </div>
+                </div>
             </div>
 
             <div class="workshop__content w-full text-modal-text">

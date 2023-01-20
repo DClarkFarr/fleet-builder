@@ -29,7 +29,9 @@ Route::prefix('/builder')->middleware(['auth'])->group(function () {
         ->name('builder');
 });
 
-
+Route::get('/share/{id_workshop}', function () {
+    return view('home');
+})->name('share.workshop');
 
 Route::get('/login', function () {
     return view('home');
