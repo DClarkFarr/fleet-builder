@@ -32,6 +32,15 @@ const useBuilderStore = defineStore("builder", () => {
 
     const selectedFleets = ref([]);
 
+    const populateUserShip = (userShip) => {
+        populateShip(userShip.ship);
+
+        populateUserShipAbilityData(userShip, {
+            shipClasses: toRaw(shipClasses.value),
+        });
+
+        return userShip;
+    };
     const populateShip = (ship) => {
         parseShipSlotStrengths(ship);
         ship.chipCount = getShipChipsCount(ship);
@@ -85,28 +94,13 @@ const useBuilderStore = defineStore("builder", () => {
         await apiClient
             .get("user/ships")
             .then((response) => {
-                return response.data.rows.map((us) => {
-                    populateShip(us.ship);
-                    return us;
-                });
+                return response.data.rows.map(populateUserShip);
             })
             .then((uss) => {
                 userShips.value = uss;
             });
 
         isLoadingUserShips.value = false;
-    };
-
-    const populateUserShipsAbilityData = () => {
-        const us = [...userShips.value].map((us) => toRaw(us));
-
-        us.forEach((s) => {
-            populateUserShipAbilityData(s, {
-                shipClasses: toRaw(shipClasses.value),
-            });
-        });
-
-        userShips.value = us;
     };
 
     const loadWorkshops = async () => {
@@ -128,7 +122,7 @@ const useBuilderStore = defineStore("builder", () => {
             const us = userShips.value;
 
             const userShip = res.data.row;
-            populateShip(userShip.ship);
+            populateUserShip(userShip);
 
             if (data.id_user_ship) {
                 const index = us.findIndex(
@@ -236,11 +230,6 @@ const useBuilderStore = defineStore("builder", () => {
                     ),
                     pivot: fus.pivot,
                 };
-
-                populateUserShipAbilityData(subShip, {
-                    shipClasses: toRaw(shipClasses.value),
-                });
-                parseShipSlotStrengths(subShip.ship);
 
                 return subShip;
             });
@@ -357,11 +346,7 @@ const useBuilderStore = defineStore("builder", () => {
                             ...us.pivot,
                             flagship: us.id_user_ship === id_user_ship,
                         },
-                    }))
-                    .map((us) => {
-                        parseShipSlotStrengths(us.ship);
-                        return us;
-                    });
+                    }));
 
                 selectedFleets.value[fleetIndex].user_ships = uss; // set ships before getting stats
 
@@ -396,7 +381,6 @@ const useBuilderStore = defineStore("builder", () => {
         deleteFleet,
         addUserShipToFleet,
         removeUserShipFromFleet,
-        populateUserShipsAbilityData,
         setFleetFlagship,
         setSelectedWorkshopId,
     };

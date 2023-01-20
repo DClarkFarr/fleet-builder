@@ -118,8 +118,6 @@ onBeforeMount(async () => {
         allLoaded.value = true;
     });
 
-    builderStore.populateUserShipsAbilityData();
-
     builderStore.setSelectedWorkshopId(route.params.id_workshop);
 });
 </script>
