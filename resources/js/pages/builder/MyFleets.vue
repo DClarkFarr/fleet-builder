@@ -163,6 +163,7 @@ onBeforeMount(() => {
                                         v-for="userShip in builderStore.userShips"
                                         :key="userShip.id_user_ship"
                                         :userShip="userShip"
+                                        :showTags="false"
                                         @click="showEditShipModal(userShip)"
                                     />
                                 </div>

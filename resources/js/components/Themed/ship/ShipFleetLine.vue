@@ -1,8 +1,5 @@
 <script setup>
-import { computed } from "vue";
-
 import IconBattery from "~icons/fa-solid/battery-three-quarters";
-import { getShipChipsCount } from "../../../methods/ship";
 
 import Chips from "./Chips.vue";
 
@@ -11,10 +8,6 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-});
-
-const chipCount = computed(() => {
-    return getShipChipsCount(props.userShip.ship);
 });
 </script>
 
@@ -43,7 +36,7 @@ const chipCount = computed(() => {
                             </div>
                             <div>
                                 <Chips
-                                    :total="chipCount"
+                                    :total="userShip.ship.chipCount"
                                     :chipLevel="userShip.chip_level"
                                     height="8px"
                                 />

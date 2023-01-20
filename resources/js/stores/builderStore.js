@@ -2,11 +2,13 @@ import { defineStore } from "pinia";
 import { computed, ref, toRaw } from "vue";
 import apiClient from "../services/ApiClient";
 import { useToast } from "vue-toastification";
+import { cloneDeep } from "lodash";
 import {
     parseFleetShipsAbilities,
     parseFleetBasicStats,
 } from "../methods/fleet";
 import {
+    getShipChipsCount,
     parseShipSlotStrengths,
     populateUserShipAbilityData,
 } from "../methods/ship";
@@ -30,6 +32,13 @@ const useBuilderStore = defineStore("builder", () => {
 
     const selectedFleets = ref([]);
 
+    const populateShip = (ship) => {
+        parseShipSlotStrengths(ship);
+        ship.chipCount = getShipChipsCount(ship);
+
+        return ship;
+    };
+
     const setSelectedWorkshopId = (id_workshop) => {
         selectedWorkshopId.value = id_workshop;
 
@@ -52,9 +61,14 @@ const useBuilderStore = defineStore("builder", () => {
     const loadShips = async () => {
         isLoadingShips.value = true;
 
-        await apiClient.get("data/ships").then((response) => {
-            ships.value = response.data.rows;
-        });
+        await apiClient
+            .get("data/ships")
+            .then((response) => {
+                return response.data.rows.map(populateShip);
+            })
+            .then((ss) => {
+                ships.value = ss;
+            });
 
         isLoadingShips.value = false;
     };
@@ -68,9 +82,17 @@ const useBuilderStore = defineStore("builder", () => {
     const loadUserShips = async () => {
         isLoadingUserShips.value = true;
 
-        await apiClient.get("user/ships").then((response) => {
-            userShips.value = response.data.rows;
-        });
+        await apiClient
+            .get("user/ships")
+            .then((response) => {
+                return response.data.rows.map((us) => {
+                    populateShip(us.ship);
+                    return us;
+                });
+            })
+            .then((uss) => {
+                userShips.value = uss;
+            });
 
         isLoadingUserShips.value = false;
     };
@@ -103,18 +125,20 @@ const useBuilderStore = defineStore("builder", () => {
         try {
             const res = await apiClient.post("user/ships", data);
 
-            const us = [...userShips.value].map((s) => toRaw(s));
+            const us = userShips.value;
+
+            const userShip = res.data.row;
+            populateShip(userShip.ship);
 
             if (data.id_user_ship) {
                 const index = us.findIndex(
                     (s) => s.id_user_ship === data.id_user_ship
                 );
-                us[index] = res.data.row;
-            } else {
-                us.push(res.data.row);
-            }
 
-            userShips.value = us;
+                us.splice(index, 1, userShip);
+            } else {
+                us.push(userShip);
+            }
 
             return true;
         } catch (err) {
@@ -201,11 +225,24 @@ const useBuilderStore = defineStore("builder", () => {
 
     const setSelectedFleets = (fleets) => {
         selectedFleets.value = fleets.map((f) => {
-            f.user_ships.forEach((s) => {
-                populateUserShipAbilityData(s, {
+            f.user_ships = f.user_ships.map((fus) => {
+                const subShip = {
+                    ...cloneDeep(
+                        toRaw(
+                            userShips.value.find(
+                                (us) => us.id_user_ship === fus.id_user_ship
+                            )
+                        )
+                    ),
+                    pivot: fus.pivot,
+                };
+
+                populateUserShipAbilityData(subShip, {
                     shipClasses: toRaw(shipClasses.value),
                 });
-                parseShipSlotStrengths(s.ship);
+                parseShipSlotStrengths(subShip.ship);
+
+                return subShip;
             });
 
             f.stats = parseFleetBasicStats(f); // parse first

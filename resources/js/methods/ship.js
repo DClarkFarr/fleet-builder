@@ -50,7 +50,11 @@ export const parseShipSlotStrengths = (ship) => {
     if (ship.slotStrengths) {
         return ship.slotStrengths;
     }
-    const slotCounts = parseShipSlotCounts(ship);
+
+    if (!ship.slotCounts) {
+        parseShipSlotCounts(ship);
+    }
+    const slotCounts = ship.slotCounts;
     const sizes = DataService.SIZES;
 
     const slotStrengths = {};

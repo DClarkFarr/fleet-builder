@@ -14,7 +14,7 @@ onMounted(async () => {
     try {
         ships.value = (await ShipService.getShips({ public: false })).map(
             (s) => {
-                s.shipSlotCounts = parseShipSlotCounts(s);
+                parseShipSlotCounts(s);
 
                 return s;
             }
@@ -85,13 +85,13 @@ onMounted(async () => {
                                 <div class="text-sm text-gray-500 flex gap-x-2">
                                     <span>
                                         W:
-                                        {{ ship.shipSlotCounts.weapon.total }}
+                                        {{ ship.slotCounts.weapon.total }}
                                     </span>
                                     <span>
-                                        A: {{ ship.shipSlotCounts.armor.total }}
+                                        A: {{ ship.slotCounts.armor.total }}
                                     </span>
                                     <span>
-                                        U: {{ ship.shipSlotCounts.unit.total }}
+                                        U: {{ ship.slotCounts.unit.total }}
                                     </span>
                                 </div>
                             </td>

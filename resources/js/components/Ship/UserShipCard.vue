@@ -1,7 +1,4 @@
 <script setup>
-import { computed } from "vue";
-import { getShipChipsCount, parseShipSlotStrengths } from "../../methods/ship";
-
 import IconBattery from "~icons/fa-solid/battery-three-quarters";
 import Chips from "../Themed/ship/Chips.vue";
 import AbilityTag from "../Themed/ability/AbilityTag.vue";
@@ -11,27 +8,20 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-});
-
-const computedUserShip = computed(() => {
-    const userShip = { ...props.userShip };
-    parseShipSlotStrengths(userShip.ship);
-
-    return userShip;
-});
-
-const chipCount = computed(() => {
-    return getShipChipsCount(props.userShip.ship);
+    showTags: {
+        type: Boolean,
+        default: true,
+    },
 });
 </script>
 
 <template>
     <div
-        v-tooltip="computedUserShip.visible ? false : 'Hidden from workshops'"
+        v-tooltip="userShip.visible ? false : 'Hidden from workshops'"
         class="ship ship-box relative leading-none"
         :class="[
-            'ship-box--' + computedUserShip.ship.ship_level.name.toLowerCase(),
-            { 'ship--hidden': !computedUserShip.visible },
+            'ship-box--' + userShip.ship.ship_level.name.toLowerCase(),
+            { 'ship--hidden': !userShip.visible },
         ]"
     >
         <div class="ship-box__content">
@@ -40,20 +30,20 @@ const chipCount = computed(() => {
                     <div class="flex w-full justify-between">
                         <div class="flex gap-x-2 items-center text-sm mb-1">
                             <div>
-                                {{ computedUserShip.ship.ship_class.name }}
+                                {{ userShip.ship.ship_class.name }}
                             </div>
                             <div class="flex gap-x-[2px] items-center">
                                 <div>
                                     <IconBattery />
                                 </div>
                                 <div>
-                                    {{ computedUserShip.ship.energy }}
+                                    {{ userShip.ship.energy }}
                                 </div>
                             </div>
                             <div>
                                 <Chips
-                                    :total="chipCount"
-                                    :chipLevel="computedUserShip.chip_level"
+                                    :total="userShip.ship.chipCount"
+                                    :chipLevel="userShip.chip_level"
                                     height="8px"
                                 />
                             </div>
@@ -68,10 +58,7 @@ const chipCount = computed(() => {
                             <div
                                 class="text-base font-medium text-grow-green-text-alt"
                             >
-                                {{
-                                    computedUserShip.ship.slotStrengths.weapon
-                                        .total
-                                }}
+                                {{ userShip.ship.slotStrengths.weapon.total }}
                             </div>
                         </div>
                         <div
@@ -81,10 +68,7 @@ const chipCount = computed(() => {
                             <div
                                 class="text-base font-medium text-grow-green-text-alt"
                             >
-                                {{
-                                    computedUserShip.ship.slotStrengths.armor
-                                        .total
-                                }}
+                                {{ userShip.ship.slotStrengths.armor.total }}
                             </div>
                         </div>
                         <div
@@ -94,10 +78,7 @@ const chipCount = computed(() => {
                             <div
                                 class="text-base font-medium text-grow-green-text-alt"
                             >
-                                {{
-                                    computedUserShip.ship.slotStrengths.unit
-                                        .total
-                                }}
+                                {{ userShip.ship.slotStrengths.unit.total }}
                             </div>
                         </div>
                     </div>
@@ -106,7 +87,7 @@ const chipCount = computed(() => {
                     <slot name="tags">
                         <div
                             class="flex flex-wrap gap-[2px]"
-                            v-if="userShip.parsedAbilities?.length"
+                            v-if="showTags && userShip.parsedAbilities?.length"
                         >
                             <AbilityTag
                                 v-for="parsedAbility in userShip.parsedAbilities"
@@ -127,10 +108,10 @@ const chipCount = computed(() => {
         </div>
         <div class="ship-box__caption flex gap-x-4 justify-center">
             <div>
-                {{ computedUserShip.ship.name }}
+                {{ userShip.ship.name }}
             </div>
             <div class="text-white italic">
-                {{ computedUserShip.name }}
+                {{ userShip.name }}
             </div>
         </div>
     </div>
