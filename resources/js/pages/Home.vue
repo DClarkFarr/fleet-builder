@@ -38,7 +38,7 @@ const onClickGetStarted = () => {
                 <li class="steps__li">
                     <div class="steps__number text-text-blue text-2xl">2.</div>
                     <div class="steps__text text-white/75">
-                        Build as many fleets as you want, compare bonsus stats
+                        Build as many fleets as you want, compare bonus stats
                         and unlock the most effective combinations for you!
                     </div>
                 </li>
