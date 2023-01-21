@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ShipClassController;
 use App\Http\Controllers\Admin\ShipController;
 use App\Http\Controllers\Admin\ShipLevelController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\BuilderController;
 use App\Http\Controllers\User\DataController;
 use App\Http\Controllers\User\UserAuthController;
@@ -74,6 +75,10 @@ Route::prefix('/data')->middleware(['auth'])->group(function () {
 });
 
 Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
+
+    Route::prefix('/user')->group(function () {
+        Route::get('/', [UserController::class, 'list']);
+    });
 
     Route::prefix('/ship')->group(function () {
 
