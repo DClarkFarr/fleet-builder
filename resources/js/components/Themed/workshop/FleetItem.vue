@@ -70,6 +70,13 @@ const isEmpty = computed(() => {
             class="fleet__info grow p-4 rounded min-h-[350px] mb-4 border border-dark-border-start"
         >
             <div class="fleet__used leading-none" v-if="!isEmpty">
+                <div
+                    class="fleet__nickname text-base font-medium text-modal-text"
+                    v-if="fleet?.name"
+                >
+                    {{ fleet.name }}
+                </div>
+
                 <FleetShipStats :fleet="fleet" />
 
                 <div class="fleet__ships flex flex-col gap-y-2 mb-8">
