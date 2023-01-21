@@ -169,10 +169,16 @@ const selectedFleet = computed(() => {
     return found;
 });
 
-const selectedUserShipIds = computed(() => {
-    return builderStore.selectedFleets?.reduce((acc, fleet) => {
-        return [...acc, ...fleet.user_ships.map((us) => us.id_user_ship)];
-    }, []);
+const selectedFleetShipIds = computed(() => {
+    return selectedFleet.value?.user_ships?.map((us) => us.id_user_ship);
+});
+
+const otherFleetShipIds = computed(() => {
+    return builderStore.selectedFleets
+        ?.filter((f) => f.id_workshop_fleet !== props.fleet?.id_workshop_fleet)
+        .reduce((acc, fleet) => {
+            return [...acc, ...fleet.user_ships.map((us) => us.id_user_ship)];
+        }, []);
 });
 
 const shipClasses = computed(() => builderStore.shipClasses);
@@ -191,14 +197,14 @@ const computedUserShips = computed(() => {
             if (fleetUserShipIds.includes(us.id_user_ship)) {
                 return true;
             }
-            return !selectedUserShipIds.value.includes(us.id_user_ship);
+            return !otherFleetShipIds.value.includes(us.id_user_ship);
         });
     }
 
     const mapped = userShips.map((us) => {
         return {
             ...us,
-            selected: selectedUserShipIds.value.includes(us.id_user_ship),
+            selected: selectedFleetShipIds.value.includes(us.id_user_ship),
         };
     });
 

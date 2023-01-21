@@ -141,7 +141,7 @@ const getBaseStatObj = (parsedAbility, userShip, amount, slug) => {
     if (ability.variants.length) {
         const [, variant] = slug.match(/variant--([a-z]+)/);
 
-        variants = [parseInt(variant)];
+        variants = [!isNaN(parseInt(variant)) ? parseInt(variant) : variant];
     }
 
     return {

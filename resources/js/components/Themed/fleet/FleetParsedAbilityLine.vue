@@ -47,14 +47,18 @@ const matchedShips = computed(() => {
                     });
                 }
             }
+        } else {
+            matched.push({
+                id_user_ship: userShip.id_user_ship,
+                id_ship: userShip.ship.id_ship,
+                name: userShip.ship.name,
+                nickname: userShip.name,
+                ship_class: userShip.ship.ship_class.name,
+            });
         }
     });
 
-    if (matched.length && matched.length !== props.fleetUserShips.length) {
-        return matched;
-    }
-
-    return null; // matches all!
+    return matched;
 });
 </script>
 
@@ -90,7 +94,12 @@ const matchedShips = computed(() => {
                     <div class="flex gap-x-3 items-start">
                         <div class="text-xs text-modal-text">Applies to:</div>
                         <div>
-                            <template v-if="matchedShips === null">
+                            <template
+                                v-if="
+                                    matchedShips.length ===
+                                    fleetUserShips.length
+                                "
+                            >
                                 All ships in fleet
                             </template>
                             <template v-else-if="matchedShips?.length">

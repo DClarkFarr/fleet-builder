@@ -15,6 +15,8 @@ import {
 
 import pluralize from "pluralize";
 
+import { upperFirst } from "lodash";
+
 const abilityTypes = DataService.getAbilityTypes();
 const abilityLocations = DataService.getShipAbilityLocations();
 
@@ -44,7 +46,11 @@ export const summedStatsTotalToText = (
     let title;
     if (summedStatsTotal.isVariantType) {
         const variants = ability.variants.length
-            ? joinAnd(summedStatsTotal.variants)
+            ? joinAnd(
+                  summedStatsTotal.variants
+                      .map(pluralize.singular)
+                      .map(upperFirst)
+              )
             : "All";
         title = parseText(titlesByType[ability.type], {
             abilityName,
