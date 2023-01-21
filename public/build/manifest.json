@@ -3,58 +3,53 @@
     "file": "assets/banner-1-7249c5e9.jpg",
     "src": "resources/images/banner-1.jpg"
   },
-  "resources/images/fleet-icon.png": {
-    "file": "assets/fleet-icon-21b7c8e4.png",
-    "src": "resources/images/fleet-icon.png"
+  "resources/images/banner-2.jpg": {
+    "file": "assets/banner-2-d2a28d6b.jpg",
+    "src": "resources/images/banner-2.jpg"
   },
   "resources/images/banner-3.jpg": {
     "file": "assets/banner-3-96dc4c6a.jpg",
     "src": "resources/images/banner-3.jpg"
   },
-  "resources/images/hexagon-md.png": {
-    "file": "assets/hexagon-md-5c1bec4b.png",
-    "src": "resources/images/hexagon-md.png"
-  },
-  "resources/images/banner-2.jpg": {
-    "file": "assets/banner-2-d2a28d6b.jpg",
-    "src": "resources/images/banner-2.jpg"
+  "resources/images/fleet-icon.png": {
+    "file": "assets/fleet-icon-21b7c8e4.png",
+    "src": "resources/images/fleet-icon.png"
   },
   "resources/images/hexagon-sm.png": {
     "file": "assets/hexagon-sm-11ae0820.png",
     "src": "resources/images/hexagon-sm.png"
   },
+  "resources/images/hexagon-md.png": {
+    "file": "assets/hexagon-md-5c1bec4b.png",
+    "src": "resources/images/hexagon-md.png"
+  },
   "resources/images/space-bg-pattern.jpg": {
     "file": "assets/space-bg-pattern-a2b245b5.jpg",
     "src": "resources/images/space-bg-pattern.jpg"
-  },
-  "resources/js/app.css": {
-    "file": "assets/app-c0222476.css",
-    "src": "resources/js/app.css"
-  },
-  "index.css": {
-    "file": "assets/index-8aff80f7.css",
-    "src": "index.css"
   },
   "AbilityItem.css": {
     "file": "assets/AbilityItem-14240184.css",
     "src": "AbilityItem.css"
   },
-  "resources/js/builder.css": {
-    "file": "assets/builder-cceca1e7.css",
-    "src": "resources/js/builder.css"
-  },
   "FleetItem.css": {
     "file": "assets/FleetItem-9b300e42.css",
     "src": "FleetItem.css"
   },
+  "index.css": {
+    "file": "assets/index-8aff80f7.css",
+    "src": "index.css"
+  },
+  "resources/js/app.css": {
+    "file": "assets/app-c0222476.css",
+    "src": "resources/js/app.css"
+  },
+  "resources/js/builder.css": {
+    "file": "assets/builder-d5fbb49c.css",
+    "src": "resources/js/builder.css"
+  },
   "resources/css/app.less": {
     "file": "assets/app-e19a1e98.css",
     "src": "resources/css/app.less",
-    "isEntry": true
-  },
-  "resources/css/dashboard.less": {
-    "file": "assets/dashboard-4ed993c7.js",
-    "src": "resources/css/dashboard.less",
     "isEntry": true
   },
   "_useMustAuthState-96f39df3.js": {
@@ -62,6 +57,11 @@
     "imports": [
       "_index-935aeafb.js"
     ]
+  },
+  "resources/css/dashboard.less": {
+    "file": "assets/dashboard-4ed993c7.js",
+    "src": "resources/css/dashboard.less",
+    "isEntry": true
   },
   "resources/css/builder.less": {
     "file": "assets/builder-4ed993c7.js",
@@ -78,8 +78,8 @@
       "_useMustAuthState-96f39df3.js"
     ]
   },
-  "_FleetItem-85049dae.js": {
-    "file": "assets/FleetItem-85049dae.js",
+  "_FleetItem-48be8056.js": {
+    "file": "assets/FleetItem-48be8056.js",
     "imports": [
       "_index-935aeafb.js"
     ],
@@ -91,16 +91,16 @@
     ]
   },
   "resources/js/builder.js": {
-    "file": "assets/builder-28772841.js",
+    "file": "assets/builder-b1922fd3.js",
     "src": "resources/js/builder.js",
     "isEntry": true,
     "imports": [
       "_index-935aeafb.js",
-      "_FleetItem-85049dae.js",
+      "_FleetItem-48be8056.js",
       "_useMustAuthState-96f39df3.js"
     ],
     "css": [
-      "assets/builder-cceca1e7.css"
+      "assets/builder-d5fbb49c.css"
     ]
   },
   "_AbilityItem-ef0f48e0.js": {
@@ -113,12 +113,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-8d17733f.js",
+    "file": "assets/app-25a57848.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "_index-935aeafb.js",
-      "_FleetItem-85049dae.js",
+      "_FleetItem-48be8056.js",
       "_AbilityItem-ef0f48e0.js"
     ],
     "css": [

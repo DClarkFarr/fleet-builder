@@ -258,6 +258,8 @@ const useBuilderStore = defineStore("builder", () => {
                 }
 
                 setSelectedFleets(fleets);
+
+                return fleet;
             });
     };
 

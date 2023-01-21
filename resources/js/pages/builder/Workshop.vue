@@ -32,11 +32,17 @@ const onSelectFleet = (location, fleet) => {
             fleet,
             excludeSelected: !workshop.value.arcade,
             onSave: async (locationSlug, data) => {
-                await builderStore.createOrUpdateFleet(
+                const fleet = await builderStore.createOrUpdateFleet(
                     workshop.value?.id_workshop,
                     locationSlug,
                     data
                 );
+
+                if (!data.id_workshop_fleet) {
+                    $vfm.hideAll();
+                    onSelectFleet(location, fleet);
+                }
+
                 toast.success("Fleet saved successfully");
             },
             onDelete: async (id_workshop_fleet) => {
