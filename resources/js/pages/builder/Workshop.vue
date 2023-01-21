@@ -90,7 +90,6 @@ const workshop = computed(() => {
 });
 
 const computedFleetLocations = computed(() => {
-    console.log("computing fleet locations");
     return fleetLocations.map((location) => {
         const fleet = builderStore.selectedFleets?.find(
             (f) => f.location === location.slug

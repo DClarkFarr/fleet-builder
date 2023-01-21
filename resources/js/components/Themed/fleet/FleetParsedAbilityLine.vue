@@ -31,23 +31,16 @@ const matchedShips = computed(() => {
     const matched = [];
 
     props.fleetUserShips.forEach((userShip) => {
+        let push = true;
         if (pa.hasQualifiers) {
             if (pa.ability.for_class_ids.length) {
-                if (
-                    pa.ability.for_class_ids.includes(
-                        userShip.ship.ship_class.id_class
-                    )
-                ) {
-                    matched.push({
-                        id_user_ship: userShip.id_user_ship,
-                        id_ship: userShip.ship.id_ship,
-                        name: userShip.ship.name,
-                        nickname: userShip.name,
-                        ship_class: userShip.ship.ship_class.name,
-                    });
-                }
+                push = pa.ability.for_class_ids.includes(
+                    userShip.ship.ship_class.id_class
+                );
             }
-        } else {
+        }
+
+        if (push) {
             matched.push({
                 id_user_ship: userShip.id_user_ship,
                 id_ship: userShip.ship.id_ship,
@@ -102,7 +95,7 @@ const matchedShips = computed(() => {
                             >
                                 All ships in fleet
                             </template>
-                            <template v-else-if="matchedShips?.length">
+                            <template v-else-if="matchedShips.length">
                                 <div class="flex flex-wrap gap-2">
                                     <div
                                         v-for="(m, index) in matchedShips"
