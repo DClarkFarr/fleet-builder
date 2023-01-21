@@ -23,7 +23,8 @@ const props = defineProps({
 
 <template>
     <vue-final-modal
-        classes="modal-container"
+        :name="'ability-modal-' + location"
+        classes="modal-container ability-modal"
         content-class="modal-content modal-content--xl"
     >
         <div class="modal__content">

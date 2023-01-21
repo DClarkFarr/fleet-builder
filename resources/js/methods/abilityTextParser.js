@@ -418,9 +418,10 @@ export const getAbilityAffectType = (ability) => {
 };
 
 export const getAbilityAffectTypeName = (ability) => {
-    return abilityAffects.find(
+    const found = abilityAffects.find(
         (aa) => aa.slug === getAbilityAffectType(ability)
-    )?.name;
+    );
+    return found?.name;
 };
 
 export const getAbilityTypeName = (ability) => {
@@ -488,7 +489,7 @@ class AbilityTextParser {
         return getAbilityAffectType(this.ability);
     }
 
-    get abilityTypeName() {
+    get affectTypeName() {
         return getAbilityAffectTypeName(this.ability);
     }
 
@@ -542,6 +543,10 @@ class AbilityTextParser {
         return parseAbilityQualifiiers(this.ability, {
             shipClasses: this.shipClasses,
         });
+    }
+
+    get abilityTypeName() {
+        return getAbilityTypeName(this.ability);
     }
 
     get fullDescription() {

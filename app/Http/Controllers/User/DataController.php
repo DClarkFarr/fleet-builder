@@ -61,4 +61,40 @@ class DataController extends Controller
             ['row' => $workshop->toArray()]
         );
     }
+
+    public function submitShipForReview(Request $request)
+    {
+        $form = $request->form;
+        $slots = $request->slots;
+        $abilities = $request->abilities;
+
+
+        if (!$form || !isset($form['name'])) {
+            return response()->json(
+                ['success' => false, 'message' => 'Invalid form data'],
+                400
+            );
+        }
+
+        if (!$slots || !isset($slots['weapon'])) {
+            return response()->json(
+                ['success' => false, 'message' => 'Invalid slots data'],
+                400
+            );
+        }
+
+
+        try {
+            $this->shipService->submitShipForReview($form, $slots, $abilities);
+        } catch (\Exception $err) {
+            return response()->json(
+                ['success' => false, 'message' => $err->getMessage()],
+                400
+            );
+        }
+
+        return response()->json(
+            ['success' => true]
+        );
+    }
 }

@@ -16,6 +16,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const isSubmitting = ref(false);
@@ -134,8 +138,10 @@ const onSubmit = () => {
 
     isSubmitting.value = true;
 
-    const resolve = () => {
-        resetForm();
+    const resolve = (reset = true) => {
+        if (reset) {
+            resetForm();
+        }
         isSubmitting.value = false;
     };
     const reject = (message) => {
@@ -183,6 +189,7 @@ onMounted(async () => {
                 v-model="form.name"
                 @input="onChangeForm"
                 placeholder="Mechanical, Argo, etc."
+                :disabled="disabled"
             />
             <InputError :error="errors.name" :dirty="dirty.name" />
         </div>
@@ -197,6 +204,7 @@ onMounted(async () => {
                     :multiple="false"
                     :searchable="true"
                     :clearable="false"
+                    :disabled="disabled"
                     v-model="form.id_class"
                     @input="onChangeForm"
                 />
@@ -211,6 +219,7 @@ onMounted(async () => {
                     :multiple="false"
                     :searchable="true"
                     :clearable="false"
+                    :disabled="disabled"
                     v-model="form.id_level"
                     @input="onChangeForm"
                 />
@@ -225,6 +234,7 @@ onMounted(async () => {
                     class="form-control"
                     v-model="form.energy"
                     @input="onChangeForm"
+                    :disabled="disabled"
                     placeholder="Energy"
                 />
                 <InputError :error="errors.energy" :dirty="dirty.energy" />
@@ -238,6 +248,7 @@ onMounted(async () => {
                             v-model="form.public"
                             @input="onChangeForm"
                             placeholder="Public"
+                            :disabled="disabled"
                             :true-value="true"
                             :false-value="false"
                         />
@@ -251,17 +262,19 @@ onMounted(async () => {
         <div class="form-group" v-if="errorMessage">
             <InputError :error="errorMessage" />
         </div>
-        <div class="form-group">
-            <button
-                type="submit"
-                class="btn bg-sky-600 hover:bg-sky-800"
-                :disabled="!isValid || isSubmitting"
-            >
-                <template v-if="!isSubmitting"> Submit </template>
-                <template v-else>
-                    <CircleNotchIcon class="animate-spin" />
-                </template>
-            </button>
-        </div>
+        <slot name="button">
+            <div class="form-group">
+                <button
+                    type="submit"
+                    class="btn bg-sky-600 hover:bg-sky-800"
+                    :disabled="!isValid || isSubmitting || disabled"
+                >
+                    <template v-if="!isSubmitting"> Submit </template>
+                    <template v-else>
+                        <CircleNotchIcon class="animate-spin" />
+                    </template>
+                </button>
+            </div>
+        </slot>
     </form>
 </template>

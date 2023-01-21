@@ -69,6 +69,10 @@ Route::prefix('/data')->group(function () {
 });
 
 
+Route::prefix('/data')->middleware(['auth'])->group(function () {
+    Route::post('/ships', [DataController::class, 'submitShipForReview']);
+});
+
 Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
 
     Route::prefix('/ship')->group(function () {

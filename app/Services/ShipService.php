@@ -571,4 +571,27 @@ class ShipService
 
         return $this->populateWOrkshopForResponse($workshop);
     }
+
+    public function submitShipForReview($form, $slots, $abilities)
+    {
+
+        $existing = Ship::where('name', $form['name'])->first();
+        if ($existing) {
+            throw new \Exception('Ship already exists', 400);
+        }
+
+        $ship = $this->createShip(array_merge($form, ['public' => false]));
+
+        foreach ($slots as $type => $values) {
+            foreach ($values as $size => $amount) {
+                $this->syncShipSlot($ship, $type, $size, $amount);
+            }
+        }
+
+        foreach ($abilities as $location => $values) {
+            foreach ($values as $ability) {
+                $ability = $ship->abilities()->create(array_merge($ability, ['location' => $location]));
+            }
+        }
+    }
 }

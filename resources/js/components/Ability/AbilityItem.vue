@@ -39,24 +39,30 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    stackable: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const modals = ref({});
 
-const onEditAbility = async (id_ability) => {
-    await $vfm.hideAll();
+const onEditAbility = async (abilityIndex) => {
+    if (!props.stackable) {
+        await $vfm.hideAll();
+    }
 
     $vfm.show({
         component: AbilityModal,
         bind: {
-            ability: computedAbilities.value.find(
-                (a) => a.id_ability === id_ability
-            ),
+            ability: computedAbilities.value[abilityIndex],
             location: props.location,
             locationName: props.locationName,
             onSave: (data) => {
-                onUpdateAbility(id_ability, data);
-                $vfm.hideAll();
+                onUpdateAbility(abilityIndex, data);
+                if (!props.stackable) {
+                    $vfm.hideAll();
+                }
             },
         },
     });
@@ -64,11 +70,11 @@ const onEditAbility = async (id_ability) => {
 
 const deletingAbility = ref(null);
 
-const onDeleteAbility = async (id_ability) => {
+const onDeleteAbility = async (id_ability, abilityIndex) => {
     deletingAbility.value = id_ability;
 
     try {
-        await props.onDelete(id_ability);
+        await props.onDelete(id_ability, props.location, abilityIndex);
     } catch (e) {
         console.error(e);
     }
@@ -79,17 +85,22 @@ const onDeleteAbility = async (id_ability) => {
 const shipClasses = ref([]);
 
 const onAddAbility = async () => {
-    await $vfm.hideAll();
+    if (!props.stackable) {
+        $vfm.hideAll();
+    }
 
     $vfm.show({
         component: AbilityModal,
+        // stackable: props.stackable,
         bind: {
             ability: defaultAbility,
             location: props.location,
             locationName: props.locationName,
             onSave: (data) => {
                 onCreateAbility(data);
-                $vfm.hideAll();
+                if (!props.stackable) {
+                    $vfm.hideAll();
+                }
             },
         },
     });
@@ -102,21 +113,12 @@ const onCreateAbility = (abilityForm) => {
     props.onSave(abilities);
 };
 
-const onUpdateAbility = (id_ability, data) => {
-    const locationAbilities = [...props.abilities].filter(
-        (a) => a.location === props.location
-    );
+const onUpdateAbility = (updateIndex, data) => {
+    const abs = [...props.abilities];
 
-    const updateIndex = locationAbilities.findIndex(
-        (a) => a.id_ability === id_ability
-    );
+    abs.splice(updateIndex, 1, { ...data });
 
-    locationAbilities[updateIndex] = {
-        ...locationAbilities[updateIndex],
-        ...data,
-    };
-
-    props.onSave(locationAbilities);
+    props.onSave(abs);
 };
 
 const defaultAbility = computed(() => {
@@ -172,7 +174,7 @@ onMounted(async () => {
                         'opacity-60': deletingAbility === ability.id_ability,
                     },
                 ]"
-                v-for="ability in computedAbilities"
+                v-for="(ability, abilityIndex) in computedAbilities"
                 :key="ability.id_ability"
             >
                 <div class="ability__icons">
@@ -232,7 +234,7 @@ onMounted(async () => {
                     <div>
                         <button
                             class="btn bg-sky-600 hover:bg-sky-800"
-                            @click="onEditAbility(ability.id_ability)"
+                            @click="onEditAbility(abilityIndex)"
                         >
                             <EditIcon />
                         </button>
@@ -240,7 +242,12 @@ onMounted(async () => {
                     <div>
                         <button
                             class="btn bg-red-700 hover:bg-red-800"
-                            @click="onDeleteAbility(ability.id_ability)"
+                            @click="
+                                onDeleteAbility(
+                                    ability.id_ability,
+                                    abilityIndex
+                                )
+                            "
                         >
                             <TrashIcon />
                         </button>
