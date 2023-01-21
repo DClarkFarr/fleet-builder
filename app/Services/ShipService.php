@@ -453,13 +453,13 @@ class ShipService
         $workshop->fill($data);
         $workshop->save();
 
-        return $workshop;
+        return $this->populateWorkshopForResponse($workshop);
     }
 
     public function listWorkshops(User $user)
     {
         $workshops = $user->workshops->map(function ($workshop) {
-            return $this->populateWOrkshopForResponse($workshop, true);
+            return $this->populateWorkshopForResponse($workshop, true);
         });
 
         return $workshops;
@@ -569,7 +569,7 @@ class ShipService
 
         unset($workshop->user->email, $workshop->user->email_verified_at, $workshop->user->created_at, $workshop->user->updated_at);
 
-        return $this->populateWOrkshopForResponse($workshop);
+        return $this->populateWorkshopForResponse($workshop);
     }
 
     public function submitShipForReview($form, $slots, $abilities)
