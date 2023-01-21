@@ -40,7 +40,9 @@ const props = defineProps({
 });
 
 const onClickCancel = (close) => {
-    props.onCancel();
+    if (typeof props.onCancel === "function") {
+        props.onCancel();
+    }
     close();
 };
 

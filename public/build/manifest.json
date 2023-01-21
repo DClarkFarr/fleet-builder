@@ -1,16 +1,4 @@
 {
-  "resources/images/banner-3.jpg": {
-    "file": "assets/banner-3-96dc4c6a.jpg",
-    "src": "resources/images/banner-3.jpg"
-  },
-  "resources/images/fleet-icon.png": {
-    "file": "assets/fleet-icon-21b7c8e4.png",
-    "src": "resources/images/fleet-icon.png"
-  },
-  "resources/images/hexagon-md.png": {
-    "file": "assets/hexagon-md-5c1bec4b.png",
-    "src": "resources/images/hexagon-md.png"
-  },
   "resources/images/banner-1.jpg": {
     "file": "assets/banner-1-7249c5e9.jpg",
     "src": "resources/images/banner-1.jpg"
@@ -18,6 +6,18 @@
   "resources/images/banner-2.jpg": {
     "file": "assets/banner-2-d2a28d6b.jpg",
     "src": "resources/images/banner-2.jpg"
+  },
+  "resources/images/fleet-icon.png": {
+    "file": "assets/fleet-icon-21b7c8e4.png",
+    "src": "resources/images/fleet-icon.png"
+  },
+  "resources/images/banner-3.jpg": {
+    "file": "assets/banner-3-96dc4c6a.jpg",
+    "src": "resources/images/banner-3.jpg"
+  },
+  "resources/images/hexagon-md.png": {
+    "file": "assets/hexagon-md-5c1bec4b.png",
+    "src": "resources/images/hexagon-md.png"
   },
   "resources/images/hexagon-sm.png": {
     "file": "assets/hexagon-sm-11ae0820.png",
@@ -31,16 +31,16 @@
     "file": "assets/app-69c78c62.css",
     "src": "resources/js/app.css"
   },
-  "AbilityItem.css": {
-    "file": "assets/AbilityItem-deb2e87b.css",
-    "src": "AbilityItem.css"
-  },
   "HelpBar.css": {
     "file": "assets/HelpBar-06fd01c1.css",
     "src": "HelpBar.css"
   },
+  "AbilityItem.css": {
+    "file": "assets/AbilityItem-deb2e87b.css",
+    "src": "AbilityItem.css"
+  },
   "resources/js/builder.css": {
-    "file": "assets/builder-278a33ed.css",
+    "file": "assets/builder-e60c09ce.css",
     "src": "resources/js/builder.css"
   },
   "resources/css/app.less": {
@@ -53,16 +53,16 @@
     "src": "resources/css/builder.less",
     "isEntry": true
   },
+  "resources/css/dashboard.less": {
+    "file": "assets/dashboard-4ed993c7.js",
+    "src": "resources/css/dashboard.less",
+    "isEntry": true
+  },
   "_useMustAuthState-ee26b178.js": {
     "file": "assets/useMustAuthState-ee26b178.js",
     "imports": [
       "_AbilityItem-bfb7c390.js"
     ]
-  },
-  "resources/css/dashboard.less": {
-    "file": "assets/dashboard-4ed993c7.js",
-    "src": "resources/css/dashboard.less",
-    "isEntry": true
   },
   "resources/js/dashboard.js": {
     "file": "assets/dashboard-b13e4390.js",
@@ -86,7 +86,7 @@
     ]
   },
   "resources/js/builder.js": {
-    "file": "assets/builder-ead74a7f.js",
+    "file": "assets/builder-bbf0d37a.js",
     "src": "resources/js/builder.js",
     "isEntry": true,
     "imports": [
@@ -95,7 +95,7 @@
       "_useMustAuthState-ee26b178.js"
     ],
     "css": [
-      "assets/builder-278a33ed.css"
+      "assets/builder-e60c09ce.css"
     ]
   },
   "resources/js/app.js": {
