@@ -15,8 +15,10 @@ import WorkshopListItem from "../../components/Themed/workshop/WorkshopListItem.
 import { useRouter } from "vue-router";
 import { showConfirmModal } from "../../components/Themed/controls/ConfirmModal.vue";
 import { useToast } from "vue-toastification";
+import useUserStore from "../../stores/userStore";
 
 const builderStore = useBuilderStore();
+const userStore = useUserStore();
 const router = useRouter();
 const toast = useToast();
 
@@ -107,6 +109,10 @@ const onClickDeleteWorkshop3 = async (workshop) => {
     });
 };
 
+const onClickLogout = () => {
+    userStore.logout();
+};
+
 const allLoaded = ref(false);
 
 onBeforeMount(() => {
@@ -130,6 +136,11 @@ onBeforeMount(() => {
 </script>
 <template>
     <BuilderLayout>
+        <div class="flex w-full justify-end p-4">
+            <router-link to="/" class="banner__link" @click="onClickLogout">
+                Logout
+            </router-link>
+        </div>
         <div class="my-fleets flex w-full justify-center items-center">
             <div
                 class="my-fleets__content w-full max-w-6xl p-6 text-modal-text"
@@ -248,6 +259,13 @@ onBeforeMount(() => {
 </style>
 
 <style lang="less" scoped>
+.banner {
+    &__link {
+        @apply text-grow-green-text-alt;
+
+        text-shadow: 0 0 10px #05774e;
+    }
+}
 .placeholder {
     @apply text-white;
 
