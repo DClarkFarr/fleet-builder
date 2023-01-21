@@ -273,7 +273,7 @@ watch(
                     />
                 </div>
 
-                <div class="mb-2">
+                <div class="mb-2" v-if="fleet">
                     <button
                         type="button"
                         class="btn btn-bright-blue btn-sm"
