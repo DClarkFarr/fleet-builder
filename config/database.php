@@ -58,7 +58,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'unix_socket'   => '/Applications/MAMP/tmp/mysql/mysql.sock',
+            'unix_socket'   => env('DB_UNIX_SOCKET', ''),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
