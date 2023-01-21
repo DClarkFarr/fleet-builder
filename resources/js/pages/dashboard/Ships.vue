@@ -5,7 +5,7 @@ import ShipService from "../../services/ShipService";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import PencilIcon from "~icons/fa-solid/pencil-alt";
 import { parseShipSlotCounts } from "../../methods/ship";
-
+import IconExclamationTriangle from "~icons/fa-solid/exclamation-triangle";
 const ships = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref("");
@@ -72,7 +72,18 @@ onMounted(async () => {
                             :data-id-ship="ship.id_ship"
                         >
                             <td>
-                                {{ ship.name }}
+                                <div class="flex gap-x-2 items-center">
+                                    <div
+                                        v-if="!ship.public"
+                                        class="text-lg text-red-600 flex gap-x-2"
+                                    >
+                                        <IconExclamationTriangle />
+                                        <span class="text-base"> Public </span>
+                                    </div>
+                                    <div>
+                                        {{ ship.name }}
+                                    </div>
+                                </div>
                             </td>
                             <td>
                                 {{ ship.ship_level.name }} /
