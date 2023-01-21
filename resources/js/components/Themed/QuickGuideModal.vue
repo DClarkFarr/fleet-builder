@@ -23,7 +23,7 @@ const props = defineProps({});
                     </h3>
                     <p class="mb-2">
                         Armor, weapons and units have 3 sizes: Small, Medium,
-                        and Large. For calculatin total ship strength, we use
+                        and Large. For calculating total ship strength, we use
                         the following weights:
                     </p>
                     <div class="block">
@@ -50,7 +50,7 @@ const props = defineProps({});
                             <div>S: 3</div>
                             <div>M: 2</div>
                             <div>L: 0</div>
-                            <div>Total: 10</div>
+                            <div>Total: 7 // (3 * 1) + (2 * 2)</div>
                         </div>
                     </div>
                 </div>
