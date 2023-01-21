@@ -12,6 +12,7 @@ import FleetFormModal from "../../components/Themed/workshop/FleetFormModal.vue"
 
 import IconArrowLeft from "~icons/fa-solid/arrow-left";
 import ShareWorkshop from "../../components/Themed/controls/ShareWorkshop.vue";
+import HelpBar from "../../components/Themed/HelpBar.vue";
 
 const route = useRoute();
 
@@ -158,6 +159,8 @@ onBeforeMount(async () => {
                     </div>
                 </div>
             </div>
+
+            <HelpBar />
 
             <div class="workshop__content w-full text-modal-text">
                 <div class="grid gap-x-4 gap-y-8 w-full">

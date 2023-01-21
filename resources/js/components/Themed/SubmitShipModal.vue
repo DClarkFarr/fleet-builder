@@ -215,12 +215,12 @@ const onSubmit = async () => {
 </template>
 
 <style lang="less">
-.custom-bg {
-    background: #fff;
-}
-
 .submit-ship-modal,
 .ability-modal {
+    .custom-bg {
+        background: #fff;
+    }
+
     .modal__content {
         background: #fff;
     }
