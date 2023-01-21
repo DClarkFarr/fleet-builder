@@ -14,7 +14,7 @@ class Ability extends Model
         'location',
         'type',
         'variants',
-        'amount',
+        'amounts',
         'weapon_classes',
         'weapon_sizes',
         'notes',

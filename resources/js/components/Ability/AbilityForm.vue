@@ -176,6 +176,7 @@ const onSubmit = async () => {
         const data = {
             ...toRaw(form),
             amounts: form.amounts.map((amount) => toRaw(amount)),
+            id_ability: props.ability?.id_ability,
         };
         await props.onSave(data);
     } catch (err) {

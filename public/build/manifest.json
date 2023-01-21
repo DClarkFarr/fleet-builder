@@ -3,13 +3,13 @@
     "file": "assets/banner-1-7249c5e9.jpg",
     "src": "resources/images/banner-1.jpg"
   },
+  "resources/images/banner-2.jpg": {
+    "file": "assets/banner-2-d2a28d6b.jpg",
+    "src": "resources/images/banner-2.jpg"
+  },
   "resources/images/banner-3.jpg": {
     "file": "assets/banner-3-96dc4c6a.jpg",
     "src": "resources/images/banner-3.jpg"
-  },
-  "resources/images/hexagon-md.png": {
-    "file": "assets/hexagon-md-5c1bec4b.png",
-    "src": "resources/images/hexagon-md.png"
   },
   "resources/images/fleet-icon.png": {
     "file": "assets/fleet-icon-21b7c8e4.png",
@@ -19,17 +19,13 @@
     "file": "assets/hexagon-sm-11ae0820.png",
     "src": "resources/images/hexagon-sm.png"
   },
-  "resources/images/banner-2.jpg": {
-    "file": "assets/banner-2-d2a28d6b.jpg",
-    "src": "resources/images/banner-2.jpg"
+  "resources/images/hexagon-md.png": {
+    "file": "assets/hexagon-md-5c1bec4b.png",
+    "src": "resources/images/hexagon-md.png"
   },
   "resources/images/space-bg-pattern.jpg": {
     "file": "assets/space-bg-pattern-a2b245b5.jpg",
     "src": "resources/images/space-bg-pattern.jpg"
-  },
-  "resources/js/builder.css": {
-    "file": "assets/builder-e60c09ce.css",
-    "src": "resources/js/builder.css"
   },
   "resources/js/app.css": {
     "file": "assets/app-69c78c62.css",
@@ -43,53 +39,44 @@
     "file": "assets/AbilityItem-deb2e87b.css",
     "src": "AbilityItem.css"
   },
+  "resources/js/builder.css": {
+    "file": "assets/builder-e60c09ce.css",
+    "src": "resources/js/builder.css"
+  },
   "resources/css/app.less": {
     "file": "assets/app-603efd0e.css",
     "src": "resources/css/app.less",
     "isEntry": true
-  },
-  "resources/css/dashboard.less": {
-    "file": "assets/dashboard-4ed993c7.js",
-    "src": "resources/css/dashboard.less",
-    "isEntry": true
-  },
-  "_useMustAuthState-ee26b178.js": {
-    "file": "assets/useMustAuthState-ee26b178.js",
-    "imports": [
-      "_AbilityItem-bfb7c390.js"
-    ]
   },
   "resources/css/builder.less": {
     "file": "assets/builder-4ed993c7.js",
     "src": "resources/css/builder.less",
     "isEntry": true
   },
+  "_useMustAuthState-db3c080b.js": {
+    "file": "assets/useMustAuthState-db3c080b.js",
+    "imports": [
+      "_AbilityItem-5b6463c0.js"
+    ]
+  },
+  "resources/css/dashboard.less": {
+    "file": "assets/dashboard-4ed993c7.js",
+    "src": "resources/css/dashboard.less",
+    "isEntry": true
+  },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-b13e4390.js",
+    "file": "assets/dashboard-eb937f79.js",
     "src": "resources/js/dashboard.js",
     "isEntry": true,
     "imports": [
-      "_AbilityItem-bfb7c390.js",
-      "_useMustAuthState-ee26b178.js"
+      "_AbilityItem-5b6463c0.js",
+      "_useMustAuthState-db3c080b.js"
     ]
   },
-  "resources/js/builder.js": {
-    "file": "assets/builder-62ed8b8f.js",
-    "src": "resources/js/builder.js",
-    "isEntry": true,
+  "_HelpBar-a86821e7.js": {
+    "file": "assets/HelpBar-a86821e7.js",
     "imports": [
-      "_AbilityItem-bfb7c390.js",
-      "_HelpBar-31cddb2a.js",
-      "_useMustAuthState-ee26b178.js"
-    ],
-    "css": [
-      "assets/builder-e60c09ce.css"
-    ]
-  },
-  "_HelpBar-31cddb2a.js": {
-    "file": "assets/HelpBar-31cddb2a.js",
-    "imports": [
-      "_AbilityItem-bfb7c390.js"
+      "_AbilityItem-5b6463c0.js"
     ],
     "css": [
       "assets/HelpBar-9042866e.css"
@@ -98,20 +85,33 @@
       "assets/hexagon-md-5c1bec4b.png"
     ]
   },
+  "resources/js/builder.js": {
+    "file": "assets/builder-8328e034.js",
+    "src": "resources/js/builder.js",
+    "isEntry": true,
+    "imports": [
+      "_AbilityItem-5b6463c0.js",
+      "_HelpBar-a86821e7.js",
+      "_useMustAuthState-db3c080b.js"
+    ],
+    "css": [
+      "assets/builder-e60c09ce.css"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-9092a202.js",
+    "file": "assets/app-9c524355.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_AbilityItem-bfb7c390.js",
-      "_HelpBar-31cddb2a.js"
+      "_AbilityItem-5b6463c0.js",
+      "_HelpBar-a86821e7.js"
     ],
     "css": [
       "assets/app-69c78c62.css"
     ]
   },
-  "_AbilityItem-bfb7c390.js": {
-    "file": "assets/AbilityItem-bfb7c390.js",
+  "_AbilityItem-5b6463c0.js": {
+    "file": "assets/AbilityItem-5b6463c0.js",
     "css": [
       "assets/AbilityItem-deb2e87b.css"
     ]
