@@ -24,7 +24,7 @@ const url = computed(() => {
 const { copy, isSupported } = useClipboard();
 
 const onCopy = async () => {
-    await copy(inputRef);
+    await copy(url.value);
 
     toastDebounced();
 };

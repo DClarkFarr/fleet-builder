@@ -1,23 +1,23 @@
 {
-  "resources/images/banner-1.jpg": {
-    "file": "assets/banner-1-7249c5e9.jpg",
-    "src": "resources/images/banner-1.jpg"
-  },
-  "resources/images/fleet-icon.png": {
-    "file": "assets/fleet-icon-21b7c8e4.png",
-    "src": "resources/images/fleet-icon.png"
+  "resources/images/hexagon-md.png": {
+    "file": "assets/hexagon-md-5c1bec4b.png",
+    "src": "resources/images/hexagon-md.png"
   },
   "resources/images/banner-3.jpg": {
     "file": "assets/banner-3-96dc4c6a.jpg",
     "src": "resources/images/banner-3.jpg"
   },
+  "resources/images/fleet-icon.png": {
+    "file": "assets/fleet-icon-21b7c8e4.png",
+    "src": "resources/images/fleet-icon.png"
+  },
   "resources/images/hexagon-sm.png": {
     "file": "assets/hexagon-sm-11ae0820.png",
     "src": "resources/images/hexagon-sm.png"
   },
-  "resources/images/hexagon-md.png": {
-    "file": "assets/hexagon-md-5c1bec4b.png",
-    "src": "resources/images/hexagon-md.png"
+  "resources/images/banner-1.jpg": {
+    "file": "assets/banner-1-7249c5e9.jpg",
+    "src": "resources/images/banner-1.jpg"
   },
   "resources/images/space-bg-pattern.jpg": {
     "file": "assets/space-bg-pattern-a2b245b5.jpg",
@@ -52,21 +52,21 @@
     "src": "resources/css/app.less",
     "isEntry": true
   },
-  "resources/css/builder.less": {
-    "file": "assets/builder-4ed993c7.js",
-    "src": "resources/css/builder.less",
-    "isEntry": true
+  "_useMustAuthState-e6f98085.js": {
+    "file": "assets/useMustAuthState-e6f98085.js",
+    "imports": [
+      "_index-474b6c89.js"
+    ]
   },
   "resources/css/dashboard.less": {
     "file": "assets/dashboard-4ed993c7.js",
     "src": "resources/css/dashboard.less",
     "isEntry": true
   },
-  "_useMustAuthState-e6f98085.js": {
-    "file": "assets/useMustAuthState-e6f98085.js",
-    "imports": [
-      "_index-474b6c89.js"
-    ]
+  "resources/css/builder.less": {
+    "file": "assets/builder-4ed993c7.js",
+    "src": "resources/css/builder.less",
+    "isEntry": true
   },
   "resources/js/dashboard.js": {
     "file": "assets/dashboard-7129d037.js",
@@ -76,19 +76,6 @@
       "_index-474b6c89.js",
       "_AbilityItem-814feefc.js",
       "_useMustAuthState-e6f98085.js"
-    ]
-  },
-  "resources/js/builder.js": {
-    "file": "assets/builder-d3128f6d.js",
-    "src": "resources/js/builder.js",
-    "isEntry": true,
-    "imports": [
-      "_index-474b6c89.js",
-      "_FleetItem-3ca40883.js",
-      "_useMustAuthState-e6f98085.js"
-    ],
-    "css": [
-      "assets/builder-7db5f375.css"
     ]
   },
   "_FleetItem-3ca40883.js": {
@@ -101,6 +88,19 @@
     ],
     "assets": [
       "assets/hexagon-md-5c1bec4b.png"
+    ]
+  },
+  "resources/js/builder.js": {
+    "file": "assets/builder-83763e0d.js",
+    "src": "resources/js/builder.js",
+    "isEntry": true,
+    "imports": [
+      "_index-474b6c89.js",
+      "_FleetItem-3ca40883.js",
+      "_useMustAuthState-e6f98085.js"
+    ],
+    "css": [
+      "assets/builder-7db5f375.css"
     ]
   },
   "_AbilityItem-814feefc.js": {
