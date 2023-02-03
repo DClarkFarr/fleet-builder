@@ -97,6 +97,7 @@ export default class DataService {
         MISSILE_RESISTANCE: "missile_resistance",
         BEAM_RESISTANCE: "beam_resistance",
         TOTAL_SHIELDS: "all_shields",
+        ARMOR: "armor",
     };
 
     static FORMULA_ITEM_TYPES = {
@@ -228,6 +229,10 @@ export default class DataService {
             {
                 name: "Total Shields",
                 slug: DataService.SHIP_COLUMNS.TOTAL_SHIELDS,
+            },
+            {
+                name: "Total Armor",
+                slug: DataService.SHIP_COLUMNS.ARMOR,
             },
         ];
     }
