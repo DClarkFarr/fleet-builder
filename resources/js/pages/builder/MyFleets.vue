@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, computed, reactive } from "vue";
 import { $vfm } from "vue-final-modal";
 
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
@@ -115,6 +115,40 @@ const onClickLogout = () => {
 
 const allLoaded = ref(false);
 
+const filters = reactive({
+    search: "",
+    id_class: null,
+});
+
+const hasFilters = computed(() => {
+    return Object.values(filters).some((v) => !!v);
+});
+
+const onClearFilters = () => {
+    filters.search = "";
+    filters.id_class = null;
+};
+
+const computedUserShips = computed(() => {
+    let userShips = [...builderStore.userShips];
+
+    if (filters.search) {
+        userShips = userShips.filter((userShip) => {
+            return userShip.ship.name
+                .toLowerCase()
+                .includes(filters.search.toLowerCase());
+        });
+    }
+
+    if (filters.id_class) {
+        userShips = userShips.filter((userShip) => {
+            return userShip.ship.id_class === filters.id_class;
+        });
+    }
+
+    return userShips;
+});
+
 onBeforeMount(() => {
     const def1 = builderStore.ships.length
         ? Promise.resolve()
@@ -166,12 +200,46 @@ onBeforeMount(() => {
                             </div>
                         </div>
                         <div class="bordered p-4">
+                            <div class="filters flex gap-x-4 items-center mb-4">
+                                <div>
+                                    <div class="text-modal-title font-medium">
+                                        Filter by name
+                                    </div>
+                                    <input
+                                        type="text"
+                                        class="input input--search"
+                                        placeholder="Search by name..."
+                                        v-model="filters.search"
+                                    />
+                                </div>
+                                <div>
+                                    <div class="text-modal-title font-medium">
+                                        Filter by class
+                                    </div>
+                                    <VSelect
+                                        :options="builderStore.shipClasses"
+                                        :reduce="(x) => x.id_class"
+                                        :searchable="true"
+                                        :clearable="true"
+                                        label="name"
+                                        v-model="filters.id_class"
+                                    />
+                                </div>
+                                <div v-if="hasFilters" class="pt-6">
+                                    <button
+                                        class="btn btn-sm btn-red"
+                                        @click="onClearFilters"
+                                    >
+                                        Clear filters
+                                    </button>
+                                </div>
+                            </div>
                             <template v-if="allLoaded">
                                 <div
                                     class="user-ships grid grid-cols-2 gap-3 w-full"
                                 >
                                     <UserShipCard
-                                        v-for="userShip in builderStore.userShips"
+                                        v-for="userShip in computedUserShips"
                                         :key="userShip.id_user_ship"
                                         :userShip="userShip"
                                         :showTags="false"
@@ -180,7 +248,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div
                                     class="placeholder p-10 flex justify-center items-center text-center text-xl h-full"
-                                    v-if="!builderStore.userShips.length"
+                                    v-if="!computedUserShips.length"
                                 >
                                     There are no ships in your fleet. Create
                                     one.
