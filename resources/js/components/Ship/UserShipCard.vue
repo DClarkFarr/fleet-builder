@@ -107,8 +107,8 @@ const props = defineProps({
             </div>
         </div>
         <div class="ship-box__caption flex gap-x-4 justify-center">
-            <div>
-                {{ userShip.ship.name }}
+            <div class="text-bold">
+                L{{ userShip.level }} {{ userShip.ship.name }}
             </div>
             <div class="text-white italic">
                 {{ userShip.name }}

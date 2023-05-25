@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserShip extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'user_ships';
     protected $primaryKey = 'id_user_ship';
 
@@ -20,6 +23,7 @@ class UserShip extends Model
         'name',
         'chip_level',
         'visible',
+        'level',
     ];
 
     /**

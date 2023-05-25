@@ -65,6 +65,20 @@ class BuilderController extends Controller
         );
     }
 
+    public function deleteAllUserShips()
+    {
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService = new ShipService;
+
+        $shipService->deleteAllUserShips($user);
+
+        return response()->json(
+            ['message' => 'All ships deleted']
+        );
+    }
+
     public function createOrUpdateWorkshop(Request $request)
     {
         $auth = Auth::user();

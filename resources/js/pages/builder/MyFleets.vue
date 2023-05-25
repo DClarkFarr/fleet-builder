@@ -129,6 +129,17 @@ const onClearFilters = () => {
     filters.id_class = null;
 };
 
+const onClickDeleteAllShips = () => {
+    showConfirmModal({
+        title: `Really delete all ships?`,
+        message:
+            "This will permanently delete all your ships. You will have to start over. No un-doing this.",
+        onConfirm: () => {
+            builderStore.deleteAllUserShips();
+        },
+    });
+};
+
 const computedUserShips = computed(() => {
     let userShips = [...builderStore.userShips];
 
@@ -189,14 +200,25 @@ onBeforeMount(() => {
                                     My Ships
                                 </div>
                             </div>
-                            <div class="ml-auto">
-                                <button
-                                    class="btn btn-blue btn-sm ml-4"
-                                    @click="showShipsModal"
-                                    v-if="allLoaded"
-                                >
-                                    Add Ship
-                                </button>
+                            <div class="flex gap-x-3 justify-end ml-auto">
+                                <div>
+                                    <button
+                                        class="btn btn-red btn-sm ml-4"
+                                        @click="onClickDeleteAllShips"
+                                        v-if="allLoaded"
+                                    >
+                                        Delete All Ships
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        class="btn btn-blue btn-sm ml-4"
+                                        @click="showShipsModal"
+                                        v-if="allLoaded"
+                                    >
+                                        Add Ship
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="bordered p-4">

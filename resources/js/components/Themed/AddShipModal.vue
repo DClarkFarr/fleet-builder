@@ -1,7 +1,7 @@
 <script setup>
 import ContentBox from "./ContentBox.vue";
 
-import { ref, reactive, computed } from "vue";
+import { ref } from "vue";
 import UserShipForm from "../Ship/UserShipForm.vue";
 
 import SelectedShipList from "./ship/ShipSelectList.vue";

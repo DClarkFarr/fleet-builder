@@ -31,6 +31,7 @@ Route::prefix('/user')->group(function () {
         Route::get('/ships', [BuilderController::class, 'getShips']);
         Route::post('/ships', [BuilderController::class, 'createOrUpdateShip']);
         Route::delete('/ships/{id_user_ship}', [BuilderController::class, 'deleteShip']);
+        Route::delete('/ships', [BuilderController::class, 'deleteAllUserShips']);
 
         Route::prefix('/workshops')->group(function () {
 

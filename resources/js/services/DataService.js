@@ -39,6 +39,7 @@ export default class DataService {
         SHIELDS: "shields",
         HULL: "hull",
         ARMOR: "armor",
+        RESISTANCE: "resistance",
     };
 
     static CONDITION_TYPES = {
@@ -536,6 +537,7 @@ export default class DataService {
                 DataService.RESISTANCE_TYPES.SHIELDS,
                 DataService.RESISTANCE_TYPES.HULL,
                 DataService.RESISTANCE_TYPES.ARMOR,
+                DataService.RESISTANCE_TYPES.RESISTANCE,
             ],
         };
     }

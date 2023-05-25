@@ -435,6 +435,11 @@ class ShipService
         $ship->delete();
     }
 
+    public function deleteAllUserShips(User $user)
+    {
+        $user->ships()->delete();
+    }
+
     public function createOrUpdateWorkshop(User $user, $data)
     {
         $id_workshop = $data['id_workshop'] ?? null;

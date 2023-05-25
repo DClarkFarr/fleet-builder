@@ -33,6 +33,7 @@ const form = reactive({
     name: "",
     chip_level: 0,
     visible: true,
+    level: 1,
 });
 
 const onSubmit = async () => {
@@ -71,10 +72,12 @@ const resetForm = () => {
         form.name = props.userShip.name;
         form.chip_level = props.userShip.chip_level;
         form.visible = props.userShip.visible;
+        form.level = props.userShip.level;
     } else {
         form.name = "";
         form.chip_level = 0;
         form.visible = true;
+        form.level = 1;
     }
 };
 const chipCount = computed(() => {
@@ -103,18 +106,24 @@ watch(
                 v-model="form.name"
             />
         </div>
-        <div class="form-group">
-            <label>Chip Level</label>
-            <div class="chips flex gap-x-1">
-                <div
-                    class="chip cursor-pointer"
-                    v-for="i of chipCount + 1"
-                    :key="i"
-                    :class="{ 'chip--unlocked': i - 1 <= form.chip_level }"
-                    @click="form.chip_level = i - 1"
-                >
-                    {{ i - 1 }}
+        <div class="flex gap-x-4 cols-2">
+            <div class="form-group w-1/2">
+                <label>Chip Level</label>
+                <div class="chips flex gap-x-1 py-2">
+                    <div
+                        class="chip cursor-pointer"
+                        v-for="i of chipCount + 1"
+                        :key="i"
+                        :class="{ 'chip--unlocked': i - 1 <= form.chip_level }"
+                        @click="form.chip_level = i - 1"
+                    >
+                        {{ i - 1 }}
+                    </div>
                 </div>
+            </div>
+            <div class="form-group w-1/2">
+                <label>Level</label>
+                <input type="number" class="input" v-model="form.level" />
             </div>
         </div>
         <div class="form-group" v-if="userShip">

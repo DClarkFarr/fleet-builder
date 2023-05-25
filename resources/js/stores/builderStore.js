@@ -165,6 +165,12 @@ const useBuilderStore = defineStore("builder", () => {
         }
     };
 
+    const deleteAllUserShips = async () => {
+        await apiClient.delete("user/ships");
+
+        userShips.value = [];
+    };
+
     const createWorkshop = async (data) => {
         try {
             const res = await apiClient.post("user/workshops", data);
@@ -401,6 +407,7 @@ const useBuilderStore = defineStore("builder", () => {
         loadWorkshops,
         createWorkshop,
         deleteUserShip,
+        deleteAllUserShips,
         createOrUpdateUserShip,
         deleteWorkshop,
         loadWorkshopFleets,
