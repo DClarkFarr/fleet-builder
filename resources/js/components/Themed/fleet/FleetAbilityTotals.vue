@@ -5,7 +5,7 @@ import { cloneDeep } from "lodash";
 
 import { sumFleetTotalStats } from "../../../methods/abilityStatParser";
 
-import { summedStatsTotalToText } from "../../../methods/summedAbilityToText";
+import { summedFleetStatsTotalToText } from "../../../methods/summedAbilityToText";
 
 import useBuilderStore from "../../../stores/builderStore";
 
@@ -31,7 +31,7 @@ const computedTotals = computed(() => {
     return rows.map((r) => {
         return {
             ...r,
-            ...summedStatsTotalToText(props.fleet, r, {
+            ...summedFleetStatsTotalToText(props.fleet, r, {
                 shipClasses: builderStore.shipClasses,
             }),
         };

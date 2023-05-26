@@ -1,11 +1,15 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
-import { getUserShipParsedAbilityStats } from "../../methods/abilityStatParser";
+import {
+    getUserShipParsedAbilityStats,
+    sumFleetTotalStats,
+} from "../../methods/abilityStatParser";
 import useBuilderStore from "../../stores/builderStore";
 import useUserStore from "../../stores/userStore";
 
 import Chips from "@/components/Themed/ship/Chips.vue";
+import { summedStatsTotalToText } from "../../methods/summedAbilityToText";
 
 const builderStore = useBuilderStore();
 const userStore = useUserStore();
@@ -33,14 +37,26 @@ onMounted(async () => {
         allLoaded.value = true;
     });
 
-    statAbilityShips.value = [...builderStore.userShips].map((userShip) => {
-        const stats = getUserShipParsedAbilityStats(userShip);
+    statAbilityShips.value = [...builderStore.userShips]
+        .filter((userShip) => userShip.id_user_ship === 99)
+        .map((userShip) => {
+            const { totalStats } = getUserShipParsedAbilityStats(userShip);
 
-        return {
-            ...userShip,
-            ...stats,
-        };
-    });
+            const totals = sumFleetTotalStats(null, totalStats).map((row) => {
+                return {
+                    ...row,
+                    ...summedStatsTotalToText(row, {
+                        shipClasses: builderStore.shipClasses,
+                    }),
+                };
+            });
+
+            return {
+                ...userShip,
+                totalStats,
+                totals,
+            };
+        });
 });
 </script>
 
@@ -69,8 +85,9 @@ onMounted(async () => {
                     </thead>
                     <tbody>
                         <tr
-                            v-for="userShip in statAbilityShips"
+                            v-for="(userShip, index) in statAbilityShips"
                             :key="userShip.id_user_ship"
+                            :data-index="index"
                         >
                             <td>
                                 <div class="text-xs flex gap-x-2">

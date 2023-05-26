@@ -1,3 +1,4 @@
+import { cloneDeep, pick, uniq } from "lodash";
 import DataService from "../services/DataService";
 
 export const doesUserShipAbilityApplyToSelf = (parsedAbility, userShip) => {
@@ -253,10 +254,46 @@ export const calcParsedAbilityBySlug = (
     });
 };
 
+export const calcShipParsedAbilityBySlug = (
+    parsedAbility,
+    userShip,
+    slug,
+    totalStats
+) => {
+    const ability = parsedAbility.ability;
+
+    const intAmountTypes = [
+        DataService.AMOUNT_TYPES.NUMBER,
+        DataService.AMOUNT_TYPES.PERCENT,
+        DataService.AMOUNT_TYPES.SECONDS,
+        DataService.AMOUNT_TYPES.ATTACKS,
+    ];
+
+    ability.amounts.forEach((amount) => {
+        setObjValueWhenEmpty(
+            totalStats,
+            `${ability.type}.${slug}.${amount.type}`,
+            []
+        );
+
+        const stat = getBaseStatObj(parsedAbility, userShip, amount, slug);
+
+        if (intAmountTypes.includes(amount.type)) {
+            stat.value = parseFloat(amount.value);
+
+            totalStats[ability.type][slug][amount.type].push(stat);
+        } else if (amount.type === DataService.AMOUNT_TYPES.FORMULA) {
+            stat.value = amount;
+
+            totalStats[ability.type][slug][amount.type].push(stat);
+        } else {
+            console.warn("Unknown amount type", amount.type, amount);
+        }
+    });
+};
+
 export const getUserShipParsedAbilityStats = (userShip) => {
     const totalStats = {};
-    const shipStats = {};
-    const abilityStats = {};
 
     userShip.parsedAbilities.forEach((parsedAbility) => {
         const appliesToShip = doesUserShipAbilityApplyToSelf(
@@ -272,18 +309,22 @@ export const getUserShipParsedAbilityStats = (userShip) => {
             getParsedAbilitySlugPermutations(parsedAbility);
 
         slugPermutations.forEach((slug) => {
-            calcParsedAbilityBySlug(
+            console.log(
+                parsedAbility.ability.type,
+                slug,
+                cloneDeep(totalStats)
+            );
+
+            calcShipParsedAbilityBySlug(
                 parsedAbility,
                 userShip,
                 slug,
-                totalStats,
-                shipStats,
-                abilityStats
+                totalStats
             );
         });
     });
 
-    return { shipStats, totalStats, abilityStats };
+    return { totalStats };
 };
 
 export const getFleetParsedAbilityStats = (fleet) => {
@@ -335,10 +376,13 @@ export const getFleetsParsedAbilityStats = (fleets) => {
     }, {});
 };
 
-export const sumFleetTotalStats = (fleet, parsedAbilityStats) => {
+export const sumFleetTotalStats = (fleet, totalStats) => {
     const variantsByAbilityType = DataService.getVariantsByAbilityType();
     const rows = [];
-    Object.entries(parsedAbilityStats).forEach(([abilityType, obj1]) => {
+
+    const toWorkOn = cloneDeep(totalStats);
+
+    Object.entries(toWorkOn).forEach(([abilityType, obj1]) => {
         Object.entries(obj1).forEach(([slug, obj2]) => {
             Object.entries(obj2).forEach(([amountType, arr]) => {
                 if (!(arr && arr.length)) {
@@ -350,15 +394,28 @@ export const sumFleetTotalStats = (fleet, parsedAbilityStats) => {
                         arr
                     );
                 }
-                const row = arr.shift();
 
-                const userShipIds = [row.target.id_user_ship];
+                const row = {
+                    type: abilityType,
+                    source: {
+                        ability: arr[0].source.ability,
+                        id_user_ship: arr[0].source.id_user_ship,
+                        slug: arr[0].source.slug,
+                        amounts: arr.map((r) => r.source.amount),
+                    },
+                    value: 0,
+                    strength: 0,
+                    values: [],
+                    variants: [],
+                    for_class_ids: uniq(arr.map((r) => r.for_class_ids)),
+                    target_class_ids: uniq(arr.map((r) => r.target_class_ids)),
+                };
 
-                const abilityIds = [row.source.ability.id_ability];
+                const userShipIds = uniq(arr.map((r) => r.target.id_user_ship));
 
-                // const sourceShip = fleet.user_ships.find((userShip) => {
-                //     return userShip.id_user_ship === row.source.id_user_ship;
-                // });
+                const abilityIds = uniq(
+                    arr.map((r) => r.source.ability.id_ability)
+                );
 
                 arr.forEach((r) => {
                     if (!userShipIds.includes(r.target.id_user_ship)) {
@@ -371,6 +428,10 @@ export const sumFleetTotalStats = (fleet, parsedAbilityStats) => {
                 });
 
                 row.isVariantType = !!variantsByAbilityType[abilityType];
+                if (row.isVariantType) {
+                    row.variants = arr[0].variants;
+                }
+
                 row.target = userShipIds;
                 row.amountType = amountType;
                 row.abilityType = abilityType;
