@@ -1,6 +1,21 @@
 import DataService from "../services/DataService";
 
-export const doesAbilityApplyToUserShip = (parsedAbility, userShip) => {
+export const doesUserShipAbilityApplyToSelf = (parsedAbility, userShip) => {
+    let applyToShip = true;
+    if (parsedAbility.ability.for_class_ids.length) {
+        applyToShip = parsedAbility.ability.for_class_ids.includes(
+            userShip.ship.ship_class.id_class
+        );
+    }
+
+    if (applyToShip && parsedAbility.ability.flagship_required) {
+        applyToShip = false;
+    }
+
+    return applyToShip;
+};
+
+export const doesFleetAbilityApplyToUserShip = (parsedAbility, userShip) => {
     let applyToShip = true;
     if (parsedAbility.ability.for_class_ids.length) {
         applyToShip = parsedAbility.ability.for_class_ids.includes(
@@ -238,6 +253,39 @@ export const calcParsedAbilityBySlug = (
     });
 };
 
+export const getUserShipParsedAbilityStats = (userShip) => {
+    const totalStats = {};
+    const shipStats = {};
+    const abilityStats = {};
+
+    userShip.parsedAbilities.forEach((parsedAbility) => {
+        const appliesToShip = doesUserShipAbilityApplyToSelf(
+            parsedAbility,
+            userShip
+        );
+
+        if (!appliesToShip) {
+            return false;
+        }
+
+        const slugPermutations =
+            getParsedAbilitySlugPermutations(parsedAbility);
+
+        slugPermutations.forEach((slug) => {
+            calcParsedAbilityBySlug(
+                parsedAbility,
+                userShip,
+                slug,
+                totalStats,
+                shipStats,
+                abilityStats
+            );
+        });
+    });
+
+    return { shipStats, totalStats, abilityStats };
+};
+
 export const getFleetParsedAbilityStats = (fleet) => {
     const totalStats = {};
     const shipStats = {};
@@ -245,7 +293,7 @@ export const getFleetParsedAbilityStats = (fleet) => {
 
     fleet.parsedAbilities.forEach((parsedAbility) => {
         fleet.user_ships.forEach((userShip) => {
-            const appliesToShip = doesAbilityApplyToUserShip(
+            const appliesToShip = doesFleetAbilityApplyToUserShip(
                 parsedAbility,
                 userShip
             );

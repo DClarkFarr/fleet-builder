@@ -2,12 +2,18 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "../pages/builder/MyFleets.vue";
 import Workshop from "../pages/builder/Workshop.vue";
+import Viewer from "../pages/builder/Viewer.vue";
 
 const routes = [
     {
         path: "/",
         component: Home,
         name: "builder.fleets",
+    },
+    {
+        path: "/viewer",
+        component: Viewer,
+        name: "builder.viewer",
     },
     {
         path: "/workshop/:id_workshop",
