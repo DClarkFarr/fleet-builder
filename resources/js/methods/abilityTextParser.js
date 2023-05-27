@@ -368,16 +368,18 @@ const parseWeaponsDescription = (ability) => {
     }
 };
 
-export const abilityHasQualifiers = (ability) => {
-    return (
-        ability.for_class_ids.length > 0 ||
-        ability.target_class_ids.length > 0 ||
-        ability.weapon_classes.length > 0 ||
-        ability.weapon_sizes.length > 0
-    );
+export const abilityHasQualifiers = (ability, exclude = []) => {
+    const toTest = [
+        "for_class_ids",
+        "target_class_ids",
+        "weapon_classes",
+        "weapon_sizes",
+    ].filter((key) => !exclude.includes(key));
+
+    return toTest.some((key) => ability[key].length > 0);
 };
 
-export const parseAbilityQualifiiers = (ability, { shipClasses }) => {
+export const parseabilityQualifiers = (ability, { shipClasses }) => {
     const qualifiers = [];
 
     if (ability.target_class_ids.length) {
@@ -539,8 +541,8 @@ class AbilityTextParser {
         return parseWeaponsDescription(this.ability);
     }
 
-    get abilityQualifiiers() {
-        return parseAbilityQualifiiers(this.ability, {
+    get abilityQualifiers() {
+        return parseabilityQualifiers(this.ability, {
             shipClasses: this.shipClasses,
         });
     }

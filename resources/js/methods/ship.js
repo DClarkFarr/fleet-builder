@@ -110,7 +110,7 @@ export const populateUserShipAbilityData = (userShip, { shipClasses }) => {
                 fullDescription: parser.fullDescription,
                 abilityTypeCategory: parser.abilityTypeCategory,
                 conditionsDescription: parser.conditionsDescription,
-                abilityQualifiiers: parser.abilityQualifiiers,
+                abilityQualifiers: parser.abilityQualifiers,
                 amount: parser.amount,
                 amountIsFormula: parsedAbility.ability.amounts.some(
                     (a) => a.type === DataService.FORMULA_ITEM_TYPES.FORMULA

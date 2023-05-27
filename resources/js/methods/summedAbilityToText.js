@@ -103,7 +103,7 @@ export const summedFleetStatsTotalToText = (
     let strength = "";
 
     if (summedStatsTotal.strength > summedStatsTotal.target.length) {
-        strength = parseText("(affecting {strength} strength)", {
+        strength = parseText("(affects {strength} strength)", {
             strength: summedStatsTotal.strength,
         });
     }
@@ -221,7 +221,7 @@ export const summedStatsTotalToText = (summedStatsTotal, { shipClasses }) => {
     let strength = "";
 
     if (summedStatsTotal.strength > summedStatsTotal.target.length) {
-        strength = parseText("(affecting {strength} strength)", {
+        strength = parseText("(affects {strength} strength)", {
             strength: summedStatsTotal.strength,
         });
     }

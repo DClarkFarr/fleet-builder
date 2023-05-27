@@ -1,5 +1,6 @@
-import { cloneDeep, pick, uniq } from "lodash";
+import { cloneDeep, flatten, pick, uniq } from "lodash";
 import DataService from "../services/DataService";
+import { abilityHasQualifiers } from "./abilityTextParser";
 
 export const doesUserShipAbilityApplyToSelf = (parsedAbility, userShip) => {
     let applyToShip = true;
@@ -174,6 +175,7 @@ const getBaseStatObj = (parsedAbility, userShip, amount, slug) => {
         variants,
         target_class_ids,
         for_class_ids,
+        extra: parsedAbility.extra,
     };
 };
 
@@ -396,13 +398,23 @@ export const sumFleetTotalStats = (fleet, totalStats) => {
                         id_user_ship: arr[0].source.id_user_ship,
                         slug: arr[0].source.slug,
                         amounts: arr.map((r) => r.source.amount),
+                        extra: arr[0].extra,
                     },
                     value: 0,
                     strength: 0,
                     values: [],
                     variants: [],
-                    for_class_ids: uniq(arr.map((r) => r.for_class_ids)),
-                    target_class_ids: uniq(arr.map((r) => r.target_class_ids)),
+                    for_class_ids: uniq(
+                        flatten(arr.map((r) => r.for_class_ids))
+                    ),
+                    target_class_ids: uniq(
+                        flatten(arr.map((r) => r.target_class_ids))
+                    ),
+                    hasConditions: arr[0].source.ability.conditions.length > 0,
+                    hasQualifiers: abilityHasQualifiers(arr[0].source.ability, [
+                        "weapon_classes",
+                    ]),
+                    appliesToFleet: arr[0].source.ability.applies_to_fleet,
                 };
 
                 const userShipIds = uniq(arr.map((r) => r.target.id_user_ship));

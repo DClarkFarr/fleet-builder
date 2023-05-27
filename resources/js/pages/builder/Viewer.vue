@@ -11,6 +11,7 @@ import useUserStore from "../../stores/userStore";
 import Chips from "@/components/Themed/ship/Chips.vue";
 import { summedStatsTotalToText } from "../../methods/summedAbilityToText";
 import DataService from "../../services/DataService";
+import StatTotal from "../../components/Themed/ability/StatTotal.vue";
 
 const builderStore = useBuilderStore();
 const userStore = useUserStore();
@@ -74,7 +75,7 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        // .filter((userShip) => userShip.id_user_ship === 99)
+        // .filter((userShip) => userShip.id_user_ship === 77)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);
@@ -113,7 +114,7 @@ onMounted(async () => {
 
             const matchVariantColumn = (col, row) => {
                 if (typeof col === "string") {
-                    return row.abilityType;
+                    return row.abilityType === col;
                 } else if (typeof col === "object" && col.length === 2) {
                     return (
                         row.abilityType === col[0] &&
@@ -218,7 +219,7 @@ onMounted(async () => {
                                     </div>
                                 </div>
                             </td>
-                            <td>
+                            <td data-col="slots">
                                 Armor
                                 <div class="flex gap-x-2 mb-2">
                                     <div class="flex gap-x-1 items-center">
@@ -348,11 +349,67 @@ onMounted(async () => {
                                     </div>
                                 </div>
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td data-col="damage">
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.attackTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.penetrationTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.armorTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.resistanceTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(total, index) in userShip.hpTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.shieldTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
+                            <td>
+                                <StatTotal
+                                    v-for="(
+                                        total, index
+                                    ) in userShip.flagTotals"
+                                    :key="index"
+                                    :total="total"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>

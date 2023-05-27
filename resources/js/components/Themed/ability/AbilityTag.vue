@@ -61,7 +61,7 @@ const Icon = computed(() => {
             <div
                 v-if="parsedAbility.extra.hasQualifiers"
                 class="cursor-pointer"
-                v-tooltip="parsedAbility.extra.abilityQualifiiers"
+                v-tooltip="parsedAbility.extra.abilityQualifiers"
             >
                 <IconExclamationTriangle />
             </div>
