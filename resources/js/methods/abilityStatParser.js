@@ -292,7 +292,7 @@ export const calcShipParsedAbilityBySlug = (
     });
 };
 
-export const getUserShipParsedAbilityStats = (userShip) => {
+export const getUserShipParsedAbilityStats = (userShip, flagship = false) => {
     const totalStats = {};
 
     userShip.parsedAbilities.forEach((parsedAbility) => {
@@ -301,7 +301,7 @@ export const getUserShipParsedAbilityStats = (userShip) => {
             userShip
         );
 
-        if (!appliesToShip) {
+        if (appliesToShip === flagship) {
             return false;
         }
 
@@ -309,12 +309,6 @@ export const getUserShipParsedAbilityStats = (userShip) => {
             getParsedAbilitySlugPermutations(parsedAbility);
 
         slugPermutations.forEach((slug) => {
-            console.log(
-                parsedAbility.ability.type,
-                slug,
-                cloneDeep(totalStats)
-            );
-
             calcShipParsedAbilityBySlug(
                 parsedAbility,
                 userShip,

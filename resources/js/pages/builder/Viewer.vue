@@ -10,6 +10,7 @@ import useUserStore from "../../stores/userStore";
 
 import Chips from "@/components/Themed/ship/Chips.vue";
 import { summedStatsTotalToText } from "../../methods/summedAbilityToText";
+import DataService from "../../services/DataService";
 
 const builderStore = useBuilderStore();
 const userStore = useUserStore();
@@ -21,6 +22,39 @@ const onClickLogout = () => {
 const allLoaded = ref(false);
 
 const statAbilityShips = ref([]);
+
+const attackColumns = [
+    DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED,
+    DataService.ABILITY_TYPES.INCREASE_WEAPON_DAMAGE,
+    DataService.ABILITY_TYPES.INCREASE_ACCURACY,
+    DataService.ABILITY_TYPES.INCREASE_EVADE,
+    DataService.ABILITY_TYPES.EXTRA_ATTACK,
+];
+
+const armorColumns = [
+    [
+        DataService.ABILITY_TYPES.REDUCE_DAMAGE,
+        DataService.RESISTANCE_TYPES.ARMOR,
+    ],
+    DataService.ABILITY_TYPES.INCREASE_ARMOR,
+];
+
+const resistanceColumns = [DataService.ABILITY_TYPES.INCREASE_RESISTENCE];
+
+const hpColumns = [
+    DataService.ABILITY_TYPES.INCREASE_HP,
+    [DataService.ABILITY_TYPES.REDUCE_DAMAGE, DataService.RESISTANCE_TYPES.HP],
+];
+
+const shieldColumns = [
+    [
+        DataService.ABILITY_TYPES.REDUCE_DAMAGE,
+        DataService.RESISTANCE_TYPES.SHIELDS,
+    ],
+    DataService.ABILITY_TYPES.INCREASE_SHIELD,
+];
+
+const penetrationColumns = [DataService.ABILITY_TYPES.INCREASE_PENETRATION];
 
 onMounted(async () => {
     const def1 = builderStore.ships.length
@@ -37,26 +71,97 @@ onMounted(async () => {
         allLoaded.value = true;
     });
 
-    statAbilityShips.value = [...builderStore.userShips]
-        .filter((userShip) => userShip.id_user_ship === 99)
-        .map((userShip) => {
-            const { totalStats } = getUserShipParsedAbilityStats(userShip);
+    console.time("onMounted");
 
-            const totals = sumFleetTotalStats(null, totalStats).map((row) => {
-                return {
-                    ...row,
-                    ...summedStatsTotalToText(row, {
-                        shipClasses: builderStore.shipClasses,
-                    }),
-                };
+    statAbilityShips.value = [...builderStore.userShips]
+        // .filter((userShip) => userShip.id_user_ship === 99)
+        .map((userShip) => {
+            const { totalStats: shipTotalStats } =
+                getUserShipParsedAbilityStats(userShip, false);
+            const { totalStats: flagTotalStats } =
+                getUserShipParsedAbilityStats(userShip, true);
+
+            const shipTotals = sumFleetTotalStats(null, shipTotalStats).map(
+                (row) => {
+                    return {
+                        ...row,
+                        ...summedStatsTotalToText(row, {
+                            shipClasses: builderStore.shipClasses,
+                        }),
+                    };
+                }
+            );
+
+            const flagTotals = sumFleetTotalStats(null, flagTotalStats).map(
+                (row) => {
+                    return {
+                        ...row,
+                        ...summedStatsTotalToText(row, {
+                            shipClasses: builderStore.shipClasses,
+                        }),
+                    };
+                }
+            );
+
+            const attackTotals = [];
+            const penetrationTotals = [];
+            const armorTotals = [];
+            const resistanceTotals = [];
+            const hpTotals = [];
+            const shieldTotals = [];
+            const unsortedTotals = [];
+
+            const matchVariantColumn = (col, row) => {
+                if (typeof col === "string") {
+                    return row.abilityType;
+                } else if (typeof col === "object" && col.length === 2) {
+                    return (
+                        row.abilityType === col[0] &&
+                        row.variants.includes(col[1])
+                    );
+                }
+                return false;
+            };
+
+            shipTotals.forEach((row) => {
+                if (attackColumns.includes(row.abilityType)) {
+                    attackTotals.push(row);
+                } else if (
+                    armorColumns.some((col) => matchVariantColumn(col, row))
+                ) {
+                    armorTotals.push(row);
+                } else if (resistanceColumns.includes(row.abilityType)) {
+                    resistanceTotals.push(row);
+                } else if (
+                    hpColumns.some((col) => matchVariantColumn(col, row))
+                ) {
+                    hpTotals.push(row);
+                } else if (
+                    shieldColumns.some((col) => matchVariantColumn(col, row))
+                ) {
+                    shieldTotals.push(row);
+                } else if (penetrationColumns.includes(row.abilityType)) {
+                    penetrationTotals.push(row);
+                } else {
+                    unsortedTotals.push(row);
+                }
             });
 
             return {
                 ...userShip,
-                totalStats,
-                totals,
+                shipTotals,
+                flagTotals,
+                attackTotals,
+                penetrationTotals,
+                armorTotals,
+                resistanceTotals,
+                hpTotals,
+                shieldTotals,
+                unsortedTotals,
             };
         });
+
+    console.timeEnd("onMounted");
 });
 </script>
 
@@ -75,10 +180,12 @@ onMounted(async () => {
                     <thead>
                         <tr>
                             <th>Ship</th>
-                            <th>Slots</th>
+                            <th>Slot Strength</th>
                             <th>Damage</th>
+                            <th>Penetration</th>
                             <th>Armor</th>
                             <th>Resistance</th>
+                            <th>HP</th>
                             <th>Shield</th>
                             <th>Flagship</th>
                         </tr>
