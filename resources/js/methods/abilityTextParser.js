@@ -313,7 +313,7 @@ const parseCondition = (condition, { shipClasses }) => {
         const classes = condition.select
             .map((id) => {
                 const name = shipClasses.find((c) => c.id_class === id)?.name;
-                return name ? pluralize.plural(name) : false;
+                return name ? pluralize(name, condition.value, false) : false;
             })
             .filter((c) => !!c);
 
@@ -327,7 +327,7 @@ const parseCondition = (condition, { shipClasses }) => {
     return "";
 };
 
-const parseConditionsDescription = (ability, { shipClasses }) => {
+export const parseConditionsDescription = (ability, { shipClasses }) => {
     if (!ability.conditions.length) {
         return "";
     }

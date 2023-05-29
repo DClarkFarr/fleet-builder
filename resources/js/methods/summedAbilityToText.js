@@ -11,6 +11,7 @@ import {
     classIdsToNames,
     getAbilityAffectType,
     getAbilityAffectTypeName,
+    parseConditionsDescription,
 } from "./abilityTextParser";
 
 import pluralize from "pluralize";
@@ -153,7 +154,10 @@ export const summedFleetStatsTotalToText = (
     };
 };
 
-export const summedStatsTotalToText = (summedStatsTotal, { shipClasses }) => {
+export const summedStatsTotalToText = (
+    summedStatsTotal,
+    { shipClasses, withConditions = false }
+) => {
     const ability = summedStatsTotal.source.ability;
 
     /**
@@ -235,12 +239,19 @@ export const summedStatsTotalToText = (summedStatsTotal, { shipClasses }) => {
         );
     }
 
+    let condition = "";
+    if (ability.conditions.length && withConditions) {
+        condition = parseConditionsDescription(ability, {
+            shipClasses,
+        });
+    }
+
     const duration = parseDurationDescription(ability);
 
     const repeat = parseRepeatDescription(ability);
 
     const descriptionTemplate =
-        "{title} {amount} {strength} {against} {duration} {repeat}";
+        "{title} {amount} {strength} {against} {duration} {repeat} {condition}";
 
     const description = parseText(descriptionTemplate, {
         title,
@@ -249,6 +260,7 @@ export const summedStatsTotalToText = (summedStatsTotal, { shipClasses }) => {
         against,
         duration,
         repeat,
+        condition,
     })
         .replace(/\s{2,}/gm, " ")
         .trim();

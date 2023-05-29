@@ -32,7 +32,10 @@ export const doesFleetAbilityApplyToUserShip = (parsedAbility, userShip) => {
     return applyToShip;
 };
 
-export const getParsedAbilitySlugPermutations = (parsedAbility) => {
+export const getParsedAbilitySlugPermutations = (
+    parsedAbility,
+    { withConditions = false } = {}
+) => {
     const ability = parsedAbility.ability;
 
     const slugs = [];
@@ -64,6 +67,19 @@ export const getParsedAbilitySlugPermutations = (parsedAbility) => {
         slugs.push(["weapon_size", [...ability.weapon_sizes]]);
     }
 
+    if (ability.conditions.length && withConditions) {
+        slugs.push([
+            "condition",
+            [
+                ...ability.conditions.map((c) => {
+                    return `${c.type}-${c.select.join(",")}${c.operator}${
+                        c.value
+                    }`;
+                }),
+            ],
+        ]);
+    }
+
     const slugsToPermutations = (permutations, slugs) => {
         if (!slugs.length) {
             return permutations;
@@ -83,6 +99,7 @@ export const getParsedAbilitySlugPermutations = (parsedAbility) => {
                     return acc;
                 }, []);
             } else {
+                console.log(slugType, "slug values", slugValues);
                 slugValues.forEach((slugValue) => {
                     permutations.push(slugType + "--" + slugValue);
                 });
@@ -307,8 +324,12 @@ export const getUserShipParsedAbilityStats = (userShip, flagship = false) => {
             return false;
         }
 
-        const slugPermutations =
-            getParsedAbilitySlugPermutations(parsedAbility);
+        const slugPermutations = getParsedAbilitySlugPermutations(
+            parsedAbility,
+            { withConditions: true }
+        );
+
+        console.log("slugs", slugPermutations);
 
         slugPermutations.forEach((slug) => {
             calcShipParsedAbilityBySlug(
