@@ -489,14 +489,12 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        .filter((userShip) => userShip.id_user_ship === 98)
+        // .filter((userShip) => userShip.id_user_ship === 98)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);
             const { totalStats: flagTotalStats } =
                 getUserShipParsedAbilityStats(userShip, true);
-
-            console.log("totals object", cloneDeep(shipTotalStats));
 
             const shipTotals = sumFleetTotalStats(null, shipTotalStats).map(
                 (row) => {

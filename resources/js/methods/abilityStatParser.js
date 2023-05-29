@@ -401,13 +401,14 @@ export const sumFleetTotalStats = (fleet, totalStats) => {
         Object.entries(obj1).forEach(([slug, obj2]) => {
             Object.entries(obj2).forEach(([amountType, arr]) => {
                 if (!(arr && arr.length)) {
-                    return console.log(
-                        "no arr",
-                        abilityType,
-                        slug,
-                        amountType,
-                        arr
-                    );
+                    return false;
+                    // return console.log(
+                    //     "no arr",
+                    //     abilityType,
+                    //     slug,
+                    //     amountType,
+                    //     arr
+                    // );
                 }
 
                 const row = {
