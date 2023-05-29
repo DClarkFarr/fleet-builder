@@ -99,7 +99,6 @@ export const getParsedAbilitySlugPermutations = (
                     return acc;
                 }, []);
             } else {
-                console.log(slugType, "slug values", slugValues);
                 slugValues.forEach((slugValue) => {
                     permutations.push(slugType + "--" + slugValue);
                 });
@@ -302,9 +301,10 @@ export const calcShipParsedAbilityBySlug = (
 
             totalStats[ability.type][slug][amount.type].push(stat);
         } else if (amount.type === DataService.AMOUNT_TYPES.FORMULA) {
-            stat.value = amount;
-
-            totalStats[ability.type][slug][amount.type].push(stat);
+            // adding formula doubles, because somehow we get numbers too
+            // AKA, the formula has already been parsed and comes through as a number
+            // stat.values = amount;
+            // totalStats[ability.type][slug][amount.type].push(stat);
         } else {
             console.warn("Unknown amount type", amount.type, amount);
         }
@@ -328,8 +328,6 @@ export const getUserShipParsedAbilityStats = (userShip, flagship = false) => {
             parsedAbility,
             { withConditions: true }
         );
-
-        console.log("slugs", slugPermutations);
 
         slugPermutations.forEach((slug) => {
             calcShipParsedAbilityBySlug(
