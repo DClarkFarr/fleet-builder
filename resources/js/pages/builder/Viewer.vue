@@ -43,7 +43,10 @@ const resistanceColumns = [DataService.ABILITY_TYPES.INCREASE_RESISTENCE];
 
 const hpColumns = [
     DataService.ABILITY_TYPES.INCREASE_HP,
-    [DataService.ABILITY_TYPES.REDUCE_DAMAGE, DataService.RESISTANCE_TYPES.HP],
+    [
+        DataService.ABILITY_TYPES.REDUCE_DAMAGE,
+        DataService.RESISTANCE_TYPES.HULL,
+    ],
 ];
 
 const shieldColumns = [
@@ -489,7 +492,7 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        // .filter((userShip) => userShip.id_user_ship === 98)
+        .filter((userShip) => userShip.id_user_ship === 98)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);

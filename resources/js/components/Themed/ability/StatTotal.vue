@@ -103,7 +103,9 @@ var example = {
                     <template v-if="total.amountType === 'percent'">
                         {{ `${total.value}%` }}
                     </template>
-                    <template v-else> {{ total.value }} </template>
+                    <template v-else>
+                        {{ total.value.toLocaleString() }}
+                    </template>
                 </div>
                 <div
                     class="stat-total__strength text-sm"

@@ -1,4 +1,4 @@
-import { cloneDeep, flatten, pick, uniq } from "lodash";
+import { cloneDeep, flatten, pick, sum, uniq } from "lodash";
 import DataService from "../services/DataService";
 import { abilityHasQualifiers } from "./abilityTextParser";
 
@@ -272,6 +272,115 @@ export const calcParsedAbilityBySlug = (
     });
 };
 
+export const abilityHasFormula = (ability) => {
+    return ability.amounts.some(
+        (amount) => amount.type === DataService.AMOUNT_TYPES.FORMULA
+    );
+};
+
+export const resolveFormulaChild = (userShip, child) => {
+    if (child.type === DataService.FORMULA_ITEM_TYPES.COLUMN) {
+        if (child.value === DataService.SHIP_COLUMNS.LEVEL) {
+            return userShip.level;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.TOTAL_WEAPON_DAMAGE
+        ) {
+            // TODO
+            return 100;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.BEAM_WEAPON_DAMAGE
+        ) {
+            // todo
+            return 100;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.MISSILE_WEAPON_DAMAGE
+        ) {
+            // todo
+            return 100;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.KINETIC_WEAPON_DAMAGE
+        ) {
+            // todo
+            return 100;
+        } else if (child.value === DataService.SHIP_COLUMNS.TOTAL_RESISTANCE) {
+            // todo
+            return 100;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.KINETIC_RESISTANCE
+        ) {
+            // todo
+            return 100;
+        } else if (
+            child.value === DataService.SHIP_COLUMNS.MISSILE_RESISTANCE
+        ) {
+            // todo
+            return 100;
+        } else if (child.value === DataService.SHIP_COLUMNS.BEAM_RESISTANCE) {
+            // todo
+            return 100;
+        } else if (child.value === DataService.SHIP_COLUMNS.TOTAL_SHIELDS) {
+            // todo
+            return 100;
+        } else if (child.value === DataService.SHIP_COLUMNS.ARMOR) {
+            // todo
+            return 100;
+        }
+    } else if (child.type === DataService.FORMULA_ITEM_TYPES.NUMBER) {
+        return child.value;
+    } else if (child.type === DataService.FORMULA_ITEM_TYPES.FORMULA) {
+        return resolveFormulaChildren(userShip, child.children);
+    }
+};
+
+export const resolveFormulaChildren = (userShip, children) => {
+    const values = children.map((child) =>
+        resolveFormulaChild(userShip, child)
+    );
+
+    let lastOperator = null;
+    const resolved = values.reduce((total, value, i) => {
+        const child = children[i];
+
+        if (i === 0) {
+            lastOperator = child.operator;
+            return value;
+        } else {
+            if (lastOperator === DataService.FORMULA_ITEM_OPERATORS.ADD) {
+                total += value;
+            } else if (
+                lastOperator === DataService.FORMULA_ITEM_OPERATORS.SUBTRACT
+            ) {
+                total -= value;
+            } else if (
+                lastOperator === DataService.FORMULA_ITEM_OPERATORS.MULTIPLY
+            ) {
+                total *= value;
+            } else if (
+                lastOperator === DataService.FORMULA_ITEM_OPERATORS.DIVIDE
+            ) {
+                total /= value;
+            }
+
+            lastOperator = child.operator;
+            return total;
+        }
+    }, 0);
+
+    return resolved;
+};
+
+export const resolveAbilityAmount = (userShip, amount) => {
+    if (amount.type === DataService.AMOUNT_TYPES.NUMBER) {
+        // already a number
+        return parseFloat(amount.value);
+    } else if (amount.type === DataService.AMOUNT_TYPES.PERCENT) {
+        // to decimal
+        return parseFloat(amount.value) / 100;
+    } else if (amount.type === DataService.AMOUNT_TYPES.FORMULA) {
+        return resolveFormulaChildren(userShip, amount.children);
+    }
+};
+
 export const calcShipParsedAbilityBySlug = (
     parsedAbility,
     userShip,
@@ -280,11 +389,12 @@ export const calcShipParsedAbilityBySlug = (
 ) => {
     const ability = parsedAbility.ability;
 
-    const intAmountTypes = [
+    const resolvableTypes = [
         DataService.AMOUNT_TYPES.NUMBER,
         DataService.AMOUNT_TYPES.PERCENT,
         DataService.AMOUNT_TYPES.SECONDS,
         DataService.AMOUNT_TYPES.ATTACKS,
+        DataService.AMOUNT_TYPES.FORMULA,
     ];
 
     ability.amounts.forEach((amount) => {
@@ -296,15 +406,10 @@ export const calcShipParsedAbilityBySlug = (
 
         const stat = getBaseStatObj(parsedAbility, userShip, amount, slug);
 
-        if (intAmountTypes.includes(amount.type)) {
-            stat.value = parseFloat(amount.value);
+        if (resolvableTypes.includes(amount.type)) {
+            stat.value = resolveAbilityAmount(userShip, amount);
 
             totalStats[ability.type][slug][amount.type].push(stat);
-        } else if (amount.type === DataService.AMOUNT_TYPES.FORMULA) {
-            // adding formula doubles, because somehow we get numbers too
-            // AKA, the formula has already been parsed and comes through as a number
-            // stat.values = amount;
-            // totalStats[ability.type][slug][amount.type].push(stat);
         } else {
             console.warn("Unknown amount type", amount.type, amount);
         }
@@ -479,10 +584,12 @@ export const sumFleetTotalStats = (fleet, totalStats) => {
                     row.value /= userShipIds.length;
                     row.strength /= abilityIds.length;
                 } else if (amountType === DataService.AMOUNT_TYPES.FORMULA) {
-                    row.values = [row.value];
+                    row.values = [];
                     arr.forEach((r) => {
                         row.values.push(r.value);
                     });
+
+                    row.value = row.value + sum(row.values);
                 }
 
                 rows.push(row);
