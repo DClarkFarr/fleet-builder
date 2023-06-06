@@ -101,7 +101,7 @@ var example = {
             <div class="flex items-center ml-auto">
                 <div class="stat-total__amount">
                     <template v-if="total.amountType === 'percent'">
-                        {{ `${total.value}%` }}
+                        {{ `${(total.value * 100).toFixed(2)}%` }}
                     </template>
                     <template v-else>
                         {{ total.value.toLocaleString() }}
