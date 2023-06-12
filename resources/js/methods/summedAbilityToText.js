@@ -204,8 +204,11 @@ export const summedStatsTotalToText = (
     let parsedAmount;
     if (summedStatsTotal.amountType === DataService.AMOUNT_TYPES.FORMULA) {
         parsedAmount = joinAnd(
-            summedStatsTotal.values.map((amount) => {
-                return parseAmountLine(ability, amount);
+            summedStatsTotal.values.map((value) => {
+                return parseAmountLine(ability, {
+                    type: DataService.AMOUNT_TYPES.NUMBER,
+                    value,
+                });
             })
         );
     } else {
@@ -216,7 +219,7 @@ export const summedStatsTotalToText = (
     }
 
     const amount = parseText(
-        formatLines[summedStatsTotal.amountType] || formatLines.default,
+        formatLines[summedStatsTotal.abilityType] || formatLines.default,
         {
             parsedAmount,
         }

@@ -8,6 +8,7 @@ import {
     parseFleetBasicStats,
 } from "../methods/fleet";
 import {
+    abilityColumnsReferenced,
     getShipChipsCount,
     getUserShipColumnsReferenced,
     parseShipSlotStrengths,
@@ -44,9 +45,17 @@ const useBuilderStore = defineStore("builder", () => {
 
         return userShip;
     };
+
+    const applyColumnsReferencedToAbilities = (ship) => {
+        ship.abilities.forEach((ability) => {
+            ability.columnsReferenced = abilityColumnsReferenced(ability);
+        });
+    };
     const populateShip = (ship) => {
         parseShipSlotStrengths(ship);
         ship.chipCount = getShipChipsCount(ship);
+
+        applyColumnsReferencedToAbilities(ship);
 
         return ship;
     };

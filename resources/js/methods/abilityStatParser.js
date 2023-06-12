@@ -282,48 +282,8 @@ export const resolveFormulaChild = (userShip, child) => {
     if (child.type === DataService.FORMULA_ITEM_TYPES.COLUMN) {
         if (child.value === DataService.SHIP_COLUMNS.LEVEL) {
             return userShip.level;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.TOTAL_WEAPON_DAMAGE
-        ) {
-            // TODO
-            return 100;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.BEAM_WEAPON_DAMAGE
-        ) {
-            // todo
-            return 100;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.MISSILE_WEAPON_DAMAGE
-        ) {
-            // todo
-            return 100;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.KINETIC_WEAPON_DAMAGE
-        ) {
-            // todo
-            return 100;
-        } else if (child.value === DataService.SHIP_COLUMNS.TOTAL_RESISTANCE) {
-            // todo
-            return 100;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.KINETIC_RESISTANCE
-        ) {
-            // todo
-            return 100;
-        } else if (
-            child.value === DataService.SHIP_COLUMNS.MISSILE_RESISTANCE
-        ) {
-            // todo
-            return 100;
-        } else if (child.value === DataService.SHIP_COLUMNS.BEAM_RESISTANCE) {
-            // todo
-            return 100;
-        } else if (child.value === DataService.SHIP_COLUMNS.TOTAL_SHIELDS) {
-            // todo
-            return 100;
-        } else if (child.value === DataService.SHIP_COLUMNS.ARMOR) {
-            // todo
-            return 100;
+        } else {
+            return userShip.columns?.[child.value] || 0;
         }
     } else if (child.type === DataService.FORMULA_ITEM_TYPES.NUMBER) {
         return child.value;
