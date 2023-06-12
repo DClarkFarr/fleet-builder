@@ -417,7 +417,7 @@ const getShipOptionValue = (statShip, option) => {
                 }
             });
 
-            return percent + number + formula;
+            return percent || number || formula;
         } else if (filter.mapTo) {
             if (filter.mapTo === "class_sort") {
                 return statShip.ship.ship_class.sort;
@@ -492,7 +492,7 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        .filter((userShip) => userShip.id_user_ship === 77)
+        // .filter((userShip) => userShip.id_user_ship === 77)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);
