@@ -24,6 +24,7 @@ class UserShip extends Model
         'chip_level',
         'visible',
         'level',
+        'columns',
     ];
 
     /**
@@ -40,6 +41,7 @@ class UserShip extends Model
      */
     protected $casts = [
         'visible' => 'boolean',
+        'columns' => 'array',
     ];
 
 

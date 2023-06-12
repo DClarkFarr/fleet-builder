@@ -94,13 +94,17 @@ export const getShipChipsCount = (ship) => {
 export const abilityColumnsReferenced = (ability) => {
     const columns = [];
 
+    const skipCols = [DataService.SHIP_COLUMNS.LEVEL];
+
     const getAmountColumns = (amount, cols) => {
         if (amount.type === DataService.FORMULA_ITEM_TYPES.FORMULA) {
             amount.children.forEach((child) => {
                 getAmountColumns(child, cols);
             });
         } else if (amount.type === DataService.FORMULA_ITEM_TYPES.COLUMN) {
-            cols.push(amount.value);
+            if (!skipCols.includes(amount.value)) {
+                cols.push(amount.value);
+            }
         }
     };
 

@@ -9,6 +9,7 @@ import {
 } from "../methods/fleet";
 import {
     getShipChipsCount,
+    getUserShipColumnsReferenced,
     parseShipSlotStrengths,
     populateUserShipAbilityData,
 } from "../methods/ship";
@@ -38,6 +39,8 @@ const useBuilderStore = defineStore("builder", () => {
         populateUserShipAbilityData(userShip, {
             shipClasses: toRaw(shipClasses.value),
         });
+
+        userShip.columnsReferenced = getUserShipColumnsReferenced(userShip);
 
         return userShip;
     };

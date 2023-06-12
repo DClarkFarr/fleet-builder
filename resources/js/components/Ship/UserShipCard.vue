@@ -1,7 +1,10 @@
 <script setup>
 import IconBattery from "~icons/fa-solid/battery-three-quarters";
+import IconExclamationTriangle from "~icons/fa-solid/exclamation-triangle";
 import Chips from "../Themed/ship/Chips.vue";
 import AbilityTag from "../Themed/ability/AbilityTag.vue";
+import { computed } from "vue";
+import DataService from "../../services/DataService";
 
 const props = defineProps({
     userShip: {
@@ -12,6 +15,18 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+});
+
+const missingColumnsReferenced = computed(() => {
+    const columnNames = DataService.getShipColumns();
+
+    return props.userShip.columnsReferenced.reduce((acc, column) => {
+        if (!props.userShip.columns?.[column]) {
+            acc.push(columnNames.find((c) => c.slug === column).name);
+        }
+
+        return acc;
+    }, []);
 });
 </script>
 
@@ -79,6 +94,27 @@ const props = defineProps({
                                 class="text-base font-medium text-grow-green-text-alt"
                             >
                                 {{ userShip.ship.slotStrengths.unit.total }}
+                            </div>
+                        </div>
+
+                        <div
+                            class="ship-box__strengths-total text-center text-xs"
+                            v-if="missingColumnsReferenced.length > 0"
+                            v-tooltip="
+                                'Abilities reference: ' +
+                                missingColumnsReferenced.join(', ')
+                            "
+                        >
+                            Missing Values
+                            <div
+                                class="text-base font-medium text-red-600 flex gap-x-1 items-center justify-center"
+                            >
+                                <div>
+                                    <IconExclamationTriangle />
+                                </div>
+                                <div>
+                                    {{ missingColumnsReferenced.length }}
+                                </div>
                             </div>
                         </div>
                     </div>
