@@ -192,26 +192,29 @@ export const parseUserShipAbility = (userShip, ability) => {
     };
 };
 
+export const getUserShipAppliedAbilities = (
+    userShip,
+    includeFlagship = false
+) => {
+    return userShip.ship.abilities.filter((ability) => {
+        const canAddAbility = ability.location.includes("chip_")
+            ? parseInt(ability.location.split("_")[1]) <= userShip.chip_level
+            : true;
+
+        return canAddAbility || (includeFlagship && ability.flagship_required);
+    });
+};
+
 export const parseUserShipAbilities = (userShip, callback = null) => {
-    const ship = userShip.ship;
-    const abilities = ship.abilities;
-
-    const parsedAbilities = [];
-
-    abilities.forEach((ability) => {
+    const appliedAbilities = getUserShipAppliedAbilities(userShip, true);
+    const parsedAbilities = appliedAbilities.map((ability) => {
         const parsedAbility = parseUserShipAbility(userShip, ability);
 
         if (typeof callback === "function") {
             parsedAbility.extra = callback(parsedAbility);
         }
 
-        const canAddAbility = ability.location.includes("chip_")
-            ? parseInt(ability.location.split("_")[1]) <= userShip.chip_level
-            : true;
-
-        if (canAddAbility) {
-            parsedAbilities.push(parsedAbility);
-        }
+        return parsedAbility;
     });
 
     return parsedAbilities;

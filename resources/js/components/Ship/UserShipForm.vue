@@ -1,10 +1,14 @@
 <script setup>
-import { ref, reactive, computed, watch } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import ToggleSwitch from "../controls/ToggleSwitch.vue";
 
-import { getShipChipsCount } from "../../methods/ship";
+import {
+    getShipChipsCount,
+    getUserShipColumnsReferenced,
+} from "../../methods/ship";
 import { useToast } from "vue-toastification";
+import DataService from "../../services/DataService";
 
 const props = defineProps({
     ship: {
@@ -44,6 +48,7 @@ const onSubmit = async () => {
             ...form,
             id_ship: props.ship.id_ship,
             id_user_ship: props.userShip?.id_user_ship,
+            columns: columnValues.value,
         });
     } catch (err) {
         toast.error(error.response?.data?.message || err.message);
@@ -82,6 +87,24 @@ const resetForm = () => {
 };
 const chipCount = computed(() => {
     return getShipChipsCount(props.ship);
+});
+
+const columnsReferenced = computed(() => {
+    const columnNames = DataService.getShipColumns();
+    const columns = getUserShipColumnsReferenced(props.userShip);
+
+    return columns.map((col) => {
+        return columnNames.find((c) => c.slug === col);
+    });
+});
+
+const columnValues = computed(() => {
+    const obj = columnsReferenced.value.reduce((acc, { slug }) => {
+        acc[slug] = props.userShip.columns?.[slug] || 0;
+        return acc;
+    }, {});
+
+    return obj;
 });
 
 watch(
@@ -138,6 +161,27 @@ watch(
                     "
                 />
             </div>
+        </div>
+        <div v-if="columnsReferenced.length > 0" class="py-4">
+            <hr />
+            <div class="py-6">
+                <h3 class="text-xl font-bold mb-2">
+                    Columns Referenced (via abilities)
+                </h3>
+                <div
+                    class="form-group pt-4"
+                    v-for="column in columnsReferenced"
+                    :key="column.slug"
+                >
+                    <label>{{ column.name }}</label>
+                    <input
+                        type="number"
+                        class="input"
+                        v-model="columnValues[column.slug]"
+                    />
+                </div>
+            </div>
+            <hr />
         </div>
         <div class="form-group pt-4 flex gap-x-4 justify-between">
             <div>

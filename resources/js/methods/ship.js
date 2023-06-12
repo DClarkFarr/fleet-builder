@@ -5,7 +5,7 @@ import {
     abilityHasQualifiers,
     getAbilityTextParser,
 } from "./abilityTextParser";
-import { parseUserShipAbilities } from "./fleet";
+import { getUserShipAppliedAbilities, parseUserShipAbilities } from "./fleet";
 
 export const parseShipSlotCounts = (ship) => {
     if (ship.slotCounts) {
@@ -91,6 +91,45 @@ export const getShipChipsCount = (ship) => {
     }, 0);
 };
 
+export const abilityColumnsReferenced = (ability) => {
+    const columns = [];
+
+    const getAmountColumns = (amount, cols) => {
+        if (amount.type === DataService.FORMULA_ITEM_TYPES.FORMULA) {
+            amount.children.forEach((child) => {
+                getAmountColumns(child, cols);
+            });
+        } else if (amount.type === DataService.FORMULA_ITEM_TYPES.COLUMN) {
+            cols.push(amount.value);
+        }
+    };
+
+    ability.amounts.forEach((amount) => {
+        getAmountColumns(amount, columns);
+    });
+
+    return columns;
+};
+
+export const abilityColumnsValues = (userShip, ability) => {
+    const columns = abilityColumnsReferenced(ability);
+};
+
+export const getUserShipColumnsReferenced = (userShip) => {
+    const appliedAbilities = getUserShipAppliedAbilities(userShip, true);
+    const allColumns = [];
+
+    appliedAbilities.forEach((ability) => {
+        const abilityColumns = abilityColumnsReferenced(ability);
+        abilityColumns.forEach((column) => {
+            if (!allColumns.includes(column)) {
+                allColumns.push(column);
+            }
+        });
+    });
+
+    return allColumns;
+};
 export const populateUserShipAbilityData = (userShip, { shipClasses }) => {
     const parsedAbilities = parseUserShipAbilities(
         userShip,
@@ -117,6 +156,13 @@ export const populateUserShipAbilityData = (userShip, { shipClasses }) => {
                 ),
                 hasConditions: parsedAbility.ability.conditions.length > 0,
                 hasQualifiers: abilityHasQualifiers(parsedAbility.ability),
+                columnsReferenced: abilityColumnsReferenced(
+                    parsedAbility.ability
+                ),
+                columnsValues: abilityColumnsValues(
+                    userShip,
+                    parsedAbility.ability
+                ),
             };
         }
     );

@@ -492,7 +492,7 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        // .filter((userShip) => userShip.id_user_ship === 98)
+        .filter((userShip) => userShip.id_user_ship === 79)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);
