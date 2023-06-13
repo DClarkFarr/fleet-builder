@@ -612,12 +612,9 @@ onMounted(async () => {
                         <tr>
                             <th>Ship</th>
                             <th>Slot Strength</th>
-                            <th>Damage</th>
-                            <th>Penetration</th>
-                            <th>Armor</th>
-                            <th>Resistance</th>
-                            <th>HP</th>
-                            <th>Shield</th>
+                            <th>Attack</th>
+                            <th>Armor / Resist</th>
+                            <th>HP / Shield</th>
                             <th>Flagship</th>
                         </tr>
                     </thead>
@@ -787,8 +784,6 @@ onMounted(async () => {
                                     :key="index"
                                     :total="total"
                                 />
-                            </td>
-                            <td>
                                 <StatTotal
                                     v-for="(
                                         total, index
@@ -805,8 +800,6 @@ onMounted(async () => {
                                     :key="index"
                                     :total="total"
                                 />
-                            </td>
-                            <td>
                                 <StatTotal
                                     v-for="(
                                         total, index
@@ -821,8 +814,6 @@ onMounted(async () => {
                                     :key="index"
                                     :total="total"
                                 />
-                            </td>
-                            <td>
                                 <StatTotal
                                     v-for="(
                                         total, index
