@@ -1,6 +1,10 @@
 import { cloneDeep, flatten, pick, sum, uniq } from "lodash";
 import DataService from "../services/DataService";
-import { abilityHasQualifiers } from "./abilityTextParser";
+import {
+    abilityHasQualifiers,
+    getAbilityQualifiers,
+    matchAbilityQualifiers,
+} from "./abilityTextParser";
 
 export const doesUserShipAbilityApplyToSelf = (parsedAbility, userShip) => {
     let applyToShip = true;
@@ -456,6 +460,44 @@ export const getFleetsParsedAbilityStats = (fleets) => {
     }, {});
 };
 
+export const augmentShipTotalStats = (totalStats) => {
+    totalStats.forEach((stat) => {
+        stat.stackedStatTotals = [];
+        stat.stackedValue = stat.value;
+    });
+
+    const totalStatsWithQualifiers = totalStats.filter(
+        (stat) => stat.hasQualifiers
+    );
+
+    const totalStatsWithoutQualifiers = totalStats.filter(
+        (stat) => !stat.hasQualifiers
+    );
+
+    totalStatsWithQualifiers.forEach((stat) => {
+        const abilityQualifiers = getAbilityQualifiers(stat.source.ability);
+
+        stat.stackedStatTotals = totalStatsWithoutQualifiers
+            .filter(
+                (ms) =>
+                    ms.abilityType === stat.abilityType &&
+                    ms.amountType === stat.amountType
+            )
+            .filter((ms) => {
+                return matchAbilityQualifiers(
+                    ms.source.ability,
+                    abilityQualifiers
+                );
+            });
+
+        if (stat.stackedStatTotals.length) {
+            stat.stackedStatTotals.forEach((stackedTotal) => {
+                stat.stackedValue += stackedTotal.value;
+            });
+        }
+    });
+};
+
 export const sumFleetTotalStats = (fleet, totalStats) => {
     const variantsByAbilityType = DataService.getVariantsByAbilityType();
     const rows = [];
@@ -496,9 +538,7 @@ export const sumFleetTotalStats = (fleet, totalStats) => {
                         flatten(arr.map((r) => r.target_class_ids))
                     ),
                     hasConditions: arr[0].source.ability.conditions.length > 0,
-                    hasQualifiers: abilityHasQualifiers(arr[0].source.ability, [
-                        "weapon_classes",
-                    ]),
+                    hasQualifiers: abilityHasQualifiers(arr[0].source.ability),
                     appliesToFleet: arr[0].source.ability.applies_to_fleet,
                 };
 

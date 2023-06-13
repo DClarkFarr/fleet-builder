@@ -3,6 +3,7 @@ import { onMounted, ref, computed } from "vue";
 import { cloneDeep, sum } from "lodash";
 import BuilderLayout from "../../components/layouts/BuilderLayout.vue";
 import {
+    augmentShipTotalStats,
     getUserShipParsedAbilityStats,
     sumFleetTotalStats,
 } from "../../methods/abilityStatParser";
@@ -408,9 +409,9 @@ const getShipOptionValue = (statShip, option) => {
 
                 if (variantsMatched && weaponClassesMatch) {
                     if (shipTotal.amountType === "percent") {
-                        percent += shipTotal.value;
+                        percent += shipTotal.stackedValue;
                     } else if (shipTotal.amountType === "number") {
-                        number += shipTotal.value;
+                        number += shipTotal.stackedValue;
                     } else if (shipTotal.amountType === "formula") {
                         formula += 1;
                     }
@@ -492,7 +493,7 @@ onMounted(async () => {
     console.time("onMounted");
 
     statAbilityShips.value = [...builderStore.userShips]
-        // .filter((userShip) => userShip.id_user_ship === 77)
+        // .filter((userShip) => userShip.id_user_ship === 132)
         .map((userShip) => {
             const { totalStats: shipTotalStats } =
                 getUserShipParsedAbilityStats(userShip, false);
@@ -511,6 +512,8 @@ onMounted(async () => {
                 }
             );
 
+            augmentShipTotalStats(shipTotals);
+
             const flagTotals = sumFleetTotalStats(null, flagTotalStats).map(
                 (row) => {
                     return {
@@ -522,6 +525,8 @@ onMounted(async () => {
                     };
                 }
             );
+
+            augmentShipTotalStats(flagTotals);
 
             const attackTotals = [];
             const penetrationTotals = [];

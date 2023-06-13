@@ -142,6 +142,7 @@ export const populateUserShipAbilityData = (userShip, { shipClasses }) => {
                 parsedAbility.ability,
                 {
                     shipClasses,
+                    userShip,
                 },
                 false
             );

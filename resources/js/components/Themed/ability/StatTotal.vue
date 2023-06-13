@@ -72,12 +72,12 @@ var example = {
 </script>
 
 <template>
-    <div class="stat-total-wrap">
+    <div class="stat-total-wrap" @click="toggleOpened">
         <div
             class="stat-total text-sm relative border-l-4 leading-none"
             :class="[`stat-total--${total.affectType}`]"
         >
-            <div class="flex items-center gap-x-4">
+            <div class="flex items-center gap-x-2">
                 <div
                     class="stat-total__icons flex gap-x-2"
                     v-if="
@@ -116,14 +116,28 @@ var example = {
                         <IconShareAlt class="text-sm text-teal-900" />
                     </div>
                 </div>
-                <div
-                    class="stat-total__text cursor-pointer"
-                    @click="toggleOpened"
-                >
+                <div class="stat-total__text cursor-pointer">
                     {{ total.category }}
                 </div>
-                <div class="flex items-center ml-auto">
-                    <div class="stat-total__amount">
+                <div
+                    class="flex items-center ml-auto stat-total__value"
+                    :class="{
+                        'stat-total__value--stacked':
+                            total.stackedStatTotals.length,
+                    }"
+                >
+                    <div
+                        class="stat-total__amount"
+                        v-if="total.stackedStatTotals.length"
+                    >
+                        <template v-if="total.amountType === 'percent'">
+                            {{ `${(total.stackedValue * 100).toFixed(2)}%` }}
+                        </template>
+                        <template v-else>
+                            {{ total.stackedValue.toLocaleString() }}
+                        </template>
+                    </div>
+                    <div class="stat-total__amount" v-else>
                         <template v-if="total.amountType === 'percent'">
                             {{ `${(total.value * 100).toFixed(2)}%` }}
                         </template>
@@ -143,19 +157,47 @@ var example = {
                 class="stat-total__description pt-1 text-gray-600"
                 v-show="opened"
             >
-                <div class="flex">
-                    <div
-                        class="stat-total__info pr-2"
-                        v-tooltip="total.source.extra.amountDescription"
-                        v-if="
-                            total.type ===
-                            DataService.ABILITY_TYPES.EXTRA_ATTACK
-                        "
-                    >
-                        <IconQuestionCircle />
+                <div class="flex flex-col gap-y-2">
+                    <div class="flex bg-gray-200">
+                        <div
+                            class="stat-total__info pr-2"
+                            v-tooltip="total.source.extra.amountDescription"
+                            v-if="
+                                total.type ===
+                                DataService.ABILITY_TYPES.EXTRA_ATTACK
+                            "
+                        >
+                            <IconQuestionCircle />
+                        </div>
+                        <div>
+                            {{
+                                total.stackedStatTotals.length
+                                    ? "Primary: "
+                                    : ""
+                            }}
+                            {{ total.description }}
+                        </div>
                     </div>
-                    <div>
-                        {{ total.description }}
+
+                    <div
+                        class="flex bg-gray-200"
+                        v-for="(st, index) in total.stackedStatTotals"
+                        :key="index"
+                    >
+                        <div
+                            class="stat-total__info pr-2"
+                            v-tooltip="st.source.extra.amountDescription"
+                            v-if="
+                                st.type ===
+                                DataService.ABILITY_TYPES.EXTRA_ATTACK
+                            "
+                        >
+                            <IconQuestionCircle />
+                        </div>
+                        <div>
+                            Stacked from generic:
+                            {{ st.description }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,6 +223,17 @@ var example = {
 
     &--passive {
         @apply border-green-500;
+    }
+
+    &__value {
+        &--stacked {
+            background: #222;
+            color: #fff;
+            padding: 2px 4px;
+            line-height: 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     }
 }
 </style>

@@ -214,7 +214,12 @@ export const summedStatsTotalToText = (
     } else {
         parsedAmount = parseAmountLine(ability, {
             type: summedStatsTotal.amountType,
-            value: summedStatsTotal.value,
+            value:
+                summedStatsTotal.value *
+                (summedStatsTotal.amountType ===
+                DataService.AMOUNT_TYPES.PERCENT
+                    ? 100
+                    : 1),
         });
     }
 

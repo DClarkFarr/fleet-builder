@@ -73,7 +73,7 @@ const parseForClasses = (ability, { shipClasses }) => {
     return `of ${joinAnd(classNames)} in fleet`;
 };
 
-export const parseFormulaAmountLine = (ability, amount) => {
+export const parseFormulaAmountLine = (ability, amount, userShip = null) => {
     const blocks = [];
     buildItemBlocks(amount.children, blocks);
 
@@ -85,8 +85,16 @@ export const parseFormulaAmountLine = (ability, amount) => {
                 return ")";
             } else if (block.type === "item") {
                 if (block.item.type === "column") {
-                    return shipColumns.find((c) => c.slug === block.item.value)
-                        .name;
+                    const column = block.item.value;
+                    const columnName = shipColumns.find(
+                        (c) => c.slug === column
+                    ).name;
+                    if (!userShip || !userShip.columns?.[column]) {
+                        return columnName;
+                    }
+                    const value = userShip.columns[column];
+
+                    return `${value} "${columnName}"`;
                 } else {
                     return block.item.value;
                 }
@@ -140,14 +148,14 @@ export const buildItemBlocks = (items, bs, depth = []) => {
     });
 };
 
-export const parseAmountLine = (ability, amount) => {
+export const parseAmountLine = (ability, amount, userShip = null) => {
     if (!amount?.type) {
         return "";
     }
 
     if (amount.type === amountTypes.FORMULA) {
         return parseText("X [{formula}]", {
-            formula: parseFormulaAmountLine(ability, amount),
+            formula: parseFormulaAmountLine(ability, amount, userShip),
         });
     }
     const attack = pluralize("attack", parseInt(amount.value));
@@ -169,14 +177,14 @@ export const parseAmountLine = (ability, amount) => {
     });
 };
 
-export const parseAmount = (ability) => {
+export const parseAmount = (ability, userShip = null) => {
     if (!ability.amounts?.length) {
         return "";
     }
 
     const amounts = ability.amounts
         .map((amount) => {
-            const parsedAmount = parseAmountLine(ability, amount);
+            const parsedAmount = parseAmountLine(ability, amount, userShip);
             if (!parsedAmount) {
                 return false;
             }
@@ -200,8 +208,8 @@ export const parseAmount = (ability) => {
 
     return parsedAmounts;
 };
-const parseAmountDescription = (ability) => {
-    const parsedAmounts = parseAmount(ability);
+const parseAmountDescription = (ability, userShip = null) => {
+    const parsedAmounts = parseAmount(ability, userShip);
 
     const formatLines = {
         default: "by {parsedAmounts}",
@@ -368,6 +376,57 @@ const parseWeaponsDescription = (ability) => {
     }
 };
 
+export const matchAbilityQualifiers = (ability, qualifiersToMatch = {}) => {
+    const testQualifiers = getAbilityQualifiers(ability);
+
+    // test qualifiers can contain LESS than qualifiersToMatch, but cannot have more or different
+
+    const testQualifiersHaveDiverged = Object.keys(testQualifiers).some(
+        (testKey) => {
+            // test qualifiers don't have it at all
+            // it has diverged!
+            if (!qualifiersToMatch[testKey]) {
+                return true;
+            }
+
+            const hasSomeExtrakeys = testQualifiers[testKey].some(
+                (testValue) => {
+                    return !qualifiersToMatch[testKey].includes(testValue);
+                }
+            );
+
+            if (hasSomeExtrakeys) {
+                return true;
+            }
+
+            return false;
+        }
+    );
+
+    if (testQualifiersHaveDiverged) {
+        return false;
+    }
+
+    return true;
+};
+
+export const getAbilityQualifiers = (ability, exclude = []) => {
+    const toTest = [
+        "for_class_ids",
+        "target_class_ids",
+        "weapon_classes",
+        "weapon_sizes",
+    ].filter((key) => !exclude.includes(key));
+
+    return toTest.reduce((acc, key) => {
+        if (ability[key].length) {
+            acc[key] = ability[key];
+        }
+
+        return acc;
+    }, {});
+};
+
 export const abilityHasQualifiers = (ability, exclude = []) => {
     const toTest = [
         "for_class_ids",
@@ -469,8 +528,9 @@ export const parseAbilityCategory = (ability) => {
 };
 
 class AbilityTextParser {
-    constructor(ability, { shipClasses }, watchForUpdates = true) {
+    constructor(ability, { shipClasses, userShip }, watchForUpdates = true) {
         this.shipClasses = shipClasses;
+        this.userShip = userShip || null;
 
         if (watchForUpdates) {
             watch(
@@ -500,7 +560,7 @@ class AbilityTextParser {
     }
 
     get amountDescription() {
-        return parseAmountDescription(this.ability);
+        return parseAmountDescription(this.ability, this.userShip);
     }
 
     get amount() {
