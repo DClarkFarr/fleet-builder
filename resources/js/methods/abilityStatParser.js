@@ -334,7 +334,13 @@ export const resolveFormulaChildren = (userShip, children) => {
 };
 
 export const resolveAbilityAmount = (userShip, amount) => {
-    if (amount.type === DataService.AMOUNT_TYPES.NUMBER) {
+    if (
+        [
+            DataService.AMOUNT_TYPES.NUMBER,
+            DataService.AMOUNT_TYPES.SECONDS,
+            DataService.AMOUNT_TYPES.ATTACKS,
+        ].includes(amount.type)
+    ) {
         // already a number
         return parseFloat(amount.value);
     } else if (amount.type === DataService.AMOUNT_TYPES.PERCENT) {
@@ -481,7 +487,8 @@ export const augmentShipTotalStats = (totalStats) => {
             .filter(
                 (ms) =>
                     ms.abilityType === stat.abilityType &&
-                    ms.amountType === stat.amountType
+                    ms.amountType === stat.amountType &&
+                    !stat.appliesToFleet
             )
             .filter((ms) => {
                 return matchAbilityQualifiers(

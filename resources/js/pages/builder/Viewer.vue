@@ -279,6 +279,7 @@ const sortMap = {
         filters: [
             {
                 abilityType: DataService.ABILITY_TYPES.INCREASE_PENETRATION,
+                variants: [DataService.RESISTANCE_TYPES.SHIELDS],
             },
         ],
     },

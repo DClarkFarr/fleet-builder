@@ -255,6 +255,14 @@ onBeforeMount(() => {
                                         Clear filters
                                     </button>
                                 </div>
+                                <div class="ml-auto">
+                                    <router-link
+                                        :to="{ name: 'builder.viewer' }"
+                                        class="btn btn-blue"
+                                    >
+                                        Ship data table
+                                    </router-link>
+                                </div>
                             </div>
                             <template v-if="allLoaded">
                                 <div
