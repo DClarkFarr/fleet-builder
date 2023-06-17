@@ -230,7 +230,7 @@ var example = {
             background: #222;
             color: #fff;
             padding: 2px 4px;
-            line-height: 0;
+            line-height: 1;
             border-radius: 4px;
             cursor: pointer;
         }
