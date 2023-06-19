@@ -13,6 +13,38 @@ use App\Services\ShipService;
 
 class BuilderController extends Controller
 {
+    public function deleteStatImage($id_user_ship)
+    {
+        $shipService = new ShipService;
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $shipService->deleteStatImage($user, $id_user_ship);
+
+        return response()->json(
+            ['deleted' => true]
+        );
+    }
+    public function uploadStatImage(Request $request, $id_user_ship)
+    {
+        $shipService = new ShipService;
+        $auth = Auth::user();
+        $user = User::find($auth->id);
+
+        $file = $request->file('file');
+
+        if (!$file || !$file->isValid()) {
+            return response()->json(
+                ['error' => 'Invalid file']
+            );
+        }
+
+        $userShip = $shipService->uploadStatImage($user, $id_user_ship, $file);
+
+        return response()->json(
+            ['url' => $userShip->stat_img]
+        );
+    }
 
     public function getShips()
     {

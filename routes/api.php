@@ -30,6 +30,8 @@ Route::prefix('/user')->group(function () {
         /** UserShips */
         Route::get('/ships', [BuilderController::class, 'getShips']);
         Route::post('/ships', [BuilderController::class, 'createOrUpdateShip']);
+        Route::post('/ships/{id_user_ship}/upload', [BuilderController::class, 'uploadStatImage']);
+        Route::delete('/ships/{id_user_ship}/upload', [BuilderController::class, 'deleteStatImage']);
         Route::delete('/ships/{id_user_ship}', [BuilderController::class, 'deleteShip']);
         Route::delete('/ships', [BuilderController::class, 'deleteAllUserShips']);
 

@@ -1,6 +1,7 @@
 <script setup>
 import ContentBox from "./ContentBox.vue";
 import UserShipForm from "../Ship/UserShipForm.vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
     userShip: {
@@ -15,10 +16,34 @@ const props = defineProps({
         type: Function,
         default: null,
     },
+    onUpdate: {
+        type: Function,
+        default: null,
+    },
 });
+
+const internalUserShip = ref(props.userShip);
+
+watch(
+    () => props.userShip,
+    (newVal) => {
+        internalUserShip.value = newVal;
+    }
+);
 
 const onSaveShip = (data) => {
     return props.onSave(data);
+};
+
+const onUpdateShip = async (idUserShip, data) => {
+    if (typeof props.onUpdate === "function") {
+        await props.onUpdate(idUserShip, data);
+    }
+
+    internalUserShip.value = {
+        ...internalUserShip.value,
+        ...data,
+    };
 };
 const onDeleteShip = (userShip) => {
     if (props.onDelete) {
@@ -40,9 +65,10 @@ const onDeleteShip = (userShip) => {
 
                 <UserShipForm
                     :ship="userShip.ship"
-                    :userShip="userShip"
+                    :userShip="internalUserShip"
                     :onSave="onSaveShip"
                     :onDelete="onDeleteShip"
+                    :onUpdate="onUpdateShip"
                 />
             </div>
         </ContentBox>

@@ -25,6 +25,18 @@ class UserShip extends Model
         'visible',
         'level',
         'columns',
+        'stat_img',
+        'stat_dpr',
+        'stat_acu',
+        'stat_hp',
+        'stat_shd',
+        'stat_armor',
+        'stat_evd',
+        'stat_ftl',
+        'stat_stl',
+        'stat_res_kinetic',
+        'stat_res_beam',
+        'stat_res_missile',
     ];
 
     /**

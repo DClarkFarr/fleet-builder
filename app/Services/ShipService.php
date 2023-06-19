@@ -10,10 +10,10 @@ use App\Models\UserShip;
 use App\Models\Workshop;
 use App\Models\WorkshopFleet;
 use Exception;
+use Illuminate\Http\UploadedFile;
 
 class ShipService
 {
-
     protected function getUserWorkshop(User $user, $id_workshop)
     {
         $workshop = $user->workshops()->find($id_workshop);
@@ -598,5 +598,27 @@ class ShipService
                 $ability = $ship->abilities()->create(array_merge($ability, ['location' => $location]));
             }
         }
+    }
+
+    public function deleteStatImage(User $user, $id_user_ship)
+    {
+        $userShip = $user->ships()->find($id_user_ship);
+
+        $userShip->stat_img = null;
+        $userShip->save();
+
+        return $userShip;
+    }
+
+    public function uploadStatImage(User $user, $id_user_ship, UploadedFile $file)
+    {
+        $userShip = $user->ships()->find($id_user_ship);
+
+        $path = preg_replace('/^public/', 'storage', $file->store('public/ships'));
+
+        $userShip->stat_img = '/' . $path;
+        $userShip->save();
+
+        return $userShip;
     }
 }

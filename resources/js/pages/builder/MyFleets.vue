@@ -62,6 +62,12 @@ const showEditShipModal = (userShip) => {
                 await builderStore.deleteUserShip(userShip.id_user_ship);
                 $vfm.hideAll();
             },
+            onUpdate: async (idUserShip, data) => {
+                const updatedShip = await builderStore.applyUpdatesToUserShip(
+                    idUserShip,
+                    data
+                );
+            },
         },
     });
 };

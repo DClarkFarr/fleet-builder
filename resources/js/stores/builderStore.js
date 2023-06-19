@@ -127,6 +127,22 @@ const useBuilderStore = defineStore("builder", () => {
         isLoadingWorkshops.value = false;
     };
 
+    const applyUpdatesToUserShip = async (idUserShip, data) => {
+        const us = userShips.value;
+        const index = us.findIndex((s) => s.id_user_ship === idUserShip);
+
+        if (index === -1) {
+            return console.warn(
+                "Could not find user ship with id_user_ship: " + idUserShip
+            );
+        }
+
+        const userShip = { ...us[index], ...data };
+        us.splice(index, 1, userShip);
+
+        return userShip;
+    };
+
     const createOrUpdateUserShip = async (data) => {
         try {
             const res = await apiClient.post("user/ships", data);
@@ -430,6 +446,7 @@ const useBuilderStore = defineStore("builder", () => {
         setFleetFlagship,
         setSelectedWorkshopId,
         loadSharedWorkshop,
+        applyUpdatesToUserShip,
     };
 });
 

@@ -10,6 +10,8 @@ import {
 import { useToast } from "vue-toastification";
 import DataService from "../../services/DataService";
 
+import DropZoneInline from "../controls/DropZoneInline.vue";
+
 const props = defineProps({
     ship: {
         type: Object,
@@ -24,6 +26,10 @@ const props = defineProps({
         required: true,
     },
     onDelete: {
+        type: Function,
+        default: null,
+    },
+    onUpdate: {
         type: Function,
         default: null,
     },
@@ -85,6 +91,23 @@ const resetForm = () => {
         form.level = 1;
     }
 };
+
+const onFileUploaded = async ({ url: stat_img }) => {
+    if (typeof props.onUpdate === "function") {
+        await props.onUpdate(props.userShip.id_user_ship, {
+            stat_img,
+        });
+    }
+};
+
+const onFileRemoved = async () => {
+    if (typeof props.onUpdate === "function") {
+        await props.onUpdate(props.userShip.id_user_ship, {
+            stat_img: null,
+        });
+    }
+};
+
 const chipCount = computed(() => {
     return getShipChipsCount(props.ship);
 });
@@ -105,6 +128,13 @@ const columnValues = computed(() => {
     }, {});
 
     return obj;
+});
+
+const uploadUrl = computed(() => {
+    if (!props.userShip) {
+        return "";
+    }
+    return `${window.location.origin}/api/user/ships/${props.userShip.id_user_ship}/upload`;
 });
 
 watch(
@@ -182,6 +212,19 @@ watch(
                 </div>
             </div>
             <hr />
+        </div>
+
+        <div class="py-8" v-if="userShip">
+            <h2 class="text-white font-semibold text-lg">Ship Stats</h2>
+            <div class="user-ship-form__stats">
+                <DropZoneInline
+                    :url="uploadUrl"
+                    :img="userShip.stat_img"
+                    :data="{ type: 'stat_img' }"
+                    @uploaded="onFileUploaded"
+                    @removed="onFileRemoved"
+                />
+            </div>
         </div>
         <div class="form-group pt-4 flex gap-x-4 justify-between">
             <div>
