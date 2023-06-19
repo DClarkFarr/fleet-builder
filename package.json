@@ -28,6 +28,7 @@
         "dropzone-vue": "^0.1.11",
         "pinia": "^2.0.28",
         "pluralize": "^8.0.0",
+        "tesseract.js": "^4.1.0",
         "validator": "^13.7.0",
         "vue": "^3.2.45",
         "vue-final-modal": "^3.4.11",

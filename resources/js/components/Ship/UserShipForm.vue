@@ -12,6 +12,8 @@ import DataService from "../../services/DataService";
 
 import DropZoneInline from "../controls/DropZoneInline.vue";
 
+import useTesseract from "../../hooks/useTesseract";
+
 const props = defineProps({
     ship: {
         type: Object,
@@ -38,6 +40,8 @@ const props = defineProps({
 const toast = useToast();
 
 const isSaving = ref(false);
+
+const { getWorker } = useTesseract();
 
 const form = reactive({
     name: "",
@@ -97,6 +101,18 @@ const onFileUploaded = async ({ url: stat_img }) => {
         await props.onUpdate(props.userShip.id_user_ship, {
             stat_img,
         });
+    }
+
+    const worker = await getWorker();
+
+    try {
+        // const { data } = await worker.detect(stat_img);
+        const { data, ...xs } = await worker.recognize(stat_img, {
+            rectangle: { top: 103, left: 32, width: 176, height: 520 },
+        });
+        console.log("data was", data, xs);
+    } catch (err) {
+        console.error("Caught error parsing image", err);
     }
 };
 
