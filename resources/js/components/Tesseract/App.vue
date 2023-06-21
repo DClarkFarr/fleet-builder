@@ -19,8 +19,22 @@ const onSelectBox = (e) => {
     const file = e.target.files?.[0] || null;
 
     if (file) {
+        ts.loadBoxData(file);
     } else {
+        ts.resetBoxData();
     }
+};
+
+const onClickDownload = () => {
+    ts.downloadBoxData();
+};
+
+const onClickNext = () => {
+    ts.getNextAndFill();
+};
+
+const onClickPrev = () => {
+    ts.getPrevAndFill();
 };
 
 onMounted(() => {
@@ -186,13 +200,27 @@ onMounted(() => {
                 </form>
             </div>
             <div class="w-1/3">
-                <button id="previousBB" class="btn btn-default">
+                <button
+                    id="previousBB"
+                    class="btn bg-gray-600"
+                    @click="onClickPrev"
+                >
                     Previous
                 </button>
-                <button id="nextBB" class="btn btn-default">Next</button>
+                <button
+                    id="nextBB"
+                    class="btn bg-gray-600"
+                    @click="onClickNext"
+                >
+                    Next
+                </button>
                 <br />
                 <br />
-                <button id="downloadBtn" class="btn bt.default">
+                <button
+                    id="downloadBtn"
+                    @click="onClickDownload"
+                    class="btn bg-gray-600"
+                >
                     Download
                 </button>
             </div>

@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import apiClient from "../services/apiClient";
 
 const useTesseractStore = defineStore("tesseract", () => {
+    var doneMovingInterval = 200;
     const boxlayer = new L.FeatureGroup();
     const drawControl = new L.Control.Draw({
         draw: {
@@ -18,24 +19,79 @@ const useTesseractStore = defineStore("tesseract", () => {
         },
     });
 
-    const map = ref(null);
-
-    const image = ref(null);
+    let map = null;
+    let image = null;
+    let selectedBox = null;
+    let selectedPoly = null;
+    let movingTimer = null;
 
     const boxdata = ref([]);
+    const rects = ref([]);
+
+    const zoomMax = ref(1);
+
+    const hasImage = ref(false);
 
     const initMap = (mapEl) => {
-        map.value = new L.map(mapEl.id, {
+        map = new L.map(mapEl, {
             crs: L.CRS.Simple,
             minZoom: -5,
         });
 
-        map.value.addControl(drawControl);
+        map.addControl(drawControl);
+
+        map.on("draw:deleted", function (event) {
+            // get boxdata
+            Object.keys(event.layers._layers).forEach((x) => {
+                var polyid = parseInt(x);
+                var delbox = boxdata.value.find((x) => {
+                    return x.polyid == polyid;
+                });
+
+                var delIndex = deleteBox(delbox);
+                // if (delIndex > -1) {
+                //     fillAndFocusRect(boxdata[delindex]);
+                // }
+            });
+        });
+
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+
+            layer.on("edit", editRect);
+            layer.on("click", onRectClick);
+
+            // add new boxdata entry
+            boxlayer.addLayer(layer);
+
+            var newbb = {
+                polyid: layer._leaflet_id,
+                text: "",
+                x1: Math.round(layer._latlngs[0][0].lng),
+                y1: Math.round(layer._latlngs[0][0].lat),
+                x2: Math.round(layer._latlngs[0][2].lng),
+                y2: layer._latlngs[0][2].lat,
+            };
+
+            // get intdex of prebious
+            var idx;
+            if (selectedBox) {
+                idx = boxdata.value.findIndex(function (x) {
+                    return x.polyid == selectedBox.polyid;
+                });
+            } else {
+                idx = 0;
+            }
+            // insert after
+            boxdata.value.splice(idx + 1, 0, newbb);
+            fillAndFocusRect(newbb);
+        });
     };
 
     const resetImage = () => {
-        if (image.value) {
-            map.value.removeLayer(image.value);
+        if (image) {
+            map.removeLayer(image);
+            image = null;
         }
     };
     const loadImage = async (file) => {
@@ -58,22 +114,16 @@ const useTesseractStore = defineStore("tesseract", () => {
                     [h, w],
                 ];
 
-                console.log("bounds was", bounds, bounds2);
-
-                if (image.value) {
+                if (image) {
                     resetImage();
-                    map.value.fitBounds(bounds2);
-                    image.value = new L.imageOverlay(img.src, bounds).addTo(
-                        map.value
-                    );
+                    image = new L.imageOverlay(img.src, bounds).addTo(map);
+                    hasImage.value = true;
                 } else {
-                    map.value.fitBounds(bounds2);
-                    image.value = new L.imageOverlay(img.src, bounds).addTo(
-                        map.value
-                    );
+                    image = new L.imageOverlay(img.src, bounds).addTo(map);
+                    hasImage.value = true;
                 }
 
-                map.value.fitBounds(bounds2);
+                map.fitBounds(bounds2);
 
                 resolve(true);
             };
@@ -85,6 +135,149 @@ const useTesseractStore = defineStore("tesseract", () => {
         });
     };
 
+    function getBoxdataFromRect(rect) {
+        var firstel = boxdata.value.find(function (x) {
+            return x.polyid == rect._leaflet_id;
+        });
+        return firstel;
+    }
+    function updateBoxdata(id, d) {
+        var thebox = boxdata.value.findIndex(function (x) {
+            return x.polyid == id;
+        });
+        var ndata = Object.assign({}, boxdata.value[thebox], d);
+        boxdata.value[thebox] = ndata;
+    }
+    function getBoxdataFromId(id) {
+        var firstel = boxdata.value.find(function (x) {
+            return x.polyid == id;
+        });
+        return firstel;
+    }
+
+    function getListData(d) {
+        var thebox = boxdata.value.findIndex(function (x) {
+            return x.polyid == d.polyid;
+        });
+
+        var start = Math.max(thebox - 10, 0);
+        var end = Math.min(thebox + 10, boxdata.value.length);
+
+        return boxdata.value.slice(start, end);
+    }
+
+    function setFromData(d) {
+        selectedBox = d;
+        $("#formtxt").val(d.text).attr("boxid", d.polyid);
+        $("#txtlabel").text(d.text);
+        $("#x1").val(d.x1);
+        $("#y1").val(d.y1);
+        $("#x2").val(d.x2);
+        $("#y2").val(d.y2);
+        $("#formtxt").focus();
+
+        var listwords = getListData(d);
+        var list = $("#wordlist");
+        list.html("");
+        $(listwords).each(function (i, word) {
+            var item = $("<a/>").text(word.text);
+            if (word.polyid === d.polyid) {
+                item.attr("class", "bg-primary symbol");
+            } else {
+                item.attr("class", "text-muted symbol");
+            }
+            item.attr("name", word.polyid);
+            item.click(function () {
+                var polyid = $(this).attr("name");
+                fillAndFocusRect(getBoxdataFromId(polyid));
+            });
+            list.append(item);
+            //       $('#wordlist').listview('refresh')
+        });
+    }
+    function removeStyle(rect) {
+        if (rect) {
+            rect.setStyle({ color: "blue", opacity: 0.5, fillOpacity: 0.1 });
+        }
+    }
+    function disableEdit(rect) {
+        if (selectedPoly && rect != selectedPoly) {
+            selectedPoly.editing.disable();
+        }
+    }
+    function setStyle(rect) {
+        if (rect) {
+            rect.setStyle({ color: "red", fillOpacity: 0 });
+        }
+    }
+    function focusRect(id) {
+        removeStyle(selectedPoly);
+        var rect = boxlayer.getLayer(id);
+        disableEdit(rect);
+        var recb = rect.getBounds();
+        map.fitBounds(recb, { maxZoom: zoomMax.value });
+        // set style
+        selectedPoly = rect;
+        setStyle(rect);
+        $("#formtxt").focus();
+    }
+    function fillAndFocusRect(box) {
+        setFromData(box);
+        focusRect(box.polyid);
+    }
+    function editRect(e) {
+        var layer = e.target;
+        var box = getBoxdataFromRect(layer);
+        var newd = {
+            x1: Math.round(layer._latlngs[0][0].lng),
+            y1: Math.round(layer._latlngs[0][0].lat),
+            x2: Math.round(layer._latlngs[0][2].lng),
+            y2: Math.round(layer._latlngs[0][2].lat),
+        };
+
+        updateBoxdata(layer._leaflet_id, newd);
+
+        fillAndFocusRect(box);
+    }
+    function enableEdit(rect) {
+        selectedPoly = rect;
+        selectedPoly.editing.enable();
+    }
+    function onRectClick(event) {
+        var rect = event.target;
+
+        removeStyle(selectedPoly);
+        map.fitBounds(rect.getBounds(), { maxZoom: zoomMax.value + 1 });
+        setStyle(rect);
+        disableEdit(rect);
+        enableEdit(rect);
+
+        // get boxdatata
+        var bb = getBoxdataFromRect(rect);
+
+        setFromData(bb);
+    }
+
+    const resetBoxData = () => {
+        boxlayer.clearLayers();
+        boxdata.value = [];
+        rects.value = [];
+    };
+
+    function getNextBB(box) {
+        // Next
+        if (typeof box === "undefined") {
+            return boxdata.value[0];
+        }
+        var el = boxdata.value.findIndex(function (x) {
+            return x.polyid == box.polyid;
+        });
+        if (el == boxdata.value.length) {
+            return boxdata.value[el];
+        }
+        return boxdata.value[el + 1];
+    }
+
     const loadBoxData = async (selectedFile) => {
         var reader = new FileReader();
         // Read the file
@@ -95,13 +288,12 @@ const useTesseractStore = defineStore("tesseract", () => {
             var file = e.target.result;
 
             if (file && file.length) {
-                boxlayer.clearLayers();
-                boxdata.value = [];
+                resetBoxData();
 
                 file.split("\n").forEach(function (line) {
                     if (line.length > 5) {
                         var temp = line.split(" ");
-                        var symbole = {
+                        var symbol = {
                             text: temp[0],
                             x1: parseInt(temp[1]),
                             y1: parseInt(temp[2]),
@@ -110,8 +302,8 @@ const useTesseractStore = defineStore("tesseract", () => {
                         };
 
                         var rect = new L.rectangle([
-                            [symbole.y1, symbole.x1],
-                            [symbole.y2, symbole.x2],
+                            [symbol.y1, symbol.x1],
+                            [symbol.y2, symbol.x2],
                         ]);
 
                         rect.on("edit", editRect);
@@ -120,12 +312,13 @@ const useTesseractStore = defineStore("tesseract", () => {
 
                         boxlayer.addLayer(rect);
                         var polyid = boxlayer.getLayerId(rect);
-                        symbole.polyid = polyid;
-                        boxdata.value.push(symbole);
+                        symbol.polyid = polyid;
+                        boxdata.value.push(symbol);
+                        rects.value.push(rect);
                     }
                 });
 
-                map.value.addLayer(boxlayer);
+                map.addLayer(boxlayer);
 
                 // select next BB
                 var nextBB = getNextBB();
@@ -134,17 +327,71 @@ const useTesseractStore = defineStore("tesseract", () => {
         };
     };
 
+    const downloadBoxData = () => {
+        var content = "";
+        $.each(boxdata.value, function () {
+            content =
+                content +
+                this.text +
+                " " +
+                this.x1 +
+                " " +
+                this.y1 +
+                " " +
+                this.x2 +
+                " " +
+                this.y2 +
+                " 0\n";
+        });
+
+        window.open(
+            "data:application/txt," + encodeURIComponent(content),
+            "_self"
+        );
+    };
+
+    function getPrevtBB(box) {
+        // Next
+        if (typeof box === "undefined") {
+            return boxdata.value[0];
+        }
+        var el = boxdata.value.findIndex(function (x) {
+            return x.polyid == box.polyid;
+        });
+        if (el === 0) {
+            return boxdata.value[el];
+        }
+        return boxdata.value[el - 1];
+    }
+
+    const getNextAndFill = () => {
+        var box = getNextBB(selectedBox);
+        setFromData(box);
+
+        clearTimeout(movingTimer);
+        movingTimer = setTimeout(focusRect, doneMovingInterval, box.polyid);
+    };
+
+    const getPrevAndFill = () => {
+        var box = getPrevtBB(selectedBox);
+        setFromData(box);
+        clearTimeout(movingTimer);
+        movingTimer = setTimeout(focusRect, doneMovingInterval, box.polyid);
+    };
+
     const showFormRow = computed(() => {
         return boxdata.value.length > 0;
-    });
-    const hasImage = computed(() => {
-        return image.value !== null;
     });
 
     return {
         initMap,
         loadImage,
         resetImage,
+        loadBoxData,
+        resetBoxData,
+        downloadBoxData,
+        getNextAndFill,
+        getPrevAndFill,
         image,
         boxdata,
         showFormRow,
