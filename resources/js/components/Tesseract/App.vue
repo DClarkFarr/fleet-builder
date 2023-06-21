@@ -1,5 +1,35 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import useTesseract from "../../stores/tesseractStore";
+
+const ts = useTesseract();
+
+const mapid = ref(null);
+
+const onSelectImage = (e) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+        ts.loadImage(file);
+    } else {
+        ts.removeImage();
+    }
+};
+
+const onSelectBox = (e) => {
+    const file = e.target.files?.[0] || null;
+
+    if (file) {
+    } else {
+    }
+};
+
+onMounted(() => {
+    ts.initMap(mapid.value);
+});
+</script>
+
 <template>
-    <div class="tesseract px-4">
+    <div class="tesseract px-4" :class="{ 'tesseract--image': ts.hasImage }">
         <nav class="navbar navbar-default">
             <div class="mb-4">
                 <div class="navbar-header">
@@ -19,6 +49,7 @@
                         type="file"
                         id="file"
                         name="file"
+                        @change="onSelectImage"
                     />
                 </div>
                 <div class="form-group">
@@ -28,12 +59,13 @@
                         type="file"
                         id="boxfile"
                         name="boxfile"
+                        @change="onSelectBox"
                     />
                 </div>
             </form>
         </div>
         <div class="mb-4">
-            <div class="maprow" id="mapid"></div>
+            <div class="maprow" ref="mapid" id="mapid"></div>
         </div>
 
         <div class="mb-4">
@@ -41,7 +73,11 @@
                 <p id="wordlist"></p>
             </div>
         </div>
-        <div id="formrow" class="mb-4 flex gap-x-4 formrow hidden">
+        <div
+            id="formrow"
+            class="mb-4 flex gap-x-4 formrow"
+            v-show="ts.showFormRow"
+        >
             <div class="w-1/3">
                 <form class="form-horizontal" id="updateTxt">
                     <div class="form-group">
@@ -164,4 +200,12 @@
     </div>
 </template>
 
-<script setup></script>
+<style lang="less" scoped>
+.tesseract {
+    &--image {
+        :deep(.leaflet-image-layer) {
+            display: block;
+        }
+    }
+}
+</style>
