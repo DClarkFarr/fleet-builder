@@ -31,5 +31,14 @@
                 >Users</router-link
             >
         </div>
+        <div class="mb-2">
+            <a
+                class="block p-2 hover:bg-black/25"
+                href="/dashboard/tesseract"
+                target="_blank"
+            >
+                Tesseract Trainer
+            </a>
+        </div>
     </div>
 </template>

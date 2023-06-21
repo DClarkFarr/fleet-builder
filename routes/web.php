@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('/dashboard/tesseract')->middleware(['role:admin'])->group(function () {
+    Route::get("/{any?}", function () {
+        return view('tesseract');
+    })
+        ->where('any', '.*')
+        ->name('tesseract');
+});
+
 Route::prefix('/dashboard')->middleware(['role:admin'])->group(function () {
     Route::get("/{any?}", function () {
         return view('dashboard');
