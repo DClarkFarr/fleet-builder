@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, reactive } from "vue";
 import apiClient from "../services/apiClient";
+import { debounce } from "lodash";
 
 const useTesseractStore = defineStore("tesseract", () => {
-    var doneMovingInterval = 200;
+    const doneMovingInterval = 200;
     const boxlayer = new L.FeatureGroup();
     const drawControl = new L.Control.Draw({
         draw: {
@@ -22,15 +23,27 @@ const useTesseractStore = defineStore("tesseract", () => {
     let map = null;
     let image = null;
     let selectedBox = null;
+    const selectedBoxRef = ref(null);
     let selectedPoly = null;
     let movingTimer = null;
 
     const boxdata = ref([]);
     const rects = ref([]);
+    const listData = ref([]);
 
     const zoomMax = ref(1);
 
     const hasImage = ref(false);
+
+    const form = reactive({
+        file: "",
+        boxfile: "",
+        txt: "",
+        y1: "",
+        x1: "",
+        y2: "",
+        x2: "",
+    });
 
     const initMap = (mapEl) => {
         map = new L.map(mapEl, {
@@ -166,35 +179,28 @@ const useTesseractStore = defineStore("tesseract", () => {
         return boxdata.value.slice(start, end);
     }
 
-    function setFromData(d) {
-        selectedBox = d;
-        $("#formtxt").val(d.text).attr("boxid", d.polyid);
-        $("#txtlabel").text(d.text);
-        $("#x1").val(d.x1);
-        $("#y1").val(d.y1);
-        $("#x2").val(d.x2);
-        $("#y2").val(d.y2);
+    function setFormFromBox(box) {
+        selectedBox = box;
+        selectedBoxRef.value = box;
+
+        form.txt = box.text;
+
+        form.x1 = box.x1;
+        form.y1 = box.y1;
+        form.x2 = box.x2;
+        form.y2 = box.y2;
+
         $("#formtxt").focus();
 
-        var listwords = getListData(d);
-        var list = $("#wordlist");
-        list.html("");
-        $(listwords).each(function (i, word) {
-            var item = $("<a/>").text(word.text);
-            if (word.polyid === d.polyid) {
-                item.attr("class", "bg-primary symbol");
-            } else {
-                item.attr("class", "text-muted symbol");
-            }
-            item.attr("name", word.polyid);
-            item.click(function () {
-                var polyid = $(this).attr("name");
-                fillAndFocusRect(getBoxdataFromId(polyid));
-            });
-            list.append(item);
-            //       $('#wordlist').listview('refresh')
-        });
+        setListData(box);
     }
+
+    const setListData = (box) => {
+        const listwords = getListData(box);
+
+        listData.value = listwords;
+    };
+
     function removeStyle(rect) {
         if (rect) {
             rect.setStyle({ color: "blue", opacity: 0.5, fillOpacity: 0.1 });
@@ -222,7 +228,7 @@ const useTesseractStore = defineStore("tesseract", () => {
         $("#formtxt").focus();
     }
     function fillAndFocusRect(box) {
-        setFromData(box);
+        setFormFromBox(box);
         focusRect(box.polyid);
     }
     function editRect(e) {
@@ -255,7 +261,7 @@ const useTesseractStore = defineStore("tesseract", () => {
         // get boxdatata
         var bb = getBoxdataFromRect(rect);
 
-        setFromData(bb);
+        setFormFromBox(bb);
     }
 
     const resetBoxData = () => {
@@ -366,7 +372,7 @@ const useTesseractStore = defineStore("tesseract", () => {
 
     const getNextAndFill = () => {
         var box = getNextBB(selectedBox);
-        setFromData(box);
+        setFormFromBox(box);
 
         clearTimeout(movingTimer);
         movingTimer = setTimeout(focusRect, doneMovingInterval, box.polyid);
@@ -374,10 +380,39 @@ const useTesseractStore = defineStore("tesseract", () => {
 
     const getPrevAndFill = () => {
         var box = getPrevtBB(selectedBox);
-        setFromData(box);
+        setFormFromBox(box);
         clearTimeout(movingTimer);
         movingTimer = setTimeout(focusRect, doneMovingInterval, box.polyid);
     };
+
+    function updateRect(polyid, d) {
+        var rect = boxlayer.getLayer(polyid);
+        var newbounds = [
+            [d.y1, d.x1],
+            [d.y2, d.x2],
+        ];
+        rect.setBounds(newbounds);
+    }
+
+    const updateBoxFromForm = () => {
+        var polyid = selectedBox.polyid;
+
+        var newdata = {
+            text: form.txt,
+            x1: parseInt(form.x1),
+            y1: parseInt(form.y1),
+            x2: parseInt(form.x2),
+            y2: parseInt(form.y2),
+        };
+        updateBoxdata(polyid, newdata);
+        updateRect(polyid, newdata);
+        // fillAndFocusRect(getNextBB(selectedBox));
+    };
+
+    const debounceUpdateBoxFromForm = debounce(
+        updateBoxFromForm,
+        doneMovingInterval
+    );
 
     const showFormRow = computed(() => {
         return boxdata.value.length > 0;
@@ -392,10 +427,16 @@ const useTesseractStore = defineStore("tesseract", () => {
         downloadBoxData,
         getNextAndFill,
         getPrevAndFill,
+        updateBoxFromForm,
+        fillAndFocusRect,
+        debounceUpdateBoxFromForm,
         image,
         boxdata,
         showFormRow,
         hasImage,
+        form,
+        listData,
+        selectedBoxRef,
     };
 });
 

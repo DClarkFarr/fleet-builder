@@ -16,15 +16,6 @@
     margin-top: 20px;
 }
 
-#wordlist {
-    font-size: 200%;
-    white-space: nowrap;
-}
-
-.hidden {
-    display: none;
-}
-
 .center {
     text-align: center;
 }

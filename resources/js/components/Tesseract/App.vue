@@ -37,6 +37,10 @@ const onClickPrev = () => {
     ts.getPrevAndFill();
 };
 
+const onUpdateText = () => {
+    ts.updateBoxFromForm();
+};
+
 onMounted(() => {
     ts.initMap(mapid.value);
 });
@@ -56,7 +60,7 @@ onMounted(() => {
 
         <div class="mb-4">
             <form class="flex gap-x-4">
-                <div class="form-group">
+                <div class="mb-4">
                     <label for="file">Image:</label>
                     <input
                         class="form-control"
@@ -66,7 +70,7 @@ onMounted(() => {
                         @change="onSelectImage"
                     />
                 </div>
-                <div class="form-group">
+                <div class="mb-4">
                     <label for="boxfile">Box file:</label>
                     <input
                         class="form-control"
@@ -83,147 +87,131 @@ onMounted(() => {
         </div>
 
         <div class="mb-4">
-            <div class="flex justify-center">
-                <p id="wordlist"></p>
+            <div class="flex gap-x-3 items-center justify-center">
+                <div>
+                    <button
+                        id="previousBB"
+                        class="btn bg-gray-600"
+                        @click="onClickPrev"
+                    >
+                        Previous
+                    </button>
+                </div>
+
+                <div class="flex gap-x-2">
+                    <div v-for="(word, i) in ts.listData" :key="i">
+                        <a
+                            @click="ts.fillAndFocusRect(word)"
+                            :class="{
+                                'text-sky-500':
+                                    word.polyid === ts.selectedBoxRef.polyid,
+                                'text-gray-500 cursor-pointer':
+                                    word.polyid !== ts.selectedBoxRef.polyid,
+                            }"
+                        >
+                            {{ word.text }}
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <button
+                        id="nextBB"
+                        class="btn bg-gray-600"
+                        @click="onClickNext"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
-        <div
-            id="formrow"
-            class="mb-4 flex gap-x-4 formrow"
-            v-show="ts.showFormRow"
-        >
-            <div class="w-1/3">
-                <form class="form-horizontal" id="updateTxt">
-                    <div class="form-group">
-                        <label
-                            class="col-sm-2 control-label"
-                            for="formtxt"
-                            id="txtlabel"
-                            >Text</label
-                        >
-                        <div class="col-sm-10">
-                            <input
-                                type="text"
-                                id="formtxt"
-                                boxid=""
-                                name="txt"
-                                class="form-control input-lg"
-                                value=""
-                            />
-                        </div>
+        <div class="mb-4" v-show="ts.showFormRow">
+            <form class="mb-4" id="updateTxt" @submit.prevent="onUpdateText">
+                <div class="mb-4 flex gap-x-4">
+                    <div class="">
+                        <label for="formtxt"> Text </label>
+                        <input
+                            type="text"
+                            class="form-control input-lg"
+                            v-model="ts.form.txt"
+                        />
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default">
-                                Update
-                            </button>
+                    <div class="">
+                        <div>
+                            <label for="">&nbsp;</label>
                         </div>
+                        <button type="submit" class="btn bg-gray-600">
+                            Update
+                        </button>
                     </div>
-                </form>
-                <form class="form-horizontal" id="formbox">
-                    <div class="form-group">
-                        <label
-                            class="col-sm-2 control-label"
-                            for="y1"
-                            id="y1label"
-                            >Y1</label
-                        >
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                id="y1"
-                                name="y1"
-                                class="form-control input-lg"
-                                value=""
-                            />
-                        </div>
-                        <div class="col-ms-4"></div>
+                </div>
+            </form>
+            <form class="mb-4" id="formbox">
+                <div class="mb-4">
+                    <label class="col-sm-2 control-label" for="y1" id="y1label">
+                        Y1
+                    </label>
+                    <div class="col-sm-6">
+                        <input
+                            type="number"
+                            id="y1"
+                            class="form-control input-lg"
+                            v-model="ts.form.y1"
+                            @change="ts.debounceUpdateBoxFromForm"
+                        />
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label
-                            class="col-sm-2 control-label"
-                            for="x1"
-                            id="x1label"
-                            >X1</label
-                        >
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                id="x1"
-                                name="x1"
-                                class="form-control input-lg"
-                                value=""
-                            />
-                            <!--           number -->
-                        </div>
-                        <div class="col-ms-4"></div>
+                <div class="mb-4">
+                    <label class="col-sm-2 control-label" for="x1" id="x1label">
+                        X1
+                    </label>
+                    <div class="col-sm-6">
+                        <input
+                            type="number"
+                            id="x1"
+                            class="form-control input-lg"
+                            v-model="ts.form.x1"
+                            @change="ts.debounceUpdateBoxFromForm"
+                        />
                     </div>
-                    <div class="form-group">
-                        <label
-                            class="col-sm-2 control-label"
-                            for="y2"
-                            id="y2label"
-                            >Y2</label
-                        >
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                id="y2"
-                                name="y2"
-                                class="form-control input-lg"
-                                value=""
-                            />
-                            <!--           number -->
-                        </div>
-                        <div class="col-ms-4"></div>
+                    <div class="col-ms-4"></div>
+                </div>
+                <div class="mb-4">
+                    <label class="col-sm-2 control-label" for="y2" id="y2label">
+                        Y2
+                    </label>
+                    <div class="col-sm-6">
+                        <input
+                            type="number"
+                            id="y2"
+                            class="form-control input-lg"
+                            v-model="ts.form.y2"
+                            @change="ts.debounceUpdateBoxFromForm"
+                        />
                     </div>
-                    <div class="form-group">
-                        <label
-                            class="col-sm-2 control-label"
-                            for="x2"
-                            id="x2label"
-                            >X2</label
-                        >
-                        <div class="col-sm-6">
-                            <input
-                                type="number"
-                                id="x2"
-                                name="x2"
-                                class="form-control input-lg"
-                                value=""
-                            />
-                            <!--           number -->
-                        </div>
-                        <div class="col-ms-4"></div>
+                </div>
+                <div class="mb-4">
+                    <label class="col-sm-2 control-label" for="x2" id="x2label">
+                        X2
+                    </label>
+                    <div class="col-sm-6">
+                        <input
+                            type="number"
+                            id="x2"
+                            class="form-control input-lg"
+                            v-model="ts.form.x2"
+                            @change="ts.debounceUpdateBoxFromForm"
+                        />
                     </div>
-                </form>
-            </div>
-            <div class="w-1/3">
-                <button
-                    id="previousBB"
-                    class="btn bg-gray-600"
-                    @click="onClickPrev"
-                >
-                    Previous
-                </button>
-                <button
-                    id="nextBB"
-                    class="btn bg-gray-600"
-                    @click="onClickNext"
-                >
-                    Next
-                </button>
-                <br />
-                <br />
-                <button
-                    id="downloadBtn"
-                    @click="onClickDownload"
-                    class="btn bg-gray-600"
-                >
-                    Download
-                </button>
-            </div>
+                </div>
+            </form>
+            <button
+                id="downloadBtn"
+                @click="onClickDownload"
+                class="btn bg-gray-600"
+            >
+                Download
+            </button>
         </div>
     </div>
 </template>
