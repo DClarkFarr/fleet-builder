@@ -61,4 +61,11 @@ class TrainDataService
 
         return $fullPath;
     }
+
+    public function saveBoxFile($fileName, $contents)
+    {
+        $fullPath = $this->getSourcePath() . "/$fileName";
+
+        file_put_contents($fullPath, $contents);
+    }
 }

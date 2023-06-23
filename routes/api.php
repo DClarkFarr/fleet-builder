@@ -116,6 +116,7 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
     Route::prefix('/tesseract')->group(function () {
         Route::get('/options', [TesseractController::class, 'getTrainingOptions']);
         Route::get('/file/{file_name}', [TesseractController::class, 'getFile']);
+        Route::post('/file/{file_name}', [TesseractController::class, 'saveFile']);
     });
 });
 

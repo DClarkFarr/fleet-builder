@@ -35,6 +35,16 @@ const onClickDownload = () => {
     ts.downloadBoxData();
 };
 
+const onClickSave = () => {
+    const option = fileOptions.value.find(
+        (o) => o.number === selectedOption.value
+    );
+    if (!option) {
+        return console.error("No selected option");
+    }
+    ts.saveBoxData(option.box);
+};
+
 const onClickNext = () => {
     ts.getNextAndFill();
 };
@@ -212,13 +222,19 @@ onMounted(async () => {
                     </div>
                 </div>
             </form>
-            <button
-                id="downloadBtn"
-                @click="onClickDownload"
-                class="btn bg-gray-600"
-            >
-                Download
-            </button>
+
+            <div class="flex gap-x-4">
+                <div>
+                    <button @click="onClickDownload" class="btn bg-gray-600">
+                        Download
+                    </button>
+                </div>
+                <div>
+                    <button @click="onClickSave" class="btn bg-gray-600">
+                        Save
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>

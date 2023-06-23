@@ -14,4 +14,10 @@ export default class TesseractService {
             })
             .then((response) => response.data);
     }
+
+    static saveFile(filename, data) {
+        return apiClient
+            .post(`/admin/tesseract/file/${filename}`, data)
+            .then((response) => response.data);
+    }
 }

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref, reactive } from "vue";
 import apiClient from "../services/apiClient";
 import { debounce } from "lodash";
+import TesseractService from "../services/TesseractService";
 
 const useTesseractStore = defineStore("tesseract", () => {
     const doneMovingInterval = 200;
@@ -100,6 +101,19 @@ const useTesseractStore = defineStore("tesseract", () => {
             fillAndFocusRect(newbb);
         });
     };
+
+    function deleteBox(box) {
+        if (!box) {
+            return -1;
+        }
+        var boxindex = boxdata.value.findIndex(function (d) {
+            return d.polyid == box.polyid;
+        });
+        if (boxindex > -1) {
+            boxdata.value.splice(boxindex, 1);
+        }
+        return boxindex;
+    }
 
     const resetImage = () => {
         if (image) {
@@ -325,7 +339,7 @@ const useTesseractStore = defineStore("tesseract", () => {
     };
 
     const downloadBoxData = () => {
-        var content = "";
+        let content = "";
         $.each(boxdata.value, function () {
             content =
                 content +
@@ -345,6 +359,26 @@ const useTesseractStore = defineStore("tesseract", () => {
             "data:application/txt," + encodeURIComponent(content),
             "_self"
         );
+    };
+
+    const saveBoxData = async (filename) => {
+        let content = "";
+        $.each(boxdata.value, function () {
+            content =
+                content +
+                this.text +
+                " " +
+                this.x1 +
+                " " +
+                this.y1 +
+                " " +
+                this.x2 +
+                " " +
+                this.y2 +
+                " 0\n";
+        });
+
+        await TesseractService.saveFile(filename, content);
     };
 
     function getPrevtBB(box) {
@@ -420,6 +454,7 @@ const useTesseractStore = defineStore("tesseract", () => {
         getPrevAndFill,
         updateBoxFromForm,
         fillAndFocusRect,
+        saveBoxData,
         debounceUpdateBoxFromForm,
         image,
         boxdata,

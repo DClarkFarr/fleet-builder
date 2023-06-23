@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\TrainDataService;
+use Illuminate\Http\Request;
 
 class TesseractController extends Controller
 {
@@ -31,5 +32,16 @@ class TesseractController extends Controller
         $file = $this->service->readSourceFile($file_name);
 
         return response()->file($file);
+    }
+
+    public function saveFile(Request $request, $file_name)
+    {
+        $body = $request->getContent();
+
+        $this->service->saveBoxFile($file_name, $body);
+
+        return response()->json([
+            'message' => 'File saved',
+        ]);
     }
 }
