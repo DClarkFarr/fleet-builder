@@ -1,28 +1,34 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import useTesseract from "../../stores/tesseractStore";
+import TesseractService from "../../services/TesseractService";
 
 const ts = useTesseract();
 
 const mapid = ref(null);
 
-const onSelectImage = (e) => {
-    const file = e.target.files?.[0] || null;
-    if (file) {
-        ts.loadImage(file);
-    } else {
+const fileOptions = ref([]);
+const selectedOption = ref("");
+
+const onSelectOption = async (e) => {
+    const option = fileOptions.value.find((o) => o.number === e.target.value);
+
+    if (!option) {
         ts.removeImage();
-    }
-};
-
-const onSelectBox = (e) => {
-    const file = e.target.files?.[0] || null;
-
-    if (file) {
-        ts.loadBoxData(file);
-    } else {
         ts.resetBoxData();
+        return;
     }
+
+    const imgData = await TesseractService.getFile(option.jpg);
+
+    const imgReader = new window.FileReader();
+    imgReader.readAsDataURL(imgData);
+    imgReader.onload = () => {
+        ts.loadImage(imgReader.result);
+    };
+
+    const boxData = await TesseractService.getFile(option.box);
+    ts.loadBoxData(await boxData.text());
 };
 
 const onClickDownload = () => {
@@ -41,8 +47,12 @@ const onUpdateText = () => {
     ts.updateBoxFromForm();
 };
 
-onMounted(() => {
+onMounted(async () => {
     ts.initMap(mapid.value);
+
+    fileOptions.value = await TesseractService.getOptions();
+
+    console.log("got options", fileOptions.value);
 });
 </script>
 
@@ -59,35 +69,32 @@ onMounted(() => {
         </nav>
 
         <div class="mb-4">
-            <form class="flex gap-x-4">
-                <div class="mb-4">
-                    <label for="file">Image:</label>
-                    <input
-                        class="form-control"
-                        type="file"
-                        id="file"
-                        name="file"
-                        @change="onSelectImage"
-                    />
-                </div>
-                <div class="mb-4">
-                    <label for="boxfile">Box file:</label>
-                    <input
-                        class="form-control"
-                        type="file"
-                        id="boxfile"
-                        name="boxfile"
-                        @change="onSelectBox"
-                    />
-                </div>
-            </form>
+            <select
+                class="input p-2 border border-slate-500 w-[200px]"
+                v-model="selectedOption"
+                @change="onSelectOption"
+            >
+                <option value="" selected="selected">
+                    Select a file to modify
+                </option>
+                <option
+                    v-for="o in fileOptions"
+                    :key="o.number"
+                    :value="o.number"
+                >
+                    Set {{ o.number }}
+                </option>
+            </select>
         </div>
         <div class="mb-4">
             <div class="maprow" ref="mapid" id="mapid"></div>
         </div>
 
         <div class="mb-4">
-            <div class="flex gap-x-3 items-center justify-center">
+            <div
+                class="flex gap-x-3 items-center justify-center"
+                v-show="ts.listData.length"
+            >
                 <div>
                     <button
                         id="previousBB"

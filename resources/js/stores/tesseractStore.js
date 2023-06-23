@@ -144,7 +144,7 @@ const useTesseractStore = defineStore("tesseract", () => {
             img.onerror = function () {
                 reject("not a valid file: " + file.type);
             };
-            img.src = URL.createObjectURL(file);
+            img.setAttribute("src", file);
         });
     };
 
@@ -284,53 +284,44 @@ const useTesseractStore = defineStore("tesseract", () => {
         return boxdata.value[el + 1];
     }
 
-    const loadBoxData = async (selectedFile) => {
-        var reader = new FileReader();
-        // Read the file
-        reader.readAsText(selectedFile);
-        // When it's loaded, process it
+    const loadBoxData = async (boxData) => {
+        if (boxData && boxData.length) {
+            resetBoxData();
 
-        reader.onload = function processFile(e) {
-            var file = e.target.result;
+            boxData.split("\n").forEach(function (line) {
+                if (line.length > 5) {
+                    var temp = line.split(" ");
+                    var symbol = {
+                        text: temp[0],
+                        x1: parseInt(temp[1]),
+                        y1: parseInt(temp[2]),
+                        x2: parseInt(temp[3]),
+                        y2: parseInt(temp[4]),
+                    };
 
-            if (file && file.length) {
-                resetBoxData();
+                    var rect = new L.rectangle([
+                        [symbol.y1, symbol.x1],
+                        [symbol.y2, symbol.x2],
+                    ]);
 
-                file.split("\n").forEach(function (line) {
-                    if (line.length > 5) {
-                        var temp = line.split(" ");
-                        var symbol = {
-                            text: temp[0],
-                            x1: parseInt(temp[1]),
-                            y1: parseInt(temp[2]),
-                            x2: parseInt(temp[3]),
-                            y2: parseInt(temp[4]),
-                        };
+                    rect.on("edit", editRect);
+                    rect.on("click", onRectClick);
+                    // addLayer
 
-                        var rect = new L.rectangle([
-                            [symbol.y1, symbol.x1],
-                            [symbol.y2, symbol.x2],
-                        ]);
+                    boxlayer.addLayer(rect);
+                    var polyid = boxlayer.getLayerId(rect);
+                    symbol.polyid = polyid;
+                    boxdata.value.push(symbol);
+                    rects.value.push(rect);
+                }
+            });
 
-                        rect.on("edit", editRect);
-                        rect.on("click", onRectClick);
-                        // addLayer
+            map.addLayer(boxlayer);
 
-                        boxlayer.addLayer(rect);
-                        var polyid = boxlayer.getLayerId(rect);
-                        symbol.polyid = polyid;
-                        boxdata.value.push(symbol);
-                        rects.value.push(rect);
-                    }
-                });
-
-                map.addLayer(boxlayer);
-
-                // select next BB
-                var nextBB = getNextBB();
-                fillAndFocusRect(nextBB);
-            }
-        };
+            // select next BB
+            var nextBB = getNextBB();
+            fillAndFocusRect(nextBB);
+        }
     };
 
     const downloadBoxData = () => {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ShipClassController;
 use App\Http\Controllers\Admin\ShipController;
 use App\Http\Controllers\Admin\ShipLevelController;
+use App\Http\Controllers\Admin\TesseractController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\BuilderController;
 use App\Http\Controllers\User\DataController;
@@ -110,6 +111,11 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
             Route::put('/abilities', [ShipController::class, 'updateShipAbilities']);
             Route::delete('/abilities/{id_ability}', [ShipController::class, 'deleteShipAbility']);
         });
+    });
+
+    Route::prefix('/tesseract')->group(function () {
+        Route::get('/options', [TesseractController::class, 'getTrainingOptions']);
+        Route::get('/file/{file_name}', [TesseractController::class, 'getFile']);
     });
 });
 
