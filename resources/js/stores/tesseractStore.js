@@ -169,17 +169,11 @@ const useTesseractStore = defineStore("tesseract", () => {
         return firstel;
     }
     function updateBoxdata(id, d) {
-        var thebox = boxdata.value.findIndex(function (x) {
+        var boxIndex = boxdata.value.findIndex(function (x) {
             return x.polyid == id;
         });
-        var ndata = Object.assign({}, boxdata.value[thebox], d);
-        boxdata.value[thebox] = ndata;
-    }
-    function getBoxdataFromId(id) {
-        var firstel = boxdata.value.find(function (x) {
-            return x.polyid == id;
-        });
-        return firstel;
+        var ndata = Object.assign({}, boxdata.value[boxIndex], d);
+        boxdata.value.splice(boxIndex, 1, ndata);
     }
 
     function getListData(d) {
@@ -429,6 +423,7 @@ const useTesseractStore = defineStore("tesseract", () => {
             x2: parseInt(form.x2),
             y2: parseInt(form.y2),
         };
+
         updateBoxdata(polyid, newdata);
         updateRect(polyid, newdata);
         // fillAndFocusRect(getNextBB(selectedBox));

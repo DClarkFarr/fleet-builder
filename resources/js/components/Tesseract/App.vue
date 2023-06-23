@@ -116,7 +116,11 @@ onMounted(async () => {
                 </div>
 
                 <div class="flex gap-x-2">
-                    <div v-for="(word, i) in ts.listData" :key="i">
+                    <div
+                        v-for="(word, i) in ts.listData"
+                        :data-key="`${i}-${word.polyid}-${word.text}`"
+                        :key="`${i}-${word.polyid}-${word.text}`"
+                    >
                         <a
                             @click="ts.fillAndFocusRect(word)"
                             :class="{

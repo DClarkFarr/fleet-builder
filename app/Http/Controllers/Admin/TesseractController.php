@@ -31,7 +31,9 @@ class TesseractController extends Controller
     {
         $file = $this->service->readSourceFile($file_name);
 
-        return response()->file($file);
+        return response()->file($file, [
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
+        ]);
     }
 
     public function saveFile(Request $request, $file_name)
