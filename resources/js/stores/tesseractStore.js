@@ -32,7 +32,7 @@ const useTesseractStore = defineStore("tesseract", () => {
     const rects = ref([]);
     const listData = ref([]);
 
-    const zoomMax = ref(1);
+    const zoomMax = ref(3);
 
     const hasImage = ref(false);
 
@@ -100,6 +100,8 @@ const useTesseractStore = defineStore("tesseract", () => {
             boxdata.value.splice(idx + 1, 0, newbb);
             fillAndFocusRect(newbb);
         });
+
+        console.log("map", map);
     };
 
     function deleteBox(box) {
@@ -177,17 +179,19 @@ const useTesseractStore = defineStore("tesseract", () => {
     }
 
     function getListData(d) {
-        var thebox = boxdata.value.findIndex(function (x) {
+        var index = boxdata.value.findIndex(function (x) {
             return x.polyid == d.polyid;
         });
 
-        var start = Math.max(thebox - 10, 0);
-        var end = Math.min(thebox + 10, boxdata.value.length);
+        var start = Math.max(index - 10, 0);
+        var end = Math.min(index + 10, boxdata.value.length);
 
         return boxdata.value.slice(start, end);
     }
 
-    function setFormFromBox(box) {
+    function setFormFromBox(boxObj) {
+        const box = boxdata.value.find((b) => b.polyid === boxObj.polyid);
+
         selectedBox = box;
         selectedBoxRef.value = box;
 
@@ -197,8 +201,6 @@ const useTesseractStore = defineStore("tesseract", () => {
         form.y1 = box.y1;
         form.x2 = box.x2;
         form.y2 = box.y2;
-
-        $("#formtxt").focus();
 
         setListData(box);
     }
@@ -224,20 +226,21 @@ const useTesseractStore = defineStore("tesseract", () => {
             rect.setStyle({ color: "red", fillOpacity: 0 });
         }
     }
-    function focusRect(id) {
+    function focusRect(id, withZoom = false) {
         removeStyle(selectedPoly);
         var rect = boxlayer.getLayer(id);
         disableEdit(rect);
         var recb = rect.getBounds();
+
         map.fitBounds(recb, { maxZoom: zoomMax.value });
         // set style
         selectedPoly = rect;
         setStyle(rect);
         $("#formtxt").focus();
     }
-    function fillAndFocusRect(box) {
+    function fillAndFocusRect(box, withZoom = false) {
         setFormFromBox(box);
-        focusRect(box.polyid);
+        focusRect(box.polyid, withZoom);
     }
     function editRect(e) {
         var layer = e.target;
@@ -261,7 +264,9 @@ const useTesseractStore = defineStore("tesseract", () => {
         var rect = event.target;
 
         removeStyle(selectedPoly);
-        map.fitBounds(rect.getBounds(), { maxZoom: zoomMax.value + 1 });
+        map.fitBounds(rect.getBounds(), {
+            maxZoom: Math.min(zoomMax.value, map.getZoom()),
+        });
         setStyle(rect);
         disableEdit(rect);
         enableEdit(rect);
@@ -328,7 +333,7 @@ const useTesseractStore = defineStore("tesseract", () => {
 
             // select next BB
             var nextBB = getNextBB();
-            fillAndFocusRect(nextBB);
+            fillAndFocusRect(nextBB, true);
         }
     };
 
@@ -426,6 +431,8 @@ const useTesseractStore = defineStore("tesseract", () => {
 
         updateBoxdata(polyid, newdata);
         updateRect(polyid, newdata);
+
+        setListData(selectedBox);
         // fillAndFocusRect(getNextBB(selectedBox));
     };
 

@@ -130,7 +130,7 @@ onMounted(async () => {
                                     word.polyid !== ts.selectedBoxRef.polyid,
                             }"
                         >
-                            {{ word.text }}
+                            {{ word.text || "*" }}
                         </a>
                     </div>
                 </div>
