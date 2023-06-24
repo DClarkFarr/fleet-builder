@@ -22,7 +22,7 @@ class TrainDataService
             ->values()
             ->map(function ($filename) {
                 $segs = explode('.', $filename);
-                // eng.ocrb.exp0.jpg
+                // eng.fleet.exp0.jpg
                 $matches = [];
                 preg_match('/\d+/', $segs[2], $matches);
 
