@@ -30,7 +30,6 @@ const useTesseractStore = defineStore("tesseract", () => {
 
     const boxdata = ref([]);
     const rects = ref([]);
-    const listData = ref([]);
     const formTxt = ref(null);
 
     const zoomMax = ref(3);
@@ -187,17 +186,6 @@ const useTesseractStore = defineStore("tesseract", () => {
         boxdata.value.splice(boxIndex, 1, ndata);
     }
 
-    function getListData(d) {
-        var index = boxdata.value.findIndex(function (x) {
-            return x.polyid == d.polyid;
-        });
-
-        var start = Math.max(index - 10, 0);
-        var end = Math.min(index + 10, boxdata.value.length);
-
-        return boxdata.value.slice(start, end);
-    }
-
     function setFormFromBox(boxObj) {
         const box = boxdata.value.find((b) => b.polyid === boxObj.polyid);
 
@@ -210,15 +198,7 @@ const useTesseractStore = defineStore("tesseract", () => {
         form.y1 = box.y1;
         form.x2 = box.x2;
         form.y2 = box.y2;
-
-        setListData(box);
     }
-
-    const setListData = (box) => {
-        const listwords = getListData(box);
-
-        listData.value = listwords;
-    };
 
     function removeStyle(rect) {
         if (rect) {
@@ -446,7 +426,6 @@ const useTesseractStore = defineStore("tesseract", () => {
         updateBoxdata(polyid, newdata);
         updateRect(polyid, newdata);
 
-        setListData(selectedBox);
         // fillAndFocusRect(getNextBB(selectedBox));
     };
 
@@ -477,7 +456,6 @@ const useTesseractStore = defineStore("tesseract", () => {
         showFormRow,
         hasImage,
         form,
-        listData,
         selectedBoxRef,
     };
 });

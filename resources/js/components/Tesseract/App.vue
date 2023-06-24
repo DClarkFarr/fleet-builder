@@ -101,24 +101,156 @@ onMounted(async () => {
             <div class="maprow" ref="mapid" id="mapid"></div>
         </div>
 
-        <div class="mb-4">
-            <div
-                class="flex gap-x-3 items-center justify-center"
-                v-show="ts.listData.length"
-            >
-                <div>
-                    <button
-                        id="previousBB"
-                        class="btn bg-gray-600"
-                        @click="onClickPrev"
-                    >
-                        Previous
-                    </button>
-                </div>
+        <div class="mb-4 flex gap-x-4 justify-center" v-show="ts.showFormRow">
+            <div>
+                <button
+                    id="previousBB"
+                    class="btn bg-gray-600"
+                    @click="onClickPrev"
+                >
+                    Previous
+                </button>
+            </div>
+            <div>
+                <button
+                    id="nextBB"
+                    class="btn bg-gray-600"
+                    @click="onClickNext"
+                >
+                    Next
+                </button>
+            </div>
+        </div>
 
-                <div class="flex gap-x-2">
+        <div class="flex gap-x-4" v-show="ts.showFormRow">
+            <div class="grow w-75">
+                <form
+                    class="mb-4"
+                    id="updateTxt"
+                    @submit.prevent="onUpdateText"
+                >
+                    <div class="mb-4 flex gap-x-4">
+                        <div class="">
+                            <label for="formtxt"> Text </label>
+                            <input
+                                ref="formTxt"
+                                type="text"
+                                class="form-control input-lg"
+                                v-model="ts.form.txt"
+                                @keyup.enter="onUpdateText"
+                                @keydown.tab.prevent.exact="onClickNext"
+                                @keydown.shift.tab.prevent.exact="onClickPrev"
+                            />
+                        </div>
+                        <div class="">
+                            <div>
+                                <label for="">&nbsp;</label>
+                            </div>
+                            <button type="submit" class="btn bg-gray-600">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <form class="mb-4" id="formbox">
+                    <div class="mb-4">
+                        <label
+                            class="col-sm-2 control-label"
+                            for="y1"
+                            id="y1label"
+                        >
+                            Y1
+                        </label>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                id="y1"
+                                class="form-control input-lg"
+                                v-model="ts.form.y1"
+                                @change="ts.debounceUpdateBoxFromForm"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label
+                            class="col-sm-2 control-label"
+                            for="x1"
+                            id="x1label"
+                        >
+                            X1
+                        </label>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                id="x1"
+                                class="form-control input-lg"
+                                v-model="ts.form.x1"
+                                @change="ts.debounceUpdateBoxFromForm"
+                            />
+                        </div>
+                        <div class="col-ms-4"></div>
+                    </div>
+                    <div class="mb-4">
+                        <label
+                            class="col-sm-2 control-label"
+                            for="y2"
+                            id="y2label"
+                        >
+                            Y2
+                        </label>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                id="y2"
+                                class="form-control input-lg"
+                                v-model="ts.form.y2"
+                                @change="ts.debounceUpdateBoxFromForm"
+                            />
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label
+                            class="col-sm-2 control-label"
+                            for="x2"
+                            id="x2label"
+                        >
+                            X2
+                        </label>
+                        <div class="col-sm-6">
+                            <input
+                                type="number"
+                                id="x2"
+                                class="form-control input-lg"
+                                v-model="ts.form.x2"
+                                @change="ts.debounceUpdateBoxFromForm"
+                            />
+                        </div>
+                    </div>
+                </form>
+
+                <div class="flex gap-x-4">
+                    <div>
+                        <button
+                            @click="onClickDownload"
+                            class="btn bg-gray-600"
+                        >
+                            Download
+                        </button>
+                    </div>
+                    <div>
+                        <button @click="onClickSave" class="btn bg-gray-600">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="shrink w-[300px] p-4 border border-slate-400 bg-slate-100"
+            >
+                <div class="flex gap-3 flex-wrap items-center justify-center">
                     <div
-                        v-for="(word, i) in ts.listData"
+                        v-for="(word, i) in ts.boxdata"
                         :data-key="`${i}-${word.polyid}-${word.text}`"
                         :key="`${i}-${word.polyid}-${word.text}`"
                     >
@@ -134,114 +266,6 @@ onMounted(async () => {
                             {{ word.text || "*" }}
                         </a>
                     </div>
-                </div>
-                <div>
-                    <button
-                        id="nextBB"
-                        class="btn bg-gray-600"
-                        @click="onClickNext"
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="mb-4" v-show="ts.showFormRow">
-            <form class="mb-4" id="updateTxt" @submit.prevent="onUpdateText">
-                <div class="mb-4 flex gap-x-4">
-                    <div class="">
-                        <label for="formtxt"> Text </label>
-                        <input
-                            ref="formTxt"
-                            type="text"
-                            class="form-control input-lg"
-                            v-model="ts.form.txt"
-                            @keyup.enter="onUpdateText"
-                            @keydown.tab.prevent.exact="onClickNext"
-                            @keydown.shift.tab.prevent.exact="onClickPrev"
-                        />
-                    </div>
-                    <div class="">
-                        <div>
-                            <label for="">&nbsp;</label>
-                        </div>
-                        <button type="submit" class="btn bg-gray-600">
-                            Update
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <form class="mb-4" id="formbox">
-                <div class="mb-4">
-                    <label class="col-sm-2 control-label" for="y1" id="y1label">
-                        Y1
-                    </label>
-                    <div class="col-sm-6">
-                        <input
-                            type="number"
-                            id="y1"
-                            class="form-control input-lg"
-                            v-model="ts.form.y1"
-                            @change="ts.debounceUpdateBoxFromForm"
-                        />
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="col-sm-2 control-label" for="x1" id="x1label">
-                        X1
-                    </label>
-                    <div class="col-sm-6">
-                        <input
-                            type="number"
-                            id="x1"
-                            class="form-control input-lg"
-                            v-model="ts.form.x1"
-                            @change="ts.debounceUpdateBoxFromForm"
-                        />
-                    </div>
-                    <div class="col-ms-4"></div>
-                </div>
-                <div class="mb-4">
-                    <label class="col-sm-2 control-label" for="y2" id="y2label">
-                        Y2
-                    </label>
-                    <div class="col-sm-6">
-                        <input
-                            type="number"
-                            id="y2"
-                            class="form-control input-lg"
-                            v-model="ts.form.y2"
-                            @change="ts.debounceUpdateBoxFromForm"
-                        />
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="col-sm-2 control-label" for="x2" id="x2label">
-                        X2
-                    </label>
-                    <div class="col-sm-6">
-                        <input
-                            type="number"
-                            id="x2"
-                            class="form-control input-lg"
-                            v-model="ts.form.x2"
-                            @change="ts.debounceUpdateBoxFromForm"
-                        />
-                    </div>
-                </div>
-            </form>
-
-            <div class="flex gap-x-4">
-                <div>
-                    <button @click="onClickDownload" class="btn bg-gray-600">
-                        Download
-                    </button>
-                </div>
-                <div>
-                    <button @click="onClickSave" class="btn bg-gray-600">
-                        Save
-                    </button>
                 </div>
             </div>
         </div>
