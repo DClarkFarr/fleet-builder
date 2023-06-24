@@ -47,10 +47,12 @@ const onClickSave = () => {
 };
 
 const onClickNext = () => {
+    ts.updateBoxFromForm();
     ts.getNextAndFill();
 };
 
 const onClickPrev = () => {
+    ts.updateBoxFromForm();
     ts.getPrevAndFill();
 };
 
