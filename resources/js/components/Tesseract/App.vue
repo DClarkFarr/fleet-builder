@@ -256,8 +256,9 @@ onMounted(async () => {
                     >
                         <a
                             @click="ts.fillAndFocusRect(word)"
+                            class="px-1"
                             :class="{
-                                'text-sky-500':
+                                'bg-gray-700 text-white leading-none':
                                     word.polyid === ts.selectedBoxRef.polyid,
                                 'text-gray-500 cursor-pointer':
                                     word.polyid !== ts.selectedBoxRef.polyid,
