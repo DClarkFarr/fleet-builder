@@ -77,7 +77,6 @@ const handleBlockAdd = (depthPath, toAdd) => {
 };
 
 const handleBlockChange = (origDepthPath, data) => {
-    console.log("handle block change", origDepthPath, data);
     const depthPath = [...origDepthPath];
     const index = depthPath.pop();
 

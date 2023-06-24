@@ -71,7 +71,6 @@ const onDeleteClass = (id_level, form, resolve, reject) => {
             loadLevels();
         })
         .catch((err) => {
-            console.log("caught error", err);
             let message = err.response?.data?.message || err.message;
 
             reject(message);

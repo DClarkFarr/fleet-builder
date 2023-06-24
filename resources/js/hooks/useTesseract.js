@@ -7,7 +7,6 @@ const createWorkerInstance = async () => {
         logger: (m) => console.log(m),
     });
 
-    console.log("was worker", worker);
     await worker.load();
     await worker.loadLanguage("eng");
     await worker.initialize("eng");

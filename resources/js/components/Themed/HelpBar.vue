@@ -10,7 +10,6 @@ const props = defineProps({});
 const userStore = useUserStore();
 
 const showQuickReferenceModal = () => {
-    console.log("trying to show");
     $vfm.show({
         component: QuickGuideModal,
     });

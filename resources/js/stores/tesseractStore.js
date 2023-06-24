@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, watch } from "vue";
 import apiClient from "../services/apiClient";
 import { debounce } from "lodash";
 import TesseractService from "../services/TesseractService";
@@ -31,6 +31,7 @@ const useTesseractStore = defineStore("tesseract", () => {
     const boxdata = ref([]);
     const rects = ref([]);
     const listData = ref([]);
+    const formTxt = ref(null);
 
     const zoomMax = ref(3);
 
@@ -46,7 +47,17 @@ const useTesseractStore = defineStore("tesseract", () => {
         x2: "",
     });
 
-    const initMap = (mapEl) => {
+    const initMap = (mapEl, inputElemRef) => {
+        watch(
+            () => inputElemRef,
+            () => {
+                formTxt.value = inputElemRef.value;
+            },
+            {
+                immediate: true,
+            }
+        );
+
         map = new L.map(mapEl, {
             crs: L.CRS.Simple,
             minZoom: -5,
@@ -100,8 +111,6 @@ const useTesseractStore = defineStore("tesseract", () => {
             boxdata.value.splice(idx + 1, 0, newbb);
             fillAndFocusRect(newbb);
         });
-
-        console.log("map", map);
     };
 
     function deleteBox(box) {
@@ -275,6 +284,11 @@ const useTesseractStore = defineStore("tesseract", () => {
         var bb = getBoxdataFromRect(rect);
 
         setFormFromBox(bb);
+
+        if (formTxt.value) {
+            formTxt.value.select();
+            formTxt.value.focus();
+        }
     }
 
     const resetBoxData = () => {

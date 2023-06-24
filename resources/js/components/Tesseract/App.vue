@@ -6,6 +6,7 @@ import TesseractService from "../../services/TesseractService";
 const ts = useTesseract();
 
 const mapid = ref(null);
+const formTxt = ref(null);
 
 const fileOptions = ref([]);
 const selectedOption = ref("");
@@ -58,11 +59,9 @@ const onUpdateText = () => {
 };
 
 onMounted(async () => {
-    ts.initMap(mapid.value);
+    ts.initMap(mapid.value, formTxt);
 
     fileOptions.value = await TesseractService.getOptions();
-
-    console.log("got options", fileOptions.value);
 });
 </script>
 
@@ -151,9 +150,13 @@ onMounted(async () => {
                     <div class="">
                         <label for="formtxt"> Text </label>
                         <input
+                            ref="formTxt"
                             type="text"
                             class="form-control input-lg"
                             v-model="ts.form.txt"
+                            @keyup.enter="onUpdateText"
+                            @keydown.tab.prevent.exact="onClickNext"
+                            @keydown.shift.tab.prevent.exact="onClickPrev"
                         />
                     </div>
                     <div class="">
