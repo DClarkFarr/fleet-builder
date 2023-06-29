@@ -14,15 +14,8 @@ import Chips from "@/components/Themed/ship/Chips.vue";
 import { summedStatsTotalToText } from "../../methods/summedAbilityToText";
 import DataService from "../../services/DataService";
 import StatTotal from "../../components/Themed/ability/StatTotal.vue";
-
-const builderStore = useBuilderStore();
-const userStore = useUserStore();
-
-const onClickLogout = () => {
-    userStore.logout();
-};
-
-const allLoaded = ref(false);
+import TimesIcon from "~icons/fa-solid/times";
+import CheckIcon from "~icons/fa-solid/check";
 
 const attackColumns = [
     DataService.ABILITY_TYPES.INCREASE_ATTACK_SPEED,
@@ -362,16 +355,68 @@ const sortMap = {
     },
 };
 
+const builderStore = useBuilderStore();
+const userStore = useUserStore();
+
 const sortOptions = Object.entries(sortMap).map(([key, value]) => ({
     key,
     ...value,
 }));
-
 const statAbilityShips = ref([]);
 
 const selectedOptions = ref([]);
 
+const allLoaded = ref(false);
+
+const searchText = ref("");
+
+const selectedShipClasses = ref([]);
+
+const selectedShipIds = ref([]);
+
+const excludedShipIds = ref([]);
+
 window.sortMapTrack = {};
+
+const onSelectShip = (id_user_ship) => {
+    if (!isSelected(id_user_ship)) {
+        selectedShipIds.value.push(id_user_ship);
+    }
+};
+const onExcludeShip = (id_user_ship) => {
+    if (!isExcluded(id_user_ship)) {
+        excludedShipIds.value.push(id_user_ship);
+    }
+    if (isSelected(id_user_ship)) {
+        onRemoveSelectedShip(id_user_ship);
+    }
+};
+
+const onRemoveSelectedShip = (id_user_ship) => {
+    const index = selectedShipIds.value.indexOf(id_user_ship);
+    if (index > -1) {
+        selectedShipIds.value.splice(index, 1);
+    }
+};
+
+const onRemoveExcludedShip = (id_user_ship) => {
+    const index = excludedShipIds.value.indexOf(id_user_ship);
+    if (index > -1) {
+        excludedShipIds.value.splice(index, 1);
+    }
+};
+
+const isSelected = (id_user_ship) => {
+    return selectedShipIds.value.includes(id_user_ship);
+};
+
+const isExcluded = (id_user_ship) => {
+    return excludedShipIds.value.includes(id_user_ship);
+};
+
+const onClickLogout = () => {
+    userStore.logout();
+};
 
 const getShipOptionValue = (statShip, option) => {
     // map each filter and join
@@ -429,9 +474,38 @@ const getShipOptionValue = (statShip, option) => {
 
     return val;
 };
+
+const shipClassOptions = computed(() => {
+    return builderStore.shipClasses.map((shipClass) => ({
+        label: shipClass.name,
+        value: shipClass.id_class,
+    }));
+});
+
 const sortedShips = computed(() => {
     window.sortMapTrack = {};
-    const arr = [...statAbilityShips.value];
+    const arr = [...statAbilityShips.value].filter((userShip) => {
+        let okay = true;
+
+        if (okay && excludedShipIds.value.length) {
+            okay = !excludedShipIds.value.includes(userShip.id_user_ship);
+        }
+
+        if (okay && searchText.value.length > 0) {
+            const searched = searchText.value.toLowerCase();
+            okay =
+                userShip.ship.name.toLowerCase().includes(searched) ||
+                (userShip.name &&
+                    userShip.name.toLowerCase().includes(searched));
+        }
+
+        if (okay && selectedShipClasses.value.length) {
+            const selectedIds = selectedShipClasses.value.map((sc) => sc.value);
+            okay = selectedIds.includes(userShip.ship.id_class);
+        }
+
+        return okay;
+    });
 
     console.time("SortComputed");
 
@@ -441,6 +515,12 @@ const sortedShips = computed(() => {
         const options = cloneDeep(selectedOptions.value);
 
         window.sortMapTrack[match] = {};
+        const aSelected = isSelected(a.id_user_ship);
+        const bSelected = isSelected(b.id_user_ship);
+
+        if (aSelected !== bSelected) {
+            return aSelected ? -1 : 1;
+        }
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
             const aOptionValues = getShipOptionValue(a, option);
@@ -474,6 +554,34 @@ const sortedShips = computed(() => {
 
     console.timeEnd("SortComputed");
     return arr;
+});
+
+const selectedShips = computed(() => {
+    return selectedShipIds.value.map((id_user_ship) => {
+        const found = builderStore.userShips.find(
+            (userShip) => userShip.id_user_ship === id_user_ship
+        );
+        return {
+            id_user_ship,
+            name: found.ship.name,
+            level: found.level,
+            chip_level: found.chip_level,
+        };
+    });
+});
+
+const excludedShips = computed(() => {
+    return excludedShipIds.value.map((id_user_ship) => {
+        const found = builderStore.userShips.find(
+            (userShip) => userShip.id_user_ship === id_user_ship
+        );
+        return {
+            id_user_ship,
+            name: found.ship.name,
+            level: found.level,
+            chip_level: found.chip_level,
+        };
+    });
 });
 
 onMounted(async () => {
@@ -601,14 +709,79 @@ onMounted(async () => {
 
         <div class="ships-viewer p-6 bg-white mx-8">
             <div class="controls mb-10">
-                <div>
-                    <div>Select Sort Options</div>
-                    <div>
-                        <VSelect
-                            :options="sortOptions"
-                            multiple
-                            v-model="selectedOptions"
-                        />
+                <div class="flex gap-x-4 mb-4">
+                    <div class="w-1/2">
+                        <div>Select Sort Options</div>
+                        <div>
+                            <VSelect
+                                :options="sortOptions"
+                                multiple
+                                v-model="selectedOptions"
+                            />
+                        </div>
+                    </div>
+                    <div class="w-1/2">
+                        <div>Filter by ship class</div>
+                        <div>
+                            <VSelect
+                                :options="shipClassOptions"
+                                multiple
+                                v-model="selectedShipClasses"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-x-4 mb-4">
+                    <div class="w-1/3">
+                        <div>Search ship name/nickname</div>
+                        <div class="input-group flex items-center gap-x-2">
+                            <div class="grow">
+                                <input
+                                    type="text"
+                                    class="input"
+                                    placeholder="Search ships"
+                                    v-model="searchText"
+                                />
+                            </div>
+                            <div class="shrink" v-if="searchText.length">
+                                <button
+                                    class="btn btn-red bg-red"
+                                    @click="searchText = ''"
+                                >
+                                    <TimesIcon />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/3">
+                        <div>Selected Ships</div>
+                        <div class="flex flex-wrap gap-3">
+                            <div
+                                class="bg-gray-200 hover:bg-gray-300 rounded px-2 py-1 text-sm cursor-pointer"
+                                v-for="ship in selectedShips"
+                                :key="ship.id_user_ship"
+                                @click="onRemoveSelectedShip(ship.id_user_ship)"
+                            >
+                                {{ ship.chip_level }}*
+                                {{ ship.name }}
+                                L{{ ship.level }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/3">
+                        <div>Excluded Ships</div>
+                        <div class="flex flex-wrap gap-3">
+                            <div
+                                class="bg-gray-200 hover:bg-gray-300 rounded px-2 py-1 text-sm cursor-pointer"
+                                v-for="ship in excludedShips"
+                                :key="ship.id_user_ship"
+                                @click="onRemoveExcludedShip(ship.id_user_ship)"
+                            >
+                                {{ ship.chip_level }}*
+                                {{ ship.name }}
+                                L{{ ship.level }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -616,6 +789,7 @@ onMounted(async () => {
                 <table class="table w-full" cellspacing="0" cellpadding="0">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Ship</th>
                             <th>Slot Strength</th>
                             <th>Attack</th>
@@ -629,7 +803,32 @@ onMounted(async () => {
                             v-for="(userShip, index) in sortedShips"
                             :key="userShip.id_user_ship"
                             :data-index="index"
+                            :class="{
+                                selected: isSelected(userShip.id_user_ship),
+                            }"
                         >
+                            <td>
+                                <div>
+                                    <button
+                                        class="btn btn-sm bg-emerald-600 text-white select-ship"
+                                        @click="
+                                            onSelectShip(userShip.id_user_ship)
+                                        "
+                                    >
+                                        <CheckIcon />
+                                    </button>
+                                </div>
+                                <div>
+                                    <button
+                                        class="btn btn-sm bg-red-600 text-white exclude-ship"
+                                        @click="
+                                            onExcludeShip(userShip.id_user_ship)
+                                        "
+                                    >
+                                        <TimesIcon />
+                                    </button>
+                                </div>
+                            </td>
                             <td>
                                 <div class="text-xs flex gap-x-2">
                                     <div>
@@ -861,19 +1060,30 @@ onMounted(async () => {
             background: #eee;
         }
     }
+
+    tr {
+        &.selected {
+            td {
+                background: #beecdd;
+                .select-ship {
+                    display: none;
+                }
+            }
+        }
+    }
 }
 
 .controls {
-    :deep(.v-select) {
+    :deep(.v-select, .input) {
         background: #fff;
         color: #232323;
     }
 
-    :deep(.vs__dropdown-menu) {
+    :deep(.vs__dropdown-menu, .input) {
         background: #fff;
     }
 
-    :deep(.vs__selected) {
+    :deep(.vs__selected, .input) {
         color: #232323;
     }
     :deep(.vs__dropdown-option--selected) {
