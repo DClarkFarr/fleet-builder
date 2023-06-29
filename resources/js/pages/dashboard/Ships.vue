@@ -124,3 +124,11 @@ onMounted(async () => {
         </div>
     </DashboardLayout>
 </template>
+
+<style lang="less" scoped>
+.ships-list {
+    tr:hover td {
+        background: #eaeaea;
+    }
+}
+</style>

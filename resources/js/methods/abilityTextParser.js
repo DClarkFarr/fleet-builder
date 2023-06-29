@@ -251,7 +251,7 @@ const parseVariantDescription = (ability, location = "to") => {
 
 export const parseText = (str, pairs, fallback = "") => {
     const pattern = /\{\s*(\w+)\s*\}/gm;
-    const r = str.matchAll(pattern);
+    const r = (str || "").matchAll(pattern);
     const values = [];
 
     let m;

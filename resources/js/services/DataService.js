@@ -523,6 +523,11 @@ export default class DataService {
                 DataService.RESISTANCE_TYPES.HULL,
                 DataService.RESISTANCE_TYPES.ARMOR,
             ],
+            [DataService.ABILITY_TYPES.INCREASE_ARMOR]: [
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+                DataService.RESISTANCE_TYPES.ARMOR,
+            ],
             [DataService.ABILITY_TYPES.REDUCE_DAMAGE]: [
                 DataService.RESISTANCE_TYPES.SHIELDS,
                 DataService.RESISTANCE_TYPES.HULL,
@@ -532,6 +537,9 @@ export default class DataService {
                 DataService.WEAPON_CLASSES.BEAM,
                 DataService.WEAPON_CLASSES.MISSILE,
                 DataService.WEAPON_CLASSES.KINETIC,
+                DataService.RESISTANCE_TYPES.SHIELDS,
+                DataService.RESISTANCE_TYPES.HULL,
+                DataService.RESISTANCE_TYPES.ARMOR,
             ],
             [DataService.ABILITY_TYPES.INCREASE_PENETRATION]: [
                 DataService.RESISTANCE_TYPES.SHIELDS,

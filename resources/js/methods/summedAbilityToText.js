@@ -42,6 +42,7 @@ export const summedFleetStatsTotalToText = (
             "Increase {variants} Resistance",
         [DataService.ABILITY_TYPES.INCREASE_PENETRATION]:
             "Increase {variants} Penetration",
+        [DataService.ABILITY_TYPES.INCREASE_ARMOR]: "Increase {variants} Armor",
     };
 
     let title;
@@ -174,6 +175,7 @@ export const summedStatsTotalToText = (
             "Increase {variants} Resistance",
         [DataService.ABILITY_TYPES.INCREASE_PENETRATION]:
             "Increase {variants} Penetration",
+        [DataService.ABILITY_TYPES.INCREASE_ARMOR]: "Increase {variants} Armor",
     };
 
     let title;

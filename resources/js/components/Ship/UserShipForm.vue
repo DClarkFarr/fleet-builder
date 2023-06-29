@@ -61,7 +61,7 @@ const onSubmit = async () => {
             columns: columnValues.value,
         });
     } catch (err) {
-        toast.error(error.response?.data?.message || err.message);
+        toast.error(err.response?.data?.message || err.message);
     }
 
     isSaving.value = false;
@@ -76,7 +76,7 @@ const onClickDelete = async (userShip) => {
     try {
         props.onDelete(userShip);
     } catch (err) {
-        toast.error(error.response?.data?.message || err.message);
+        toast.error(err.response?.data?.message || err.message);
     }
 
     isSaving.value = false;
@@ -128,6 +128,9 @@ const chipCount = computed(() => {
 });
 
 const columnsReferenced = computed(() => {
+    if (!props.userShip) {
+        return [];
+    }
     const columnNames = DataService.getShipColumns();
     const columns = getUserShipColumnsReferenced(props.userShip);
 
