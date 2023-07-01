@@ -353,6 +353,22 @@ const sortMap = {
             },
         ],
     },
+    [DataService.ABILITY_TYPES.INCREASE_ACCURACY]: {
+        label: "Accuracy",
+        filters: [
+            {
+                abilityType: DataService.ABILITY_TYPES.INCREASE_ACCURACY,
+            },
+        ],
+    },
+    [DataService.ABILITY_TYPES.INCREASE_EVADE]: {
+        label: "Evade",
+        filters: [
+            {
+                abilityType: DataService.ABILITY_TYPES.INCREASE_EVADE,
+            },
+        ],
+    },
 };
 
 const builderStore = useBuilderStore();
