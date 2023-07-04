@@ -12,6 +12,13 @@
         </div>
         <div class="mb-2">
             <router-link
+                :to="{ name: 'dashboard.admirals' }"
+                class="block p-2 hover:bg-black/25"
+                >Admirals</router-link
+            >
+        </div>
+        <div class="mb-2">
+            <router-link
                 :to="{ name: 'dashboard.classes' }"
                 class="block p-2 hover:bg-black/25"
                 >Ship Classes</router-link

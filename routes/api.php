@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ShipClassController;
 use App\Http\Controllers\Admin\ShipController;
+use App\Http\Controllers\Admin\AdmiralController;
 use App\Http\Controllers\Admin\ShipLevelController;
 use App\Http\Controllers\Admin\TesseractController;
 use App\Http\Controllers\Admin\UserController;
@@ -82,6 +83,19 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
 
     Route::prefix('/user')->group(function () {
         Route::get('/', [UserController::class, 'list']);
+    });
+
+    Route::prefix('/admiral')->group(function () {
+        Route::get('/', [AdmiralController::class, 'list']);
+        Route::post('/', [AdmiralController::class, 'create']);
+        Route::prefix('/{id_admiral}')->group(function () {
+            Route::get('/', [AdmiralController::class, 'get']);
+            Route::put('/', [AdmiralController::class, 'update']);
+            Route::delete('/', [AdmiralController::class, 'delete']);
+
+            Route::put('/abilities', [AdmiralController::class, 'updateAdmiralAbilities']);
+            Route::delete('/abilities/{id_ability}', [AdmiralController::class, 'deleteAdmiralAbility']);
+        });
     });
 
     Route::prefix('/ship')->group(function () {
