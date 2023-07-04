@@ -15,6 +15,7 @@ class Ability extends Model
         'type',
         'variants',
         'amounts',
+        'step_value',
         'weapon_classes',
         'weapon_sizes',
         'notes',
@@ -27,6 +28,8 @@ class Ability extends Model
         'for_class_ids',
         'target_class_ids',
         'conditions',
+        'has_condition_boost',
+        'condition_boost',
     ];
 
     protected $casts = [
@@ -39,6 +42,8 @@ class Ability extends Model
         'conditions' => 'array',
         'applies_to_fleet' => 'boolean',
         'flagship_required' => 'boolean',
+        'has_condition_boost' => 'boolean',
+        'condition_boost' => 'array',
     ];
 
     /**

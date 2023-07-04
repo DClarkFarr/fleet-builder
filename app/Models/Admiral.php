@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Admiral\Skill;
 
 class Admiral extends Model
 {
@@ -42,11 +43,11 @@ class Admiral extends Model
     /**
      * Relations
      */
-
-    public function abilities()
+    public function skills()
     {
-        return $this->morphMany(Ability::class, 'abilities');
+        return $this->hasMany(Skill::class, 'id_admiral', 'id_admiral');
     }
+
 
 
     /**
