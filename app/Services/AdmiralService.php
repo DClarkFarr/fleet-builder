@@ -79,13 +79,13 @@ class AdmiralService
 
     public function populateAdmiralForResponse(Admiral $admiral)
     {
-        $admiral->load(['abilities']);
+        $admiral->load(['skills']);
 
         return $admiral;
     }
 
 
-    public function updateAdmiralAbilities(int $id_admiral, string $location, array $abilities)
+    public function updateAdmiralSkills(int $id_admiral, string $location, array $abilities)
     {
         $admiral = Admiral::find($id_admiral);
         if (!$admiral) {
