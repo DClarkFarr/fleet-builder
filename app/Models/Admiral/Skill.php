@@ -2,6 +2,7 @@
 
 namespace App\Models\Admiral;
 
+use App\Models\Ability;
 use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
@@ -42,6 +43,10 @@ class Skill extends Model
     public function admiral()
     {
         return $this->belongsTo(Admiral::class);
+    }
+    public function abilities()
+    {
+        return $this->morphMany(Ability::class, 'abilities');
     }
 
 

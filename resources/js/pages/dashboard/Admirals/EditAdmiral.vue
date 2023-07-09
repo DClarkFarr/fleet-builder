@@ -1,11 +1,12 @@
 <script setup>
-import { computed, ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import DashboardLayout from "../../../components/layouts/DashboardLayout.vue";
 import BasicAdmiralForm from "../../../components/Admiral/BasicAdmiralForm.vue";
 import CircleNotchIcon from "~icons/fa-solid/circle-notch";
 import { useRoute } from "vue-router";
 import AdmiralService from "../../../services/AdmiralService";
 import apiClient from "../../../services/apiClient";
+import AdmiralSkillManager from "../../../components/Admiral/AdmiralSkillManager.vue";
 
 const admiral = ref(null);
 const isLoading = ref(true);
@@ -88,11 +89,11 @@ onMounted(() => {
             <div class="mb-8">
                 <h3 class="font-medium text-xl mb-4">Basic Admiral Info</h3>
                 <BasicAdmiralForm
-                    :admiral="admiral"
+                    v-model:admiral="admiral"
                     @submit="onUpdateAdmiral"
                 />
             </div>
-            <hr />
+            <AdmiralSkillManager v-model:admiral="admiral" />
         </div>
     </DashboardLayout>
 </template>

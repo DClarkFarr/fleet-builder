@@ -95,6 +95,10 @@ Route::prefix('/admin')->middleware(['role:admin'])->group(function () {
 
             Route::put('/abilities', [AdmiralController::class, 'updateAdmiralAbilities']);
             Route::delete('/abilities/{id_ability}', [AdmiralController::class, 'deleteAdmiralAbility']);
+
+            Route::prefix('/skill')->group(function () {
+                Route::post('/', [AdmiralController::class, 'createSkill']);
+            });
         });
     });
 

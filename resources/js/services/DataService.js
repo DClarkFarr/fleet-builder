@@ -87,6 +87,12 @@ export default class DataService {
         CHIP_6: "chip_6",
     };
 
+    static SKILL_LOCATIONS = {
+        SKILL_1: "skill_1",
+        SKILL_2: "skill_2",
+        SKILL_3: "skill_3",
+    };
+
     static SHIP_COLUMNS = {
         LEVEL: "level",
         TOTAL_WEAPON_DAMAGE: "all_weapon_damage",
@@ -354,6 +360,23 @@ export default class DataService {
             {
                 name: "Attacks",
                 slug: DataService.REPEAT_TYPES.ATTACKS,
+            },
+        ];
+    }
+
+    static getAdmiralSkillLocations() {
+        return [
+            {
+                name: "Skill 1",
+                slug: DataService.SKILL_LOCATIONS.SKILL_1,
+            },
+            {
+                name: "Skill 2",
+                slug: DataService.SKILL_LOCATIONS.SKILL_2,
+            },
+            {
+                name: "Skill 3",
+                slug: DataService.SKILL_LOCATIONS.SKILL_3,
             },
         ];
     }

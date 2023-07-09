@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\AdmiralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Validation\Rule;
 
 class AdmiralController extends Controller
 {
@@ -113,6 +113,25 @@ class AdmiralController extends Controller
 
         return response()->json(
             ['success' => true]
+        );
+    }
+
+    public function createSkill(Request $request, $id_admiral)
+    {
+        $validator = Validator::make($request->all(), [
+            'location' => ['required', Rule::in(['skill_1', 'skill_2', 'skill_3']),],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $location = $request->input('location');
+
+        $skill = $this->admiralService->createSkill($id_admiral, $location);
+
+        return response()->json(
+            ['row' => $skill->toArray()]
         );
     }
 }

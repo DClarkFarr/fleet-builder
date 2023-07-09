@@ -16,6 +16,14 @@ class AdmiralService {
             })
             .then((response) => response.data.rows);
     }
+
+    static createAdmiralSkill(id_admiral, location) {
+        return apiClient
+            .post(`/admin/admiral/${id_admiral}/skill`, {
+                location,
+            })
+            .then(({ data }) => data.row);
+    }
 }
 
 export default AdmiralService;

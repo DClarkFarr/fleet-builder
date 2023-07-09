@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Admiral;
+use App\Models\Admiral\Skill;
 use App\Models\UserAdmiral;
 use App\Models\User;
 use Exception;
@@ -82,6 +83,13 @@ class AdmiralService
         $admiral->load(['skills']);
 
         return $admiral;
+    }
+
+    public function populateSkillForResponse(Skill $skill)
+    {
+        $skill->load(['abilities']);
+
+        return $skill;
     }
 
 
@@ -185,5 +193,17 @@ class AdmiralService
     public function deleteAllUserAdmirals(User $user)
     {
         $user->admirals()->delete();
+    }
+
+    public function createSkill($id_admiral, $location)
+    {
+        $admiral = $this->getAdmiral($id_admiral);
+
+        $skill = $admiral->skills()->create([
+            'location' => $location,
+            'name' => 'Skill ' . explode('_', $location)[1],
+        ]);
+
+        return $this->populateSkillForResponse($skill);
     }
 }
